@@ -14,9 +14,5 @@ A powerful tool to evaluate and optimize MRP parameters, helping manufacturing a
 - **Optimization Recommendations** — Provides specific MRP parameter suggestions per item
 - **Multi-Scenario Simulation** — Simulate inventory cost vs service level trade-offs
 - **Visualization & Reporting** — Beautiful dashboards and exportable reports (Excel / PDF)
-- **ERP Agnostic** — Works with Dynamics 365 FO, SAP, Oracle, and other ERP exports
 
----
-
-## 📸 Screenshots
 
