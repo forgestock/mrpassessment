@@ -24,13 +24,18 @@ This solution answers three critical supply chain questions:
 ---
 
 ## 📸 Screenshots
-
-![ABC/XYZ Matrix](screenshots/abcxyz-matrix.png)
 *ABC/XYZ Matrix*
+![ABC/XYZ Matrix](screenshots/abcxyz-matrix.png)
+
+
+*MRP Exception Advisor*
 ![MRP Exception Advisor](screenshots/mrp-exceptions.png)
+
+
+*MRP Assessment*
 ![MRP Assessment](screenshots/mrp-assessment.png)
 
-*(Add your screenshots in the `screenshots/` folder)*
+
 
 ---
 
