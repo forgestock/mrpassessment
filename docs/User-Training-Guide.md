@@ -39,31 +39,135 @@ text> **Important:** Always run **ABC/XYZ Classification** first. The other two 
 
 ## 2. ABC/XYZ Classification
 
-### What is ABC Analysis?
-ABC analysis ranks items based on their contribution to total invoiced sales revenue (Pareto 80/20 principle).
+### What is ABC analysis?
 
-### What is XYZ Analysis?
-XYZ analysis measures demand predictability using the **Coefficient of Variation (CV)**.
+ABC analysis ranks every stocked item at a site by its share of total invoiced sales revenue over the analysis window, applying the Pareto (80/20) principle.
 
-### The 3×3 ABC/XYZ Matrix
+| Class | Cumulative revenue share | Typical inventory strategy |
+|---|---|---|
+| **A** | 0 – 80 % | Highest attention. Short replenishment cycles, tight safety stock review. |
+| **B** | 80 – 95 % | Moderate attention. Periodic review, standard safety stock. |
+| **C** | 95 – 100 % | Minimal effort. Long review cycles, bulk ordering where possible. |
 
-|          | **X** Stable          | **Y** Variable         | **Z** Sporadic          |
-|----------|-----------------------|------------------------|-------------------------|
-| **A**    | **AX**                | **AY**                 | **AZ**                  |
-| **B**    | **BX**                | **BY**                 | **BZ**                  |
-| **C**    | **CX**                | **CY**                 | **CZ**                  |
+**Example:** If your site has 1,000 items, the top ~50 items likely generate 80 % of your revenue — those are your A-class items and deserve the most planning attention.
 
-**How to run the batch job:**
+### What is XYZ analysis?
 
-**Path:** *Inventory management > Periodic tasks > Inventory optimizer > ABC/XYZ Classification*
+XYZ analysis measures how *predictable* an item's monthly demand is using the **Coefficient of Variation (CV)** — the ratio of the standard deviation to the mean of monthly demand quantities.
 
-**Recommended settings (Monthly):**
-- **Site**: Blank (all sites)
-- **From date**: 12 months ago
-- **To date**: End of previous month
-- **Delete and regenerate**: Checked
+$$CV = \frac{\sigma_{monthly}}{\mu_{monthly}}$$
 
----
+A low CV means demand is consistent from month to month, making it easy to plan. A high CV means demand swings wildly — sometimes very high, sometimes near zero — making it much harder to hold the right quantity of stock at the right time.
+
+**Why CV and not just standard deviation?** Standard deviation alone is misleading because it is scale-dependent. An item selling 10,000 units per month with a standard deviation of 1,000 is far more predictable than an item selling 200 units per month with a standard deviation of 400, even though the first item's absolute variation is larger. CV normalises the variation relative to average demand, making items comparable across very different volume levels.
+
+| Class | CV threshold | Demand pattern | Replenishment approach |
+|---|---|---|---|
+| **X** | CV < 0.50 | Steady, predictable | Statistical reorder points work well |
+| **Y** | 0.50 ≤ CV < 1.00 | Moderately variable, seasonal | Regular forecasting with safety stock |
+| **Z** | CV ≥ 1.00 | Sporadic or intermittent | Demand-driven or just-in-time ordering |
+
+**Understanding each class in practice:**
+
+- **X items** have highly stable demand. The standard deviation is less than half of the mean — you can forecast these items with high confidence using statistical methods (e.g. reorder point = mean demand × lead time + safety stock based on service level). Small safety stock buffers are sufficient. Examples: consumables with a steady usage rate, spare parts replaced on fixed maintenance schedules.
+
+- **Y items** show meaningful variation but not chaos. Demand may follow a seasonal pattern (peaks in summer, troughs in winter), respond to promotions, or reflect a broader business cycle. Forecasting is worthwhile but must account for the variability — safety stock needs to be sized more generously than for X items. Examples: seasonal products, items tied to project-based customer demand, items with promotional uplift.
+
+- **Z items** have highly irregular demand — months with very high orders interspersed with months of zero or near-zero demand. Statistical reorder points perform poorly on Z items because there is no reliable mean to anchor them. The preferred approach is either make-to-order (carry no stock; source only when an order is placed) or to hold a relatively large safety stock buffer if stock-out risk is unacceptable. Examples: spare parts for ageing equipment, slow-moving specialty items, items used only in specific customer projects.
+
+**How XYZ affects safety stock sizing:** The safety stock formula used in the Safety Stock Recommender is $SS = Z \times \sigma_d \times \sqrt{LT}$, where $\sigma_d$ is the standard deviation of demand and $LT$ is the replenishment lead time. For Z-class items with high $\sigma_d$, this formula produces very large safety stock values — often signalling that make-to-order is economically preferable to stocking. The XYZ class shown in the exception list and assessment results gives planners an immediate signal about whether a safety stock recommendation is realistic.
+
+**Interpreting CV values:**
+
+| CV example | Monthly demand example | Interpretation |
+|---|---|---|
+| 0.10 | Mean 500 units, std dev 50 units | Highly stable. X class — ideal for statistical replenishment. |
+| 0.45 | Mean 200 units, std dev 90 units | Borderline X/Y. Minor variability; statistical methods still work well. |
+| 0.75 | Mean 80 units, std dev 60 units | Y class. Noticeable swings; investigate seasonal or promotional drivers. |
+| 1.20 | Mean 30 units, std dev 36 units | Z class. Sporadic. Consider make-to-order or consignment arrangement. |
+| 3.50 | Mean 5 units, std dev 17.5 units | Deeply Z. Very low volume with large spikes. Safety stock is likely uneconomical. |
+
+**Items with zero demand months:** When an item has months with zero demand within the analysis window, those zero values are included in the CV calculation. A product sold in 4 out of 12 months will have a very high CV even if the months it does sell show consistent quantities. The **Zero periods** column on the item list shows how many months had zero demand — use this alongside the CV to distinguish *truly erratic* demand from *seasonal/intermittent* demand.
+
+> **Minimum data requirement:** XYZ analysis requires at least **3 complete calendar months** of invoice data within the date range. Items with fewer than 3 months of data are skipped for XYZ classification and will show a blank XYZ class in the item list. This most commonly affects newly introduced items and items that were recently added to a site's stocking policy.
+
+### The combined 3×3 matrix
+
+Combining ABC and XYZ produces nine planning segments:
+
+|  | **X** (Stable) | **Y** (Variable) | **Z** (Sporadic) |
+|---|---|---|---|
+| **A** (High value) | **AX** | **AY** | **AZ** |
+| **B** (Mid value) | **BX** | **BY** | **BZ** |
+| **C** (Low value) | **CX** | **CY** | **CZ** |
+
+**Segment guidance:**
+
+| Segment | Recommended approach |
+|---|---|
+| **AX** | Continuous review, vendor-managed inventory, kanban. Your most critical items. |
+| **AY** | Regular forecasting with safety stock. Investigate seasonality drivers. |
+| **AZ** | Make-to-order where possible; high safety stock if MTS. Close planner attention required. |
+| **BX** | Periodic review with statistical reorder point. |
+| **BY** | Moderate safety stock. Review forecast quarterly. |
+| **BZ** | Demand-driven replenishment. Consider consignment stocking. |
+| **CX** | Min-max ordering. Low admin effort. |
+| **CY** | Bulk purchasing, infrequent review. |
+| **CZ** | Consider stocking out; source on demand. |
+
+**What to look for in the workspace:**
+
+| Signal | Interpretation |
+|---|---|
+| Large **AX inventory value** | Healthy — significant capital in your most predictable, high-value items. |
+| Large **AZ inventory value** | Risk — high capital tied up in sporadic A-items. Consider make-to-order or consignment. |
+| Large **CZ inventory value** | Working-capital concern — low-value, erratic items consuming cash. |
+| Many items with **no class** (all tiles = 0) | The classification job has not been run yet, or no invoice data exists for the selected period. |
+
+### How to run the ABC/XYZ batch job
+
+1. Navigate to **Inventory Management › Periodic tasks › Inventory optimizer › ABC/XYZ Classification**.
+2. Fill in the parameters:
+
+   | Parameter | Description | Recommendation |
+   |---|---|---|
+   | **Site** | The site to classify. Leave blank to classify **all active sites** in one job. | Leave blank (all sites) |
+   | **From date** | Start of the analysis window. | First day of the month, 12 months ago |
+   | **To date** | End of the analysis window. | Last day of the previous month |
+   | **Delete and regenerate** | Deletes all existing classification records before re-inserting. | **Tick this** for monthly runs |
+
+3. Click **OK** to run immediately, or use the **Batch** tab to schedule overnight.
+4. Monitor progress at **System administration › Inquiries › Batch jobs** (description: *ABC/XYZ Classification*).
+5. When status shows **Ended**, open the workspace to review results.
+
+> **Best practice:** Schedule monthly on the first working day of each month with Site blank, a 12-month look-back, and *Delete and regenerate* ticked. This refreshes all sites in one run.
+
+> **Troubleshooting — no data found:** If a site reports no data, verify that customer invoice transactions exist in **Accounts receivable › Inquiries › Journals › Invoice journal** for that site and period. Sites with no invoice data are silently skipped.
+
+### How to read the ABC/XYZ results
+
+**Workspace (ABC/XYZ Matrix)**  
+Navigate to **Inventory Management › Inquiries and reports › Inventory optimizer › ABC/XYZ Matrix**.
+
+- The **9-tile matrix** at the top shows item counts per segment. Click any tile to open the item list filtered to that segment.
+- The **summary card grid** shows item count, 12-month sales value, and inventory value per segment.
+
+**Item list (Item ABC/XYZ classification)**  
+Navigate to **Inventory Management › Inquiries and reports › Inventory optimizer › Item ABC/XYZ classification**.
+
+Key columns:
+
+| Column | Description |
+|---|---|
+| **ABC class** | A / B / C based on revenue share |
+| **XYZ class** | X / Y / Z based on demand CV |
+| **12M sales amount** | Item revenue over the analysis window |
+| **Sales amount %** | Item share of total site revenue |
+| **Demand mean** | Average monthly demand quantity |
+| **Demand std dev** | Standard deviation of monthly demand |
+| **Demand CV** | Coefficient of variation (σ / μ) |
+| **Zero periods** | Months in the window with zero demand |
+| **Calculated date** | Date of the last classification run |
 
 ## 3. MRP Exception Advisor
 
