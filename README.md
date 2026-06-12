@@ -1,102 +1,68 @@
-# MRP Assessment tool
+# Inventory Optimizer
 
-**Free Tools for Microsoft Dynamics 365 Finance & Operations**
+**Free & Open Source Intelligence Tools for Microsoft Dynamics 365 Finance & Operations**
 
-A powerful set of inventory intelligence tools designed to help planners make better decisions faster.
-
-**Free Features Included:**
-- ABC/XYZ Classification Matrix
-- MRP Exception Advisor
-- MRP Assessment Engine
+A powerful suite of **free and open source** tools designed to help Demand Planners, Inventory Controllers, and MRP Super Users achieve reliable planning and healthier inventory.
 
 ---
 
-## ✨ What It Does
+### ✨ Free & Open Source Features
 
-This solution answers three critical supply chain questions:
+- **ABC/XYZ Classification** — Intelligent item segmentation with 3×3 matrix
+- **MRP Exception Advisor** — Smart prioritization of planned order issues
+- **MRP Assessment Engine** — 27+ diagnostic checks on plan & master data health
+- **Excess & Obsolete Cockpit** — Aging analysis and disposition recommendations
 
-| Feature                    | Answers the Question                          | Update Frequency |
-|---------------------------|-----------------------------------------------|------------------|
-| **ABC/XYZ Classification** | Which items matter most and how predictable is demand? | Monthly |
-| **MRP Exception Advisor**  | What supply actions need immediate attention? | After each MRP run |
-| **MRP Assessment**         | Can we trust the MRP output?                  | Weekly |
-
----
-
-## 📸 Screenshots
-*ABC/XYZ Matrix*
-![ABC/XYZ Matrix](screenshots/abcxyz-matrix.png)
-
-
-*MRP Exception Advisor*
-![MRP Exception Advisor](screenshots/mrp-exceptions.png)
-
-
-*MRP Assessment*
-![MRP Assessment](screenshots/mrp-assessment.png)
-
-
+All features are **completely free**, open source (MIT License), and available for both commercial and internal use.
 
 ---
 
-## 🚀 Quick Start
+### 🎯 Why Use Inventory Optimizer?
 
-### 1. Download the latest package
-→ **[⬇️ Download Latest Release](https://github.com/forgestock/mrpassessment/releases)**
-
-### 2. Import into D365FO
-- Import the deployable package via LCS or Visual Studio
-- Run the following batch jobs in order:
-
-  1. **ABC/XYZ Classification** (Monthly)
-  2. **MRP Exception Scan** (After each Master Planning run)
-  3. **MRP Assessment** (Weekly)
+- Reduce excess inventory while protecting service levels
+- Focus daily effort on truly critical issues using priority scoring
+- Identify hidden configuration problems that cause unreliable MRP output
+- Get clear, data-driven recommendations for parameter optimization
+- No licensing cost — fully open source
 
 ---
 
-## 📖 User Training Guide
+### 🚀 Quick Start
 
-Detailed documentation is available in the repository:
+1. **[⬇️ Download Latest Release](https://github.com/forgestock/mrpassessment/releases)**
+2. Import the deployable package into your D365FO environment
+3. Run the features in recommended order:
+   - ABC/XYZ Classification (Monthly)
+   - MRP Exception Scan (After each Master Planning)
+   - MRP Assessment (Weekly)
+   - Excess & Obsolete Cockpit (Monthly)
+
+---
+
+### 📖 Documentation
 
 **[📘 Full User Training Guide](./docs/User-Training-Guide.md)**
 
-**Key Sections:**
-- How ABC/XYZ Classification works (with 3×3 matrix guidance)
-- How to interpret and action MRP Exceptions by priority score
-- How to run and understand MRP Assessment results
-- Recommended monthly/weekly/daily operating rhythm
-- Full menu path reference
-
 ---
 
-## 🎯 Key Benefits
+### 📊 Supported Environments
 
-- Prioritize high-value unpredictable items (AZ)
-- Reduce excess inventory while protecting service levels
-- Identify configuration issues that cause bad MRP output
-- Provide data-backed justification for parameter changes
+- Microsoft Dynamics 365 Finance & Operations (Cloud)
 - Works with both **Planning Optimization** and Classic MRP
 
 ---
 
-## 📊 Supported Environments
+### 📄 License
 
-- Microsoft Dynamics 365 Finance & Operations (Cloud)
-- Compatible with both Classic MRP and Planning Optimization
-
----
-
-## 📄 License
-
-MIT License — Free for commercial and internal use.
+**MIT License** — Free for commercial and internal use.
 
 ---
 
-## 🤝 Contributing
+### 🤝 Contributing
 
-Contributions, bug reports, and feature requests are welcome!
+Contributions, ideas, and feedback are welcome!
 
-Feel free to open an **Issue** or submit a **Pull Request**.
+Feel free to open an [Issue](https://github.com/forgestock/mrpassessment/issues) or submit a Pull Request.
 
 ---
 
@@ -104,8 +70,6 @@ Feel free to open an **Issue** or submit a **Pull Request**.
 
 ---
 
-### Repository Links
+This version keeps **"Inventory Optimizer"** as the main brand name while clearly communicating that everything is **free and open source**.
 
-- [Releases](https://github.com/forgestock/mrpassessment/releases)
-- [Issues](https://github.com/forgestock/mrpassessment/issues)
-- [Full Documentation](./docs/)
+Would you like me to make it slightly shorter, or add anything else?
