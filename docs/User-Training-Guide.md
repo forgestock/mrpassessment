@@ -61,7 +61,7 @@ The four free features answer four different questions about your supply chain:
 
 | Feature | Analyses | Question answered |
 |---|---|---|
-| **ABC/XYZ Classification** | Inventory issue demand history (`InventTrans`) | Which items matter most, and how predictable is their demand? |
+| **Inventory health dashboard (ABC/XYZ Classification)** | Inventory issue demand history (`InventTrans`) | Which items matter most, and how predictable is their demand? |
 | **MRP Exception** | Planned order output (`ReqPO`) | What supply actions need to be taken right now? |
 | **MRP Assessment** | Plan configuration + master data | Can the MRP output be trusted? |
 | **Excess & Obsolete Cockpit** | On-hand stock + issue/receipt movement aging | Which stock is no longer moving, and what should we do with it? |
