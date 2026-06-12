@@ -9,6 +9,8 @@ A powerful native suite of free tools that helps Demand Planners, Inventory Cont
 ### ✨ Free Features
 
 - **ABC/XYZ Classification** — Intelligent item segmentation with 3×3 matrix (accessed via **Inventory Health Dashboard**)
+  <img width="915" height="931" alt="image" src="https://github.com/user-attachments/assets/e8b5cc3b-c321-4d16-bb28-9503dd4c0855" />
+
 - **MRP Exception Advisor** — Smart prioritization of planned order issues with weighted scoring
 - **MRP Assessment Engine** — 38 diagnostic checks on plan configuration and master data health
 - **Excess & Obsolete Cockpit** — Aging analysis and disposition recommendations for slow-moving and dead stock
