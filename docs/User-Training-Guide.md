@@ -69,13 +69,14 @@ The four free features answer four different questions about your supply chain:
 They are designed to run in sequence:
 
 ```
-ABC/XYZ Classification  →  MRP Exception  →  MRP Assessment
-       (monthly)                (after each MRP run)        (weekly)
+ABC/XYZ Classification  →  MRP Exception  →  MRP Assessment  →  Excess & Obsolete
+   (monthly)                (after each MRP run)        (weekly)            (weekly/monthly)
 ```
 
-- **ABC/XYZ** enriches the other two features with value and variability context.  
+- **ABC/XYZ** enriches the other three features with value and variability context.  
 - **MRP Exception** uses ABC/XYZ class to weight severity scores — a safety stock breach on an A-class item is more urgent than the same breach on a C-class item.  
 - **MRP Assessment** uses ABC/XYZ class to identify configuration gaps (e.g. A-class items without a coverage group) and flags items that simultaneously have an assessment finding *and* an open MRP exception as **compounded risk**.
+- **Excess & Obsolete** turns aging and provision exposure into disposition actions; review the watchlist daily, refresh analysis weekly (or monthly in stable environments), and govern monthly.
 
 > **Important:** Always run ABC/XYZ Classification at least once before running MRP Exception or MRP Assessment. Without classification data, the ABC/XYZ-weighted priority scores cannot be computed.
 
@@ -577,8 +578,10 @@ Navigate to **Inventory Management › Inquiries and reports › Inventory optim
 | **Monthly** (first working day) | Run **ABC/XYZ Classification** for all sites, 12-month look-back, Delete and regenerate ticked | Inventory controller / batch admin |
 | **Nightly** (scheduled batch) | Run **master planning** → then **MRP Exception Scan** as a chained dependency | Batch admin |
 | **Weekly** | Run **MRP Assessment** and review the overall severity. Resolve any Critical or High findings before the weekly planning meeting. | MRP super user |
-| **Monthly** | Run **Excess & Obsolete analysis** (or rely on Optimize all). Review Dead/Dormant provision value and act on Scrap/Discount candidates with open supply. | Inventory controller / demand planner |
 | **Daily** (start of day) | Open **MRP exception** list, filter Open, sort by Priority score descending. Work exceptions top-down. | Demand planner / buyer |
+| **Daily** (start of day) | Review **E&O cockpit watchlist** (Dead, Dormant, Open supply = Yes, highest Provision value first). | Inventory controller / demand planner |
+| **Weekly** | Run **Excess & Obsolete analysis** for operational follow-up in active sites (or rely on Optimize all cadence). | Inventory controller / demand planner |
+| **Monthly** | Govern **Excess & Obsolete** exposure (total provision trend, Dead/Dormant disposition decisions, owners and due dates). | Inventory controller / finance / demand planner |
 | **Monthly** | Review ABC/XYZ segment shifts. Update coverage groups and safety stock for items that have changed class. | Demand planner |
 
 ---
@@ -708,8 +711,8 @@ Use these playbooks to reduce onboarding time and make daily routines explicit b
 
 ### FAQ
 
-**Q: Should planners run all three jobs every day?**  
-A: No. ABC/XYZ is typically monthly. Exception Scan is usually daily after MRP. Assessment is typically weekly (or after major setup changes).
+**Q: Should planners run all four jobs every day?**  
+A: No. **MRP Exception** is typically daily after MRP. **MRP Assessment** is usually weekly (or after major setup changes). **ABC/XYZ** is usually monthly. For **E&O**, review a daily watchlist, refresh analysis weekly in active environments (or monthly in stable ones), and do a formal monthly governance review.
 
 **Q: Can we disable a noisy check?**  
 A: Yes. Use **MRP Assessment check configuration** in Inventory and warehouse management parameters. Keep a short reason log for governance.
