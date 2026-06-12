@@ -1,0 +1,584 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxForm xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="Microsoft.Dynamics.AX.Metadata.V6">
+	<Name>ABSExcessObsolete</Name>
+	<SourceCode>
+		<Methods xmlns="">
+			<Method>
+				<Name>classDeclaration</Name>
+				<Source><![CDATA[
+[Form]
+public class ABSExcessObsolete extends FormRun
+{
+}
+]]></Source>
+			</Method>
+			<Method>
+				<Name>init</Name>
+				<Source><![CDATA[
+public void init()
+{
+    super();
+
+    ABSExcessObsolete_ds.query().dataSourceNo(1).sortClear();
+    ABSExcessObsolete_ds.query().dataSourceNo(1).addSortField(
+        fieldNum(ABSExcessObsolete, ProvisionValue), SortOrder::Descending);
+
+    element.refreshChartData();
+    ABSEOChartData_ds.research();
+
+    if (EOChart)
+    {
+        EOChart.update();
+    }
+}
+]]></Source>
+			</Method>
+			<Method>
+				<Name>refreshChartData</Name>
+				<Source><![CDATA[
+/// Rebuilds the in-memory aging-bucket aggregate that backs the stacked column chart:
+/// provision value + remaining (uncovered) on-hand value per bucket. <= 5 rows.
+public void refreshChartData()
+{
+    ABSExcessObsolete   eo;
+    ABSEOAgingBucket    bucketLoop;
+    container           buckets = [
+        ABSEOAgingBucket::NoHistory,
+        ABSEOAgingBucket::Active,
+        ABSEOAgingBucket::Slow,
+        ABSEOAgingBucket::VerySlow,
+        ABSEOAgingBucket::Dormant,
+        ABSEOAgingBucket::Dead];
+    int                 i;
+
+    delete_from ABSEOChartData;
+
+    for (i = 1; i <= conLen(buckets); i++)
+    {
+        bucketLoop = conPeek(buckets, i);
+
+        select sum(OnHandValue), sum(ProvisionValue) from eo
+            where eo.AgingBucket == bucketLoop;
+
+        if (eo.OnHandValue == 0 && eo.ProvisionValue == 0)
+        {
+            continue;
+        }
+
+        ABSEOChartData.clear();
+        ABSEOChartData.BucketName     = SysDictEnum::newName(enumStr(ABSEOAgingBucket)).value2Label(enum2int(bucketLoop));
+        ABSEOChartData.ProvisionValue = eo.ProvisionValue;
+        ABSEOChartData.RemainingValue = max(0, eo.OnHandValue - eo.ProvisionValue);
+        ABSEOChartData.insert();
+    }
+}
+]]></Source>
+			</Method>
+		</Methods>
+		<DataSources xmlns="">
+			<DataSource>
+				<Name>ABSExcessObsolete</Name>
+				<Methods>
+					<Method>
+						<Name>displayOption</Name>
+						<Source><![CDATA[
+    public void displayOption(Common _record, FormRowDisplayOption _options)
+    {
+        ABSExcessObsolete eo = _record;
+        int bgColor;
+
+        // Only colour when history is meaningful or the bucket is already serious,
+        // so statistically thin items don't all scream (Pareto P5 lesson).
+        if (eo.HistoryMonthsAvailable < 3 && eo.AgingBucket < ABSEOAgingBucket::Dormant)
+        {
+            super(_record, _options);
+            return;
+        }
+
+        switch (eo.AgingBucket)
+        {
+            case ABSEOAgingBucket::Dead:      bgColor = ABSUIColors::critical(); break;
+            case ABSEOAgingBucket::Dormant:   bgColor = ABSUIColors::warning();  break;
+            case ABSEOAgingBucket::VerySlow:  bgColor = ABSUIColors::caution();  break;
+            case ABSEOAgingBucket::Slow:      bgColor = ABSUIColors::info();     break;
+            case ABSEOAgingBucket::NoHistory: bgColor = ABSUIColors::neutral();  break;
+            default:
+                super(_record, _options);
+                return;
+        }
+
+        _options.backColor(bgColor);
+        super(_record, _options);
+    }
+]]></Source>
+					</Method>
+					<Method>
+						<Name>executeQuery</Name>
+						<Source><![CDATA[
+    public void executeQuery()
+    {
+        super();
+        element.refreshChartData();
+        ABSEOChartData_ds.research();
+        if (EOChart)
+        {
+            EOChart.update();
+        }
+    }
+]]></Source>
+					</Method>
+				</Methods>
+			</DataSource>
+		</DataSources>
+		<DataControls xmlns="">
+			<Control>
+				<Name>RunEOAnalysisBtn</Name>
+				<Type>Button</Type>
+				<Methods>
+					<Method>
+						<Name>clicked</Name>
+						<Source><![CDATA[
+        void clicked()
+        {
+            ABSExcessObsoleteController::main(new Args());
+            ABSExcessObsolete_ds.research();
+        }
+    ]]></Source>
+					</Method>
+				</Methods>
+			</Control>
+			<Control>
+				<Name>ItemABCXYZBtn</Name>
+				<Type>MenuFunctionButton</Type>
+				<Methods>
+					<Method>
+						<Name>clicked</Name>
+						<Source><![CDATA[
+        void clicked()
+        {
+            Args args = new Args();
+            args.record(ABSExcessObsolete);
+            new MenuFunction(menuItemDisplayStr(ABSItemABCXYZ), MenuItemType::Display).run(args);
+        }
+    ]]></Source>
+					</Method>
+				</Methods>
+			</Control>
+		</DataControls>
+		<Members xmlns="" />
+	</SourceCode>
+	<DataSources>
+		<AxFormDataSource xmlns="">
+			<Name>ABSExcessObsolete</Name>
+			<Table>ABSExcessObsolete</Table>
+			<Fields>
+				<AxFormDataSourceField>
+					<DataField>AgingBucket</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Recommendation</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ItemId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>SiteId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ABCClass</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>XYZClass</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>OnHandQty</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>OnHandValue</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ProvisionValue</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>MonthsSinceLastIssue</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>MonthsOfCoverage</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ExcessFlag</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>OpenSupplyFlag</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>LastIssueDate</DataField>
+				</AxFormDataSourceField>
+			</Fields>
+			<ReferencedDataSources />
+			<AllowCreate>No</AllowCreate>
+			<AllowDelete>No</AllowDelete>
+			<AllowEdit>No</AllowEdit>
+			<InsertIfEmpty>No</InsertIfEmpty>
+			<DataSourceLinks />
+			<DerivedDataSources />
+		</AxFormDataSource>
+		<AxFormDataSource xmlns="">
+			<Name>ABSEOChartData</Name>
+			<Table>ABSEOChartData</Table>
+			<Fields>
+				<AxFormDataSourceField>
+					<DataField>BucketName</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ProvisionValue</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RemainingValue</DataField>
+				</AxFormDataSourceField>
+			</Fields>
+			<ReferencedDataSources />
+			<AllowCreate>No</AllowCreate>
+			<AllowDelete>No</AllowDelete>
+			<AllowEdit>No</AllowEdit>
+			<InsertIfEmpty>No</InsertIfEmpty>
+			<DataSourceLinks />
+			<DerivedDataSources />
+		</AxFormDataSource>
+	</DataSources>
+	<Design>
+		<Caption xmlns="">@ABS:ABSEOCockpit</Caption>
+		<Pattern xmlns="">Custom</Pattern>
+		<Style xmlns="">DetailsFormMaster</Style>
+		<Controls xmlns="">
+			<AxFormControl xmlns="" i:type="AxFormActionPaneControl">
+				<Name>ActionPane</Name>
+				<Type>ActionPane</Type>
+				<FormControlExtension i:nil="true" />
+				<Controls>
+					<AxFormControl xmlns="" i:type="AxFormButtonGroupControl">
+						<Name>MaintainGroup</Name>
+						<Type>ButtonGroup</Type>
+						<FormControlExtension i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns="" i:type="AxFormButtonControl">
+								<Name>RunEOAnalysisBtn</Name>
+								<Type>Button</Type>
+								<FormControlExtension i:nil="true" />
+								<Text>@ABS:ABSEORun</Text>
+							</AxFormControl>
+							<AxFormControl xmlns="" i:type="AxFormMenuFunctionButtonControl">
+								<Name>ItemABCXYZBtn</Name>
+								<Type>MenuFunctionButton</Type>
+								<FormControlExtension i:nil="true" />
+								<DataSource>ABSExcessObsolete</DataSource>
+								<MenuItemName>ABSItemABCXYZ</MenuItemName>
+								<MenuItemType>Display</MenuItemType>
+								<Text>@ABS:ABSEOViewClassification</Text>
+							</AxFormControl>
+						</Controls>
+						<Caption>@ABS:ABSEORun</Caption>
+					</AxFormControl>
+				</Controls>
+			</AxFormControl>
+			<AxFormControl xmlns="" i:type="AxFormGroupControl">
+				<Name>FilterGroup</Name>
+				<Pattern>CustomAndQuickFilters</Pattern>
+				<PatternVersion>1.1</PatternVersion>
+				<Type>Group</Type>
+				<WidthMode>SizeToAvailable</WidthMode>
+				<FormControlExtension i:nil="true" />
+				<Controls>
+					<AxFormControl>
+						<Name>QuickFilter</Name>
+						<FormControlExtension>
+							<Name>QuickFilterControl</Name>
+							<ExtensionComponents />
+							<ExtensionProperties>
+								<AxFormControlExtensionProperty>
+									<Name>targetControlName</Name>
+									<Type>String</Type>
+									<Value>EOGrid</Value>
+								</AxFormControlExtensionProperty>
+								<AxFormControlExtensionProperty>
+									<Name>defaultColumnName</Name>
+									<Type>String</Type>
+									<Value>EOGrid_ItemId</Value>
+								</AxFormControlExtensionProperty>
+							</ExtensionProperties>
+						</FormControlExtension>
+					</AxFormControl>
+				</Controls>
+				<ArrangeMethod>HorizontalLeft</ArrangeMethod>
+				<FrameType>None</FrameType>
+				<Style>CustomFilter</Style>
+				<ViewEditMode>Edit</ViewEditMode>
+			</AxFormControl>
+			<AxFormControl xmlns="" i:type="AxFormGroupControl">
+				<Name>EOChartGroup</Name>
+				<Pattern>Custom</Pattern>
+				<Type>Group</Type>
+				<FormControlExtension i:nil="true" />
+				<HeightMode>SizeToContent</HeightMode>
+				<WidthMode>SizeToAvailable</WidthMode>
+				<Controls>
+					<AxFormControl xmlns="" i:type="AxFormContainerControl">
+						<Name>EOChart</Name>
+						<AutoDeclaration>Yes</AutoDeclaration>
+						<Type>Container</Type>
+						<Visible>Yes</Visible>
+						<Width>800</Width>
+						<WidthMode>Manual</WidthMode>
+						<Height>300</Height>
+						<HeightMode>Manual</HeightMode>
+						<FormControlExtension>
+							<Name>SysChart</Name>
+							<ExtensionComponents>
+								<AxFormControlExtensionComponent xmlns="" i:type="AxFormControlExtensionComponentComposite">
+									<Name>parmDataSets</Name>
+									<ExtensionComponents>
+										<AxFormControlExtensionComponent xmlns="" i:type="AxFormControlExtensionComponentLeaf">
+											<Name>EODataSet</Name>
+											<ComponentType>SysBuildChartDataSet</ComponentType>
+											<ExtensionProperties>
+												<AxFormControlExtensionProperty>
+													<Name>parmDataSource</Name>
+													<Type>String</Type>
+													<Value>ABSEOChartData</Value>
+												</AxFormControlExtensionProperty>
+												<AxFormControlExtensionProperty>
+													<Name>parmCategoryField</Name>
+													<Type>String</Type>
+													<Value>BucketName</Value>
+												</AxFormControlExtensionProperty>
+											</ExtensionProperties>
+										</AxFormControlExtensionComponent>
+									</ExtensionComponents>
+								</AxFormControlExtensionComponent>
+								<AxFormControlExtensionComponent xmlns="" i:type="AxFormControlExtensionComponentComposite">
+									<Name>parmMeasures</Name>
+									<ExtensionComponents>
+										<AxFormControlExtensionComponent xmlns="" i:type="AxFormControlExtensionComponentLeaf">
+											<Name>ProvisionValue</Name>
+											<ComponentType>SysBuildChartMeasure</ComponentType>
+											<ExtensionProperties>
+												<AxFormControlExtensionProperty>
+													<Name>parmChartType</Name>
+													<Type>Enum</Type>
+													<TypeName>SysChartType</TypeName>
+													<Value>StackedColumn</Value>
+												</AxFormControlExtensionProperty>
+												<AxFormControlExtensionProperty>
+													<Name>parmDataSet</Name>
+													<Type>String</Type>
+													<Value>EODataSet</Value>
+												</AxFormControlExtensionProperty>
+												<AxFormControlExtensionProperty>
+													<Name>parmMeasureField</Name>
+													<Type>String</Type>
+													<Value>ProvisionValue</Value>
+												</AxFormControlExtensionProperty>
+												<AxFormControlExtensionProperty>
+													<Name>parmTitle</Name>
+													<Type>String</Type>
+													<Value>@ABS:ABSEOProvisionValue</Value>
+												</AxFormControlExtensionProperty>
+												<AxFormControlExtensionProperty>
+													<Name>parmUseSecondaryYAxis</Name>
+													<Type>Enum</Type>
+													<TypeName>boolean</TypeName>
+													<Value>False</Value>
+												</AxFormControlExtensionProperty>
+											</ExtensionProperties>
+										</AxFormControlExtensionComponent>
+										<AxFormControlExtensionComponent xmlns="" i:type="AxFormControlExtensionComponentLeaf">
+											<Name>RemainingValue</Name>
+											<ComponentType>SysBuildChartMeasure</ComponentType>
+											<ExtensionProperties>
+												<AxFormControlExtensionProperty>
+													<Name>parmChartType</Name>
+													<Type>Enum</Type>
+													<TypeName>SysChartType</TypeName>
+													<Value>StackedColumn</Value>
+												</AxFormControlExtensionProperty>
+												<AxFormControlExtensionProperty>
+													<Name>parmDataSet</Name>
+													<Type>String</Type>
+													<Value>EODataSet</Value>
+												</AxFormControlExtensionProperty>
+												<AxFormControlExtensionProperty>
+													<Name>parmMeasureField</Name>
+													<Type>String</Type>
+													<Value>RemainingValue</Value>
+												</AxFormControlExtensionProperty>
+												<AxFormControlExtensionProperty>
+													<Name>parmTitle</Name>
+													<Type>String</Type>
+													<Value>@ABS:ABSEORemainingValue</Value>
+												</AxFormControlExtensionProperty>
+												<AxFormControlExtensionProperty>
+													<Name>parmUseSecondaryYAxis</Name>
+													<Type>Enum</Type>
+													<TypeName>boolean</TypeName>
+													<Value>False</Value>
+												</AxFormControlExtensionProperty>
+											</ExtensionProperties>
+										</AxFormControlExtensionComponent>
+									</ExtensionComponents>
+								</AxFormControlExtensionComponent>
+								<AxFormControlExtensionComponent xmlns="" i:type="AxFormControlExtensionComponentComposite">
+									<Name>parmSecondaryYAxes</Name>
+									<ExtensionComponents />
+								</AxFormControlExtensionComponent>
+							</ExtensionComponents>
+							<ExtensionProperties>
+								<AxFormControlExtensionProperty>
+									<Name>parmLegendEnabled</Name>
+									<Type>Enum</Type>
+									<TypeName>boolean</TypeName>
+									<Value>True</Value>
+								</AxFormControlExtensionProperty>
+								<AxFormControlExtensionProperty>
+									<Name>parmLegendPosition</Name>
+									<Type>Enum</Type>
+									<TypeName>SysChartVerticalAlignment</TypeName>
+									<Value>Bottom</Value>
+								</AxFormControlExtensionProperty>
+								<AxFormControlExtensionProperty>
+									<Name>parmText</Name>
+									<Type>String</Type>
+									<Value>@ABS:ABSEOChartTitle</Value>
+								</AxFormControlExtensionProperty>
+								<AxFormControlExtensionProperty>
+									<Name>parmTitlePosition</Name>
+									<Type>Enum</Type>
+									<TypeName>SysChartVerticalAlignment</TypeName>
+									<Value>Top</Value>
+								</AxFormControlExtensionProperty>
+								<AxFormControlExtensionProperty>
+									<Name>parmToolbarEnabled</Name>
+									<Type>Enum</Type>
+									<TypeName>boolean</TypeName>
+									<Value>False</Value>
+								</AxFormControlExtensionProperty>
+								<AxFormControlExtensionProperty>
+									<Name>parmPadMargin</Name>
+									<Type>Int32</Type>
+									<Value>0</Value>
+								</AxFormControlExtensionProperty>
+							</ExtensionProperties>
+						</FormControlExtension>
+						<Controls />
+					</AxFormControl>
+				</Controls>
+				<ArrangeMethod>Vertical</ArrangeMethod>
+			</AxFormControl>
+			<AxFormControl xmlns="" i:type="AxFormGridControl">
+				<Name>EOGrid</Name>
+				<Type>Grid</Type>
+				<FormControlExtension i:nil="true" />
+				<Controls>
+					<AxFormControl xmlns="" i:type="AxFormComboBoxControl">
+						<Name>EOGrid_AgingBucket</Name>
+						<Type>ComboBox</Type>
+						<FormControlExtension i:nil="true" />
+						<DataField>AgingBucket</DataField>
+						<DataSource>ABSExcessObsolete</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns="" i:type="AxFormComboBoxControl">
+						<Name>EOGrid_Recommendation</Name>
+						<Type>ComboBox</Type>
+						<FormControlExtension i:nil="true" />
+						<DataField>Recommendation</DataField>
+						<DataSource>ABSExcessObsolete</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns="" i:type="AxFormStringControl">
+						<Name>EOGrid_ItemId</Name>
+						<Type>String</Type>
+						<FormControlExtension i:nil="true" />
+						<DataField>ItemId</DataField>
+						<DataSource>ABSExcessObsolete</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns="" i:type="AxFormStringControl">
+						<Name>EOGrid_SiteId</Name>
+						<Type>String</Type>
+						<FormControlExtension i:nil="true" />
+						<DataField>SiteId</DataField>
+						<DataSource>ABSExcessObsolete</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns="" i:type="AxFormComboBoxControl">
+						<Name>EOGrid_ABCClass</Name>
+						<Type>ComboBox</Type>
+						<FormControlExtension i:nil="true" />
+						<DataField>ABCClass</DataField>
+						<DataSource>ABSExcessObsolete</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns="" i:type="AxFormComboBoxControl">
+						<Name>EOGrid_XYZClass</Name>
+						<Type>ComboBox</Type>
+						<FormControlExtension i:nil="true" />
+						<DataField>XYZClass</DataField>
+						<DataSource>ABSExcessObsolete</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns="" i:type="AxFormRealControl">
+						<Name>EOGrid_OnHandQty</Name>
+						<Type>Real</Type>
+						<FormControlExtension i:nil="true" />
+						<DataField>OnHandQty</DataField>
+						<DataSource>ABSExcessObsolete</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns="" i:type="AxFormRealControl">
+						<Name>EOGrid_OnHandValue</Name>
+						<Type>Real</Type>
+						<FormControlExtension i:nil="true" />
+						<DataField>OnHandValue</DataField>
+						<DataSource>ABSExcessObsolete</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns="" i:type="AxFormRealControl">
+						<Name>EOGrid_ProvisionValue</Name>
+						<Type>Real</Type>
+						<FormControlExtension i:nil="true" />
+						<DataField>ProvisionValue</DataField>
+						<DataSource>ABSExcessObsolete</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns="" i:type="AxFormIntegerControl">
+						<Name>EOGrid_MonthsSinceLastIssue</Name>
+						<Type>Integer</Type>
+						<FormControlExtension i:nil="true" />
+						<DataField>MonthsSinceLastIssue</DataField>
+						<DataSource>ABSExcessObsolete</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns="" i:type="AxFormRealControl">
+						<Name>EOGrid_MonthsOfCoverage</Name>
+						<Type>Real</Type>
+						<FormControlExtension i:nil="true" />
+						<DataField>MonthsOfCoverage</DataField>
+						<DataSource>ABSExcessObsolete</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns="" i:type="AxFormComboBoxControl">
+						<Name>EOGrid_ExcessFlag</Name>
+						<Type>ComboBox</Type>
+						<FormControlExtension i:nil="true" />
+						<DataField>ExcessFlag</DataField>
+						<DataSource>ABSExcessObsolete</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns="" i:type="AxFormComboBoxControl">
+						<Name>EOGrid_OpenSupplyFlag</Name>
+						<Type>ComboBox</Type>
+						<FormControlExtension i:nil="true" />
+						<DataField>OpenSupplyFlag</DataField>
+						<DataSource>ABSExcessObsolete</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns="" i:type="AxFormDateControl">
+						<Name>EOGrid_LastIssueDate</Name>
+						<Type>Date</Type>
+						<FormControlExtension i:nil="true" />
+						<DataField>LastIssueDate</DataField>
+						<DataSource>ABSExcessObsolete</DataSource>
+					</AxFormControl>
+				</Controls>
+				<DataSource>ABSExcessObsolete</DataSource>
+			</AxFormControl>
+		</Controls>
+	</Design>
+</AxForm>

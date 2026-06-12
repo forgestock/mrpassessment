@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxTable xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ABSMRPAssessmentRunStaging</Name>
+	<SourceCode>
+		<Methods />
+	</SourceCode>
+	<DeveloperDocumentation>@DMF:StagingDeveloperDocumentation</DeveloperDocumentation>
+	<TableGroup>Staging</TableGroup>
+	<PrimaryIndex>StagingIdx</PrimaryIndex>
+	<ReplacementKey>StagingIdx</ReplacementKey>
+	<SaveDataPerCompany>No</SaveDataPerCompany>
+	<DeleteActions />
+	<FieldGroups>
+		<AxTableFieldGroup>
+			<Name>AutoReport</Name>
+			<IsSystemGenerated>Yes</IsSystemGenerated>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoLookup</Name>
+			<IsSystemGenerated>Yes</IsSystemGenerated>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoIdentification</Name>
+			<AutoPopulate>Yes</AutoPopulate>
+			<IsSystemGenerated>Yes</IsSystemGenerated>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoSummary</Name>
+			<IsSystemGenerated>Yes</IsSystemGenerated>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoBrowse</Name>
+			<IsSystemGenerated>Yes</IsSystemGenerated>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>ExtensionList</Name>
+			<IsSystemGenerated>Yes</IsSystemGenerated>
+			<Label>@DMF:StagingExtensionGroup</Label>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>DefinitionGroup</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>IsSelected</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>TransferStatus</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>ExecutionId</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+	</FieldGroups>
+	<Fields>
+		<AxTableField xmlns="" i:type="AxTableFieldString">
+			<Name>DefinitionGroup</Name>
+			<AllowEdit>No</AllowEdit>
+			<ExtendedDataType>DMFDefinitionGroupName</ExtendedDataType>
+			<IsSystemGenerated>Yes</IsSystemGenerated>
+			<Mandatory>Yes</Mandatory>
+			<StringSize>60</StringSize>
+		</AxTableField>
+		<AxTableField xmlns="" i:type="AxTableFieldString">
+			<Name>ExecutionId</Name>
+			<AllowEdit>No</AllowEdit>
+			<ExtendedDataType>DMFExecutionId</ExtendedDataType>
+			<IsSystemGenerated>Yes</IsSystemGenerated>
+			<Mandatory>Yes</Mandatory>
+			<StringSize>90</StringSize>
+		</AxTableField>
+		<AxTableField xmlns="" i:type="AxTableFieldEnum">
+			<Name>IsSelected</Name>
+			<ExtendedDataType>DMFIsSelected</ExtendedDataType>
+			<IsSystemGenerated>Yes</IsSystemGenerated>
+			<EnumType>NoYes</EnumType>
+		</AxTableField>
+		<AxTableField xmlns="" i:type="AxTableFieldEnum">
+			<Name>TransferStatus</Name>
+			<IsSystemGenerated>Yes</IsSystemGenerated>
+			<EnumType>DMFTransferStatus</EnumType>
+		</AxTableField>
+		<AxTableField xmlns="" i:type="AxTableFieldInt64">
+			<Name>Selected</Name>
+			<IsSystemGenerated>Yes</IsSystemGenerated>
+			<Label>@SYS129100</Label>
+			<Mandatory>Yes</Mandatory>
+		</AxTableField>
+		<AxTableField xmlns="" i:type="AxTableFieldString">
+			<Name>RunId</Name>
+			<ExtendedDataType>ABSMRPAssessmentRunId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns="" i:type="AxTableFieldString">
+			<Name>PlanId</Name>
+			<ExtendedDataType>ReqPlanId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns="" i:type="AxTableFieldString">
+			<Name>SiteId</Name>
+			<ExtendedDataType>InventSiteId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns="" i:type="AxTableFieldDate">
+			<Name>AssessmentDate</Name>
+			<ExtendedDataType>TransDate</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns="" i:type="AxTableFieldEnum">
+			<Name>Status</Name>
+			<EnumType>ABSMRPAssessmentStatus</EnumType>
+		</AxTableField>
+		<AxTableField xmlns="" i:type="AxTableFieldEnum">
+			<Name>OverallSeverity</Name>
+			<EnumType>ABSMRPAssessmentSeverity</EnumType>
+		</AxTableField>
+		<AxTableField xmlns="" i:type="AxTableFieldInt">
+			<Name>TotalChecks</Name>
+		</AxTableField>
+		<AxTableField xmlns="" i:type="AxTableFieldInt">
+			<Name>IssuesFound</Name>
+		</AxTableField>
+		<AxTableField xmlns="" i:type="AxTableFieldEnum">
+			<Name>PlanningEngine</Name>
+			<EnumType>ABSMRPPlanningEngine</EnumType>
+		</AxTableField>
+	</Fields>
+	<FullTextIndexes />
+	<Indexes>
+		<AxTableIndex>
+			<Name>StagingIdx</Name>
+			<AlternateKey>Yes</AlternateKey>
+			<IsSystemGenerated>Yes</IsSystemGenerated>
+			<Fields>
+				<AxTableIndexField>
+					<DataField>DefinitionGroup</DataField>
+				</AxTableIndexField>
+				<AxTableIndexField>
+					<DataField>ExecutionId</DataField>
+				</AxTableIndexField>
+				<AxTableIndexField>
+					<DataField>Selected</DataField>
+				</AxTableIndexField>
+			</Fields>
+		</AxTableIndex>
+	</Indexes>
+	<Mappings />
+	<Relations />
+	<StateMachines />
+</AxTable>

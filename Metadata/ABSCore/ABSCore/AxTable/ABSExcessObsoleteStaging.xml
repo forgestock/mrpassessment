@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxTable xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ABSExcessObsoleteStaging</Name>
+	<SourceCode>
+		<Methods />
+	</SourceCode>
+	<DeveloperDocumentation>@DMF:StagingDeveloperDocumentation</DeveloperDocumentation>
+	<TableGroup>Staging</TableGroup>
+	<PrimaryIndex>StagingIdx</PrimaryIndex>
+	<ReplacementKey>StagingIdx</ReplacementKey>
+	<SaveDataPerCompany>No</SaveDataPerCompany>
+	<DeleteActions />
+	<FieldGroups>
+		<AxTableFieldGroup>
+			<Name>AutoReport</Name>
+			<IsSystemGenerated>Yes</IsSystemGenerated>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoLookup</Name>
+			<IsSystemGenerated>Yes</IsSystemGenerated>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoIdentification</Name>
+			<AutoPopulate>Yes</AutoPopulate>
+			<IsSystemGenerated>Yes</IsSystemGenerated>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoSummary</Name>
+			<IsSystemGenerated>Yes</IsSystemGenerated>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoBrowse</Name>
+			<IsSystemGenerated>Yes</IsSystemGenerated>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>ExtensionList</Name>
+			<IsSystemGenerated>Yes</IsSystemGenerated>
+			<Label>@DMF:StagingExtensionGroup</Label>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>DefinitionGroup</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>IsSelected</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>TransferStatus</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>ExecutionId</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+	</FieldGroups>
+	<Fields>
+		<AxTableField xmlns="" i:type="AxTableFieldString">
+			<Name>DefinitionGroup</Name>
+			<AllowEdit>No</AllowEdit>
+			<ExtendedDataType>DMFDefinitionGroupName</ExtendedDataType>
+			<IsSystemGenerated>Yes</IsSystemGenerated>
+			<Mandatory>Yes</Mandatory>
+			<StringSize>60</StringSize>
+		</AxTableField>
+		<AxTableField xmlns="" i:type="AxTableFieldString">
+			<Name>ExecutionId</Name>
+			<AllowEdit>No</AllowEdit>
+			<ExtendedDataType>DMFExecutionId</ExtendedDataType>
+			<IsSystemGenerated>Yes</IsSystemGenerated>
+			<Mandatory>Yes</Mandatory>
+			<StringSize>90</StringSize>
+		</AxTableField>
+		<AxTableField xmlns="" i:type="AxTableFieldEnum">
+			<Name>IsSelected</Name>
+			<ExtendedDataType>DMFIsSelected</ExtendedDataType>
+			<IsSystemGenerated>Yes</IsSystemGenerated>
+			<EnumType>NoYes</EnumType>
+		</AxTableField>
+		<AxTableField xmlns="" i:type="AxTableFieldEnum">
+			<Name>TransferStatus</Name>
+			<IsSystemGenerated>Yes</IsSystemGenerated>
+			<EnumType>DMFTransferStatus</EnumType>
+		</AxTableField>
+		<AxTableField xmlns="" i:type="AxTableFieldInt64">
+			<Name>Selected</Name>
+			<IsSystemGenerated>Yes</IsSystemGenerated>
+			<Label>@SYS129100</Label>
+			<Mandatory>Yes</Mandatory>
+		</AxTableField>
+		<AxTableField xmlns="" i:type="AxTableFieldInt64">
+			<Name>ABSExcessObsoleteRecId</Name>
+		</AxTableField>
+		<AxTableField xmlns="" i:type="AxTableFieldString">
+			<Name>ItemId</Name>
+			<ExtendedDataType>ItemId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns="" i:type="AxTableFieldString">
+			<Name>SiteId</Name>
+			<ExtendedDataType>InventSiteId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns="" i:type="AxTableFieldEnum">
+			<Name>ABCClass</Name>
+			<EnumType>ABSABCClassification</EnumType>
+		</AxTableField>
+		<AxTableField xmlns="" i:type="AxTableFieldEnum">
+			<Name>XYZClass</Name>
+			<EnumType>ABSXYZClassification</EnumType>
+		</AxTableField>
+		<AxTableField xmlns="" i:type="AxTableFieldDate">
+			<Name>LastIssueDate</Name>
+			<ExtendedDataType>TransDate</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns="" i:type="AxTableFieldInt">
+			<Name>MonthsSinceLastIssue</Name>
+		</AxTableField>
+		<AxTableField xmlns="" i:type="AxTableFieldEnum">
+			<Name>AgingBucket</Name>
+			<EnumType>ABSEOAgingBucket</EnumType>
+		</AxTableField>
+		<AxTableField xmlns="" i:type="AxTableFieldReal">
+			<Name>OnHandQty</Name>
+			<ExtendedDataType>InventQty</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns="" i:type="AxTableFieldReal">
+			<Name>OnHandValue</Name>
+			<ExtendedDataType>AmountMST</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns="" i:type="AxTableFieldReal">
+			<Name>DemandMean</Name>
+			<ExtendedDataType>InventQty</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns="" i:type="AxTableFieldReal">
+			<Name>MonthsOfCoverage</Name>
+		</AxTableField>
+		<AxTableField xmlns="" i:type="AxTableFieldEnum">
+			<Name>ExcessFlag</Name>
+			<EnumType>NoYes</EnumType>
+		</AxTableField>
+		<AxTableField xmlns="" i:type="AxTableFieldEnum">
+			<Name>OpenSupplyFlag</Name>
+			<EnumType>NoYes</EnumType>
+		</AxTableField>
+		<AxTableField xmlns="" i:type="AxTableFieldReal">
+			<Name>ProvisionPct</Name>
+			<ExtendedDataType>Percent</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns="" i:type="AxTableFieldReal">
+			<Name>ProvisionValue</Name>
+			<ExtendedDataType>AmountMST</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns="" i:type="AxTableFieldEnum">
+			<Name>Recommendation</Name>
+			<EnumType>ABSEORecommendation</EnumType>
+		</AxTableField>
+		<AxTableField xmlns="" i:type="AxTableFieldInt">
+			<Name>HistoryMonthsAvailable</Name>
+		</AxTableField>
+		<AxTableField xmlns="" i:type="AxTableFieldDate">
+			<Name>CalculatedDate</Name>
+			<ExtendedDataType>TransDate</ExtendedDataType>
+		</AxTableField>
+	</Fields>
+	<FullTextIndexes />
+	<Indexes>
+		<AxTableIndex>
+			<Name>StagingIdx</Name>
+			<AlternateKey>Yes</AlternateKey>
+			<IsSystemGenerated>Yes</IsSystemGenerated>
+			<Fields>
+				<AxTableIndexField>
+					<DataField>DefinitionGroup</DataField>
+				</AxTableIndexField>
+				<AxTableIndexField>
+					<DataField>ExecutionId</DataField>
+				</AxTableIndexField>
+				<AxTableIndexField>
+					<DataField>Selected</DataField>
+				</AxTableIndexField>
+			</Fields>
+		</AxTableIndex>
+	</Indexes>
+	<Mappings />
+	<Relations />
+	<StateMachines />
+</AxTable>

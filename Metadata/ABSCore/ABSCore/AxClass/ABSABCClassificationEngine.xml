@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>ABSABCClassificationEngine</Name>
+  <SourceCode>
+    <Declaration><![CDATA[
+class ABSABCClassificationEngine
+{
+    InventSiteId    siteId;
+    TransDate       fromDate;
+    TransDate       toDate;
+}
+    ]]></Declaration>
+    <Methods>
+      <Method>
+        <Name>newParameters</Name>
+        <Source><![CDATA[
+public static ABSABCClassificationEngine newParameters(
+    InventSiteId    _siteId,
+    TransDate       _fromDate,
+    TransDate       _toDate)
+{
+    ABSABCClassificationEngine engine = new ABSABCClassificationEngine();
+    engine.siteId   = _siteId;
+    engine.fromDate = _fromDate;
+    engine.toDate   = _toDate;
+    return engine;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>validate</Name>
+        <Source><![CDATA[
+public boolean validate()
+{
+    boolean ok = true;
+    if (!fromDate || !toDate)
+    {
+        warning("@ABS:ABCEngineValidateDateRange");
+        ok = false;
+    }
+    else if (fromDate > toDate)
+    {
+        warning("@ABS:ABCEngineValidateDateOrder");
+        ok = false;
+    }
+    return ok;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>calcGrandTotal</Name>
+        <Source><![CDATA[
+private real calcGrandTotal()
+{
+    InventTrans inventTrans;
+    InventDim   inventDim;
+
+    // Annual usage value across ALL issue types (sales deliveries, production
+    // component consumption, transfer issues) valued at cost. This includes raw
+    // materials and BOM components that are never sold directly, so they are no
+    // longer invisible to classification.
+    select sum(CostAmountPosted), sum(CostAmountPhysical) from inventTrans
+        where inventTrans.DatePhysical >= fromDate
+           && inventTrans.DatePhysical <= toDate
+           && inventTrans.ItemId       != ''
+           && inventTrans.Qty          <  0
+           && (inventTrans.StatusIssue == StatusIssue::Sold
+            || inventTrans.StatusIssue == StatusIssue::Deducted)
+        join inventDim
+            where inventDim.inventDimId  == inventTrans.InventDimId
+               && (siteId == '' || inventDim.InventSiteId == siteId);
+
+    // Issue cost amounts are negative; usage value is the magnitude.
+    return -(inventTrans.CostAmountPosted + inventTrans.CostAmountPhysical);
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>determineABCClass</Name>
+        <Source><![CDATA[
+public ABSABCClassification determineABCClass(real _cumulativePct)
+{
+    if (_cumulativePct <= 80)
+        return ABSABCClassification::A;
+    if (_cumulativePct <= 95)
+        return ABSABCClassification::B;
+    return ABSABCClassification::C;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>run</Name>
+        <Source><![CDATA[
+public void run()
+{
+    InventTrans         inventTrans;
+    InventDim           inventDim;
+    ABSItemABCXYZ       itemRecord;
+    real                grandTotal;
+    real                cumulativePct;
+    real                itemPct;
+    Map                 salesMap;
+    MapEnumerator       me;
+    ItemId              maxItemId;
+    real                maxAmt;
+    int                 remaining;
+    real                usageValue;
+
+    if (!this.validate()) { return; }
+    grandTotal = this.calcGrandTotal();
+    if (grandTotal == 0) { warning("@ABS:ABCEngineNoSalesData"); return; }
+
+    salesMap = new Map(Types::String, Types::Real);
+    while select ItemId, sum(CostAmountPosted), sum(CostAmountPhysical) from inventTrans
+        group by inventTrans.ItemId
+        where inventTrans.DatePhysical >= fromDate
+           && inventTrans.DatePhysical <= toDate
+           && inventTrans.ItemId       != ''
+           && inventTrans.Qty          <  0
+           && (inventTrans.StatusIssue == StatusIssue::Sold
+            || inventTrans.StatusIssue == StatusIssue::Deducted)
+        join inventDim
+            where inventDim.inventDimId  == inventTrans.InventDimId
+               && (siteId == '' || inventDim.InventSiteId == siteId)
+    {
+        usageValue = -(inventTrans.CostAmountPosted + inventTrans.CostAmountPhysical);
+        if (usageValue > 0)
+            salesMap.insert(inventTrans.ItemId, usageValue);
+    }
+
+    if (salesMap.empty()) { return; }
+
+    cumulativePct  = 0;
+    remaining      = salesMap.elements();
+
+    ttsbegin;
+
+    while (remaining > 0)
+    {
+        maxAmt = -1; maxItemId = '';
+        me = salesMap.getEnumerator();
+        while (me.moveNext())
+        {
+            if (me.currentValue() > maxAmt)
+            { maxAmt = me.currentValue(); maxItemId = me.currentKey(); }
+        }
+        salesMap.remove(maxItemId);
+        remaining--;
+        itemPct        = (maxAmt / grandTotal) * 100;
+        cumulativePct += itemPct;
+
+        select firstonly forUpdate itemRecord
+            where itemRecord.ItemId == maxItemId
+               && itemRecord.SiteId == siteId;
+
+        if (!itemRecord.RecId)
+        {
+            itemRecord.clear();
+            itemRecord.ItemId = maxItemId;
+            itemRecord.SiteId = siteId;
+        }
+
+        itemRecord.SalesAmt12M    = maxAmt;
+        itemRecord.SalesAmtPct    = itemPct;
+        itemRecord.CumulativePct  = cumulativePct;
+        itemRecord.ABCClass       = this.determineABCClass(cumulativePct);
+        itemRecord.CalculatedDate = DateTimeUtil::getToday(DateTimeUtil::getUserPreferredTimeZone());
+
+        if (itemRecord.RecId) { itemRecord.update(); }
+        else                  { itemRecord.insert(); }
+
+    }
+
+    ttscommit;
+}
+        ]]></Source>
+      </Method>
+    </Methods>
+  </SourceCode>
+</AxClass>

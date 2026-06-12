@@ -1,0 +1,538 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxTable xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>ABSMRPAssessmentCheckConfig</Name>
+  <SourceCode>
+    <Declaration><![CDATA[
+public class ABSMRPAssessmentCheckConfig extends common
+{
+}
+    ]]></Declaration>
+    <Methods>
+      <Method>
+        <Name>find</Name>
+        <Source><![CDATA[
+public static ABSMRPAssessmentCheckConfig find(ABSMRPCheckCode _checkCode, boolean _forUpdate = false)
+{
+    ABSMRPAssessmentCheckConfig ret;
+
+    ret.selectForUpdate(_forUpdate);
+
+    select firstonly ret
+        where ret.CheckCode == _checkCode;
+
+    return ret;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>isSuppressed</Name>
+        <Source><![CDATA[
+public static boolean isSuppressed(ABSMRPCheckCode _checkCode)
+{
+    ABSMRPAssessmentCheckConfig cfg = ABSMRPAssessmentCheckConfig::find(_checkCode);
+    return cfg.RecId != 0 && cfg.Enabled == NoYes::No;
+}
+        ]]></Source>
+      </Method>
+    <Method>
+    <Name>seedDefaults</Name>
+    <Source><![CDATA[
+public static void seedDefaults()
+{
+  ABSMRPAssessmentCheckConfig cfg;
+
+  ttsbegin;
+
+  if (!ABSMRPAssessmentCheckConfig::find('PC-001').RecId)
+  {
+    cfg.clear();
+    cfg.CheckCode = 'PC-001';
+    cfg.initValue();
+    cfg.ApplicableEngine = ABSMRPCheckApplicability::Both;
+    cfg.insert();
+  }
+  if (!ABSMRPAssessmentCheckConfig::find('PC-002').RecId)
+  {
+    cfg.clear();
+    cfg.CheckCode = 'PC-002';
+    cfg.initValue();
+    cfg.ApplicableEngine = ABSMRPCheckApplicability::Both;
+    cfg.insert();
+  }
+  if (!ABSMRPAssessmentCheckConfig::find('PC-003').RecId)
+  {
+    cfg.clear();
+    cfg.CheckCode = 'PC-003';
+    cfg.initValue();
+    cfg.ApplicableEngine = ABSMRPCheckApplicability::LegacyOnly;
+    cfg.insert();
+  }
+  if (!ABSMRPAssessmentCheckConfig::find('PC-005').RecId)
+  {
+    cfg.clear();
+    cfg.CheckCode = 'PC-005';
+    cfg.initValue();
+    cfg.ApplicableEngine = ABSMRPCheckApplicability::Both;
+    cfg.insert();
+  }
+
+  if (!ABSMRPAssessmentCheckConfig::find('DQ-001').RecId)
+  {
+    cfg.clear();
+    cfg.CheckCode = 'DQ-001';
+    cfg.initValue();
+    cfg.ApplicableEngine = ABSMRPCheckApplicability::LegacyOnly;
+    cfg.insert();
+  }
+  if (!ABSMRPAssessmentCheckConfig::find('DQ-002').RecId)
+  {
+    cfg.clear();
+    cfg.CheckCode = 'DQ-002';
+    cfg.initValue();
+    cfg.ApplicableEngine = ABSMRPCheckApplicability::LegacyOnly;
+    cfg.insert();
+  }
+  if (!ABSMRPAssessmentCheckConfig::find('DQ-004').RecId)
+  {
+    cfg.clear();
+    cfg.CheckCode = 'DQ-004';
+    cfg.initValue();
+    cfg.ApplicableEngine = ABSMRPCheckApplicability::Both;
+    cfg.insert();
+  }
+  if (!ABSMRPAssessmentCheckConfig::find('DQ-005').RecId)
+  {
+    cfg.clear();
+    cfg.CheckCode = 'DQ-005';
+    cfg.initValue();
+    cfg.ApplicableEngine = ABSMRPCheckApplicability::Both;
+    cfg.insert();
+  }
+  if (!ABSMRPAssessmentCheckConfig::find('DQ-006').RecId)
+  {
+    cfg.clear();
+    cfg.CheckCode = 'DQ-006';
+    cfg.initValue();
+    cfg.ApplicableEngine = ABSMRPCheckApplicability::Both;
+    cfg.insert();
+  }
+  if (!ABSMRPAssessmentCheckConfig::find('DQ-007').RecId)
+  {
+    cfg.clear();
+    cfg.CheckCode = 'DQ-007';
+    cfg.initValue();
+    cfg.ApplicableEngine = ABSMRPCheckApplicability::Both;
+    cfg.insert();
+  }
+  if (!ABSMRPAssessmentCheckConfig::find('DQ-008').RecId)
+  {
+    cfg.clear();
+    cfg.CheckCode = 'DQ-008';
+    cfg.initValue();
+    cfg.ApplicableEngine = ABSMRPCheckApplicability::Both;
+    cfg.insert();
+  }
+  if (!ABSMRPAssessmentCheckConfig::find('DQ-009').RecId)
+  {
+    cfg.clear();
+    cfg.CheckCode = 'DQ-009';
+    cfg.initValue();
+    cfg.ApplicableEngine = ABSMRPCheckApplicability::Both;
+    cfg.insert();
+  }
+
+  if (!ABSMRPAssessmentCheckConfig::find('SS-001').RecId)
+  {
+    cfg.clear();
+    cfg.CheckCode = 'SS-001';
+    cfg.initValue();
+    cfg.ApplicableEngine = ABSMRPCheckApplicability::Both;
+    cfg.insert();
+  }
+  if (!ABSMRPAssessmentCheckConfig::find('SS-002').RecId)
+  {
+    cfg.clear();
+    cfg.CheckCode = 'SS-002';
+    cfg.initValue();
+    cfg.ApplicableEngine = ABSMRPCheckApplicability::Both;
+    cfg.insert();
+  }
+  if (!ABSMRPAssessmentCheckConfig::find('SS-003').RecId)
+  {
+    cfg.clear();
+    cfg.CheckCode = 'SS-003';
+    cfg.initValue();
+    cfg.ApplicableEngine = ABSMRPCheckApplicability::Both;
+    cfg.insert();
+  }
+  if (!ABSMRPAssessmentCheckConfig::find('SS-004').RecId)
+  {
+    cfg.clear();
+    cfg.CheckCode = 'SS-004';
+    cfg.initValue();
+    cfg.ApplicableEngine = ABSMRPCheckApplicability::Both;
+    cfg.insert();
+  }
+
+  if (!ABSMRPAssessmentCheckConfig::find('CV-001').RecId)
+  {
+    cfg.clear();
+    cfg.CheckCode = 'CV-001';
+    cfg.initValue();
+    cfg.ApplicableEngine = ABSMRPCheckApplicability::Both;
+    cfg.insert();
+  }
+  if (!ABSMRPAssessmentCheckConfig::find('CV-002').RecId)
+  {
+    cfg.clear();
+    cfg.CheckCode = 'CV-002';
+    cfg.initValue();
+    cfg.ApplicableEngine = ABSMRPCheckApplicability::Both;
+    cfg.insert();
+  }
+  if (!ABSMRPAssessmentCheckConfig::find('CV-003').RecId)
+  {
+    cfg.clear();
+    cfg.CheckCode = 'CV-003';
+    cfg.initValue();
+    cfg.ApplicableEngine = ABSMRPCheckApplicability::Both;
+    cfg.insert();
+  }
+  if (!ABSMRPAssessmentCheckConfig::find('CV-004').RecId)
+  {
+    cfg.clear();
+    cfg.CheckCode = 'CV-004';
+    cfg.initValue();
+    cfg.ApplicableEngine = ABSMRPCheckApplicability::Both;
+    cfg.insert();
+  }
+
+  if (!ABSMRPAssessmentCheckConfig::find('PR-001').RecId)
+  {
+    cfg.clear();
+    cfg.CheckCode = 'PR-001';
+    cfg.initValue();
+    cfg.ApplicableEngine = ABSMRPCheckApplicability::Both;
+    cfg.insert();
+  }
+  if (!ABSMRPAssessmentCheckConfig::find('PR-002').RecId)
+  {
+    cfg.clear();
+    cfg.CheckCode = 'PR-002';
+    cfg.initValue();
+    cfg.ApplicableEngine = ABSMRPCheckApplicability::Both;
+    cfg.insert();
+  }
+  if (!ABSMRPAssessmentCheckConfig::find('PR-003').RecId)
+  {
+    cfg.clear();
+    cfg.CheckCode = 'PR-003';
+    cfg.initValue();
+    cfg.ApplicableEngine = ABSMRPCheckApplicability::Both;
+    cfg.insert();
+  }
+  if (!ABSMRPAssessmentCheckConfig::find('FW-001').RecId)
+  {
+    cfg.clear();
+    cfg.CheckCode = 'FW-001';
+    cfg.initValue();
+    cfg.ApplicableEngine = ABSMRPCheckApplicability::Both;
+    cfg.insert();
+  }
+  if (!ABSMRPAssessmentCheckConfig::find('FW-002').RecId)
+  {
+    cfg.clear();
+    cfg.CheckCode = 'FW-002';
+    cfg.initValue();
+    cfg.ApplicableEngine = ABSMRPCheckApplicability::Both;
+    cfg.insert();
+  }
+  if (!ABSMRPAssessmentCheckConfig::find('FW-003').RecId)
+  {
+    cfg.clear();
+    cfg.CheckCode = 'FW-003';
+    cfg.initValue();
+    cfg.ApplicableEngine = ABSMRPCheckApplicability::Both;
+    cfg.insert();
+  }
+
+  if (!ABSMRPAssessmentCheckConfig::find('BR-001').RecId)
+  {
+    cfg.clear();
+    cfg.CheckCode = 'BR-001';
+    cfg.initValue();
+    cfg.ApplicableEngine = ABSMRPCheckApplicability::Both;
+    cfg.insert();
+  }
+  if (!ABSMRPAssessmentCheckConfig::find('BR-002').RecId)
+  {
+    cfg.clear();
+    cfg.CheckCode = 'BR-002';
+    cfg.initValue();
+    cfg.ApplicableEngine = ABSMRPCheckApplicability::Both;
+    cfg.insert();
+  }
+  if (!ABSMRPAssessmentCheckConfig::find('BR-003').RecId)
+  {
+    cfg.clear();
+    cfg.CheckCode = 'BR-003';
+    cfg.initValue();
+    cfg.ApplicableEngine = ABSMRPCheckApplicability::Both;
+    cfg.insert();
+  }
+
+  if (!ABSMRPAssessmentCheckConfig::find('PB-001').RecId)
+  {
+    cfg.clear();
+    cfg.CheckCode = 'PB-001';
+    cfg.initValue();
+    cfg.ApplicableEngine = ABSMRPCheckApplicability::Both;
+    cfg.insert();
+  }
+  if (!ABSMRPAssessmentCheckConfig::find('PB-002').RecId)
+  {
+    cfg.clear();
+    cfg.CheckCode = 'PB-002';
+    cfg.initValue();
+    cfg.ApplicableEngine = ABSMRPCheckApplicability::Both;
+    cfg.insert();
+  }
+  if (!ABSMRPAssessmentCheckConfig::find('PB-003').RecId)
+  {
+    cfg.clear();
+    cfg.CheckCode = 'PB-003';
+    cfg.initValue();
+    cfg.ApplicableEngine = ABSMRPCheckApplicability::Both;
+    cfg.insert();
+  }
+
+  if (!ABSMRPAssessmentCheckConfig::find('PO-001').RecId)
+  {
+    cfg.clear();
+    cfg.CheckCode = 'PO-001';
+    cfg.initValue();
+    cfg.ApplicableEngine = ABSMRPCheckApplicability::Both;
+    cfg.insert();
+  }
+  if (!ABSMRPAssessmentCheckConfig::find('PO-002').RecId)
+  {
+    cfg.clear();
+    cfg.CheckCode = 'PO-002';
+    cfg.initValue();
+    cfg.ApplicableEngine = ABSMRPCheckApplicability::Both;
+    cfg.insert();
+  }
+  if (!ABSMRPAssessmentCheckConfig::find('PO-003').RecId)
+  {
+    cfg.clear();
+    cfg.CheckCode = 'PO-003';
+    cfg.initValue();
+    cfg.ApplicableEngine = ABSMRPCheckApplicability::Both;
+    cfg.insert();
+  }
+  if (!ABSMRPAssessmentCheckConfig::find('PO-004').RecId)
+  {
+    cfg.clear();
+    cfg.CheckCode = 'PO-004';
+    cfg.initValue();
+    cfg.ApplicableEngine = ABSMRPCheckApplicability::POOnly;
+    cfg.insert();
+  }
+  if (!ABSMRPAssessmentCheckConfig::find('PO-005').RecId)
+  {
+    cfg.clear();
+    cfg.CheckCode = 'PO-005';
+    cfg.initValue();
+    cfg.ApplicableEngine = ABSMRPCheckApplicability::POOnly;
+    cfg.insert();
+  }
+  if (!ABSMRPAssessmentCheckConfig::find('PO-006').RecId)
+  {
+    cfg.clear();
+    cfg.CheckCode = 'PO-006';
+    cfg.initValue();
+    cfg.ApplicableEngine = ABSMRPCheckApplicability::POOnly;
+    cfg.insert();
+  }
+
+  ttscommit;
+}
+    ]]></Source>
+    </Method>
+      <Method>
+        <Name>initValue</Name>
+        <Source><![CDATA[
+public void initValue()
+{
+    super();
+
+    this.Enabled          = NoYes::Yes;
+    this.ApplicableEngine = ABSMRPCheckApplicability::Both;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>getEnabled</Name>
+        <Source><![CDATA[
+public static NoYes getEnabled(ABSMRPCheckCode _checkCode)
+{
+    ABSMRPAssessmentCheckConfig cfg = ABSMRPAssessmentCheckConfig::find(_checkCode);
+    return cfg.RecId ? cfg.Enabled : NoYes::Yes;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>setEnabled</Name>
+        <Source><![CDATA[
+public static void setEnabled(ABSMRPCheckCode _checkCode, NoYes _enabled)
+{
+    ABSMRPAssessmentCheckConfig cfg = ABSMRPAssessmentCheckConfig::find(_checkCode, true);
+
+    ttsbegin;
+
+    if (!cfg.RecId)
+    {
+        cfg.clear();
+        cfg.CheckCode = _checkCode;
+        cfg.initValue();
+    }
+
+    cfg.Enabled = _enabled;
+
+    if (cfg.Enabled == NoYes::No)
+    {
+        cfg.SuppressedBy   = curUserId();
+        cfg.SuppressedDate = today();
+    }
+    else
+    {
+        cfg.SuppressedBy   = '';
+        cfg.SuppressedDate = dateNull();
+        cfg.SuppressReason = '';
+    }
+
+    if (cfg.RecId)
+        cfg.update();
+    else
+        cfg.insert();
+
+    ttscommit;
+}
+        ]]></Source>
+      </Method>
+    </Methods>
+  </SourceCode>
+  <DeveloperDocumentation>@ABS:ABSMRPAssessmentCheckConfigDeveloperDocumentation</DeveloperDocumentation>
+  <Label>@ABS:ABSMRPAssessmentCheckConfig</Label>
+  <TableGroup>Parameter</TableGroup>
+  <TitleField1>CheckCode</TitleField1>
+  <TitleField2>Enabled</TitleField2>
+  <CacheLookup>Found</CacheLookup>
+  <ClusteredIndex>CheckCodeIdx</ClusteredIndex>
+  <PrimaryIndex>SurrogateKey</PrimaryIndex>
+  <ReplacementKey>CheckCodeIdx</ReplacementKey>
+  <SaveDataPerCompany>Yes</SaveDataPerCompany>
+  <Fields>
+    <AxTableField xmlns="" i:type="AxTableFieldString">
+      <Name>CheckCode</Name>
+      <ExtendedDataType>ABSMRPCheckCode</ExtendedDataType>
+      <Mandatory>Yes</Mandatory>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldEnum">
+      <Name>Enabled</Name>
+      <EnumType>NoYes</EnumType>
+      <Label>@ABS:Enabled</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldString">
+      <Name>SuppressReason</Name>
+      <ExtendedDataType>Description</ExtendedDataType>
+      <Label>@ABS:SuppressReason</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldString">
+      <Name>SuppressedBy</Name>
+      <ExtendedDataType>UserId</ExtendedDataType>
+      <Label>@ABS:SuppressedBy</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldDate">
+      <Name>SuppressedDate</Name>
+      <ExtendedDataType>TransDate</ExtendedDataType>
+      <Label>@ABS:SuppressedDate</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldEnum">
+      <Name>DefaultSeverityOverride</Name>
+      <EnumType>ABSMRPAssessmentSeverity</EnumType>
+      <Label>@ABS:DefaultSeverityOverride</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldEnum">
+      <Name>ApplicableEngine</Name>
+      <EnumType>ABSMRPCheckApplicability</EnumType>
+      <Label>@ABS:ApplicableEngine</Label>
+    </AxTableField>
+  </Fields>
+  <FieldGroups>
+    <AxTableFieldGroup>
+      <Name>AutoReport</Name>
+      <Fields>
+        <AxTableFieldGroupField>
+          <DataField>CheckCode</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>Enabled</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>ApplicableEngine</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>DefaultSeverityOverride</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>SuppressReason</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>SuppressedBy</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>SuppressedDate</DataField>
+        </AxTableFieldGroupField>
+      </Fields>
+    </AxTableFieldGroup>
+    <AxTableFieldGroup>
+      <Name>AutoSummary</Name>
+      <Fields />
+    </AxTableFieldGroup>
+    <AxTableFieldGroup>
+      <Name>AutoBrowse</Name>
+      <Fields />
+    </AxTableFieldGroup>
+    <AxTableFieldGroup>
+      <Name>AutoLookup</Name>
+      <Fields>
+        <AxTableFieldGroupField>
+          <DataField>CheckCode</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>Enabled</DataField>
+        </AxTableFieldGroupField>
+      </Fields>
+    </AxTableFieldGroup>
+    <AxTableFieldGroup>
+      <Name>AutoIdentification</Name>
+      <AutoPopulate>Yes</AutoPopulate>
+      <Fields />
+    </AxTableFieldGroup>
+  </FieldGroups>
+  <Indexes>
+    <AxTableIndex>
+      <Name>CheckCodeIdx</Name>
+      <AlternateKey>Yes</AlternateKey>
+      <Fields>
+        <AxTableIndexField>
+          <DataField>CheckCode</DataField>
+        </AxTableIndexField>
+      </Fields>
+    </AxTableIndex>
+  </Indexes>
+  <Mappings />
+  <Relations />
+  <StateMachines />
+</AxTable>

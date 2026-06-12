@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ABSABCXYZController</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+class ABSABCXYZController extends SysOperationServiceController
+{
+        }
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>main</Name>
+				<Source><![CDATA[
+public static void main(Args _args)
+{
+    ABSABCXYZController controller = new ABSABCXYZController(
+        classStr(ABSABCXYZService),
+        methodStr(ABSABCXYZService, run),
+        SysOperationExecutionMode::ScheduledBatch);
+    controller.parmArgs(_args);
+    controller.startOperation();
+}
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>caption</Name>
+				<Source><![CDATA[
+public ClassDescription caption()
+{
+    return "@ABS:ABSABCXYZBatchJobDescription";
+}
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

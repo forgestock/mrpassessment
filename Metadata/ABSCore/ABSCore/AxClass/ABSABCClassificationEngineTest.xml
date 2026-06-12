@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>ABSABCClassificationEngineTest</Name>
+  <SourceCode>
+    <Declaration><![CDATA[
+/// <summary>
+/// Unit tests for ABSABCClassificationEngine.determineABCClass().
+///
+/// The method maps a running cumulative-percentage of revenue to an A/B/C bucket:
+///   cumulativePct <= 80  → A
+///   cumulativePct <= 95  → B
+///   cumulativePct >  95  → C
+///
+/// Boundary values under test (exact edges + just-inside/outside each threshold):
+///   0, 80, 80.01, 95, 95.01, 100
+/// </summary>
+class ABSABCClassificationEngineTest extends SysTestCase
+{
+    ABSABCClassificationEngine engine;
+}
+    ]]></Declaration>
+    <Methods>
+      <Method>
+        <Name>setUp</Name>
+        <Source><![CDATA[
+public void setUp()
+{
+    super();
+    // Dates/site don't matter for determineABCClass — it's a pure calculation.
+    engine = ABSABCClassificationEngine::newParameters('', today(), today());
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>testDetermineABCClass_A_ZeroPct</Name>
+        <Source><![CDATA[
+/// <summary>
+/// First item in rank (cumulative 0%) → A.
+/// </summary>
+[SysTestMethodAttribute]
+public void testDetermineABCClass_A_ZeroPct()
+{
+    this.assertEquals(ABSABCClassification::A, engine.determineABCClass(0));
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>testDetermineABCClass_A_AtExactly80</Name>
+        <Source><![CDATA[
+/// <summary>
+/// Cumulative exactly 80% is still class A (boundary inclusive).
+/// </summary>
+[SysTestMethodAttribute]
+public void testDetermineABCClass_A_AtExactly80()
+{
+    this.assertEquals(ABSABCClassification::A, engine.determineABCClass(80));
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>testDetermineABCClass_B_JustAbove80</Name>
+        <Source><![CDATA[
+/// <summary>
+/// Cumulative 80.01% crosses into class B.
+/// </summary>
+[SysTestMethodAttribute]
+public void testDetermineABCClass_B_JustAbove80()
+{
+    this.assertEquals(ABSABCClassification::B, engine.determineABCClass(80.01));
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>testDetermineABCClass_B_AtExactly95</Name>
+        <Source><![CDATA[
+/// <summary>
+/// Cumulative exactly 95% is still class B (boundary inclusive).
+/// </summary>
+[SysTestMethodAttribute]
+public void testDetermineABCClass_B_AtExactly95()
+{
+    this.assertEquals(ABSABCClassification::B, engine.determineABCClass(95));
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>testDetermineABCClass_C_JustAbove95</Name>
+        <Source><![CDATA[
+/// <summary>
+/// Cumulative 95.01% crosses into class C (the long-tail remainder).
+/// </summary>
+[SysTestMethodAttribute]
+public void testDetermineABCClass_C_JustAbove95()
+{
+    this.assertEquals(ABSABCClassification::C, engine.determineABCClass(95.01));
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>testDetermineABCClass_C_At100Pct</Name>
+        <Source><![CDATA[
+/// <summary>
+/// Last item in rank (cumulative 100%) → C.
+/// </summary>
+[SysTestMethodAttribute]
+public void testDetermineABCClass_C_At100Pct()
+{
+    this.assertEquals(ABSABCClassification::C, engine.determineABCClass(100));
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>testValidate_False_EmptySiteId</Name>
+        <Source><![CDATA[
+/// <summary>
+/// validate() must return false when siteId is blank.
+/// </summary>
+[SysTestMethodAttribute]
+public void testValidate_False_EmptySiteId()
+{
+    ABSABCClassificationEngine e = ABSABCClassificationEngine::newParameters('', today(), today());
+    this.assertFalse(e.validate());
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>testValidate_False_FromDateAfterToDate</Name>
+        <Source><![CDATA[
+/// <summary>
+/// validate() must return false when fromDate > toDate.
+/// </summary>
+[SysTestMethodAttribute]
+public void testValidate_False_FromDateAfterToDate()
+{
+    ABSABCClassificationEngine e = ABSABCClassificationEngine::newParameters(
+        'MY01', today(), today() - 1);
+    this.assertFalse(e.validate());
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>testValidate_True_ValidParameters</Name>
+        <Source><![CDATA[
+/// <summary>
+/// validate() must return true for a valid site and date range.
+/// </summary>
+[SysTestMethodAttribute]
+public void testValidate_True_ValidParameters()
+{
+    ABSABCClassificationEngine e = ABSABCClassificationEngine::newParameters(
+        'MY01', today() - 365, today());
+    this.assertTrue(e.validate());
+}
+        ]]></Source>
+      </Method>
+    </Methods>
+  </SourceCode>
+</AxClass>

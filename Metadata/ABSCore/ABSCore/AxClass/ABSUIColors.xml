@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>ABSUIColors</Name>
+  <SourceCode>
+    <Declaration><![CDATA[
+/// <summary>
+/// Single source of truth for the shared ABS grid row-colour palette.
+/// Light tints chosen to remain readable with the default (dark) grid text.
+/// Use from form data source displayOption() overrides to keep status/severity
+/// colouring consistent across all ABS and ABSCore monitor/analysis forms.
+/// </summary>
+public final class ABSUIColors
+{
+}
+    ]]></Declaration>
+    <Methods>
+      <Method>
+        <Name>critical</Name>
+        <Source><![CDATA[
+/// <summary>Red tint — critical / overdue / below safety stock.</summary>
+public static int critical()
+{
+    return WinAPI::RGB2int(255, 199, 206);
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>warning</Name>
+        <Source><![CDATA[
+/// <summary>Orange tint — high concern / excess.</summary>
+public static int warning()
+{
+    return WinAPI::RGB2int(255, 190, 100);
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>caution</Name>
+        <Source><![CDATA[
+/// <summary>Amber tint — medium concern / at risk.</summary>
+public static int caution()
+{
+    return WinAPI::RGB2int(255, 235, 156);
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>healthy</Name>
+        <Source><![CDATA[
+/// <summary>Green tint — healthy / on time / no issue.</summary>
+public static int healthy()
+{
+    return WinAPI::RGB2int(198, 239, 206);
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>info</Name>
+        <Source><![CDATA[
+/// <summary>Blue tint — informational / low severity / in progress.</summary>
+public static int info()
+{
+    return WinAPI::RGB2int(187, 222, 251);
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>neutral</Name>
+        <Source><![CDATA[
+/// <summary>Grey tint — neutral / no demand / planned.</summary>
+public static int neutral()
+{
+    return WinAPI::RGB2int(240, 240, 240);
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>muted</Name>
+        <Source><![CDATA[
+/// <summary>Near-white tint — empty / zero-value cells that should recede.</summary>
+public static int muted()
+{
+    return WinAPI::RGB2int(248, 248, 248);
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>segmentA</Name>
+        <Source><![CDATA[
+/// <summary>Blue tint — ABC class A (highest importance). Cool/importance scale, NOT a health judgement.</summary>
+public static int segmentA()
+{
+    return WinAPI::RGB2int(187, 222, 251);
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>segmentB</Name>
+        <Source><![CDATA[
+/// <summary>Teal tint — ABC class B (medium importance).</summary>
+public static int segmentB()
+{
+    return WinAPI::RGB2int(178, 223, 219);
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>segmentC</Name>
+        <Source><![CDATA[
+/// <summary>Grey tint — ABC class C (lowest importance).</summary>
+public static int segmentC()
+{
+    return WinAPI::RGB2int(224, 224, 224);
+}
+        ]]></Source>
+      </Method>
+    </Methods>
+  </SourceCode>
+  <DeveloperDocumentation>@ABS:ABSUIColorsDeveloperDocumentation</DeveloperDocumentation>
+</AxClass>

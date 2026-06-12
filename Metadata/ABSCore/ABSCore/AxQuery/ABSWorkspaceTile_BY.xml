@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxQuery xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns=""
+	i:type="AxQuerySimple">
+	<Name>ABSWorkspaceTile_BY</Name>
+	<SourceCode>
+		<Methods>
+			<Method>
+				<Name>classDeclaration</Name>
+				<Source><![CDATA[
+[Query]
+public class ABSWorkspaceTile_BY extends QueryRun
+{
+}
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+	<DataSources>
+		<AxQuerySimpleRootDataSource>
+			<Name>ABSItemABCXYZ</Name>
+			<DynamicFields>Yes</DynamicFields>
+			<Table>ABSItemABCXYZ</Table>
+			<DataSources />
+			<DerivedDataSources />
+			<Fields />
+			<Ranges>
+				<AxQuerySimpleDataSourceRange>
+					<Name>ABCClass</Name>
+					<DerivedTable>ABSItemABCXYZ</DerivedTable>
+					<Field>ABCClass</Field>
+					<Value>B</Value>
+				</AxQuerySimpleDataSourceRange>
+				<AxQuerySimpleDataSourceRange>
+					<Name>XYZClass</Name>
+					<DerivedTable>ABSItemABCXYZ</DerivedTable>
+					<Field>XYZClass</Field>
+					<Value>Y</Value>
+				</AxQuerySimpleDataSourceRange>
+			</Ranges>
+			<GroupBy />
+			<Having />
+			<OrderBy />
+		</AxQuerySimpleRootDataSource>
+	</DataSources>
+</AxQuery>

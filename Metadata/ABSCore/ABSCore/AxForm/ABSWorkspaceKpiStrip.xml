@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxForm xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="Microsoft.Dynamics.AX.Metadata.V6">
+	<Name>ABSWorkspaceKpiStrip</Name>
+	<SourceCode>
+		<Methods xmlns="">
+			<Method>
+				<Name>classDeclaration</Name>
+				<Source><![CDATA[
+[Form]
+public class ABSWorkspaceKpiStrip extends FormRun
+{
+}
+]]></Source>
+			</Method>
+			<Method>
+				<Name>init</Name>
+				<Source><![CDATA[
+/// W8: headline cue strip — four aggregate KPIs computed directly from the
+/// source tables (not from the InMemory card data), so the part is self-contained.
+public void init()
+{
+    InventSum       inventSumAgg;
+    InventDim       inventDimJoin;
+    ABSItemABCXYZ   abcXyzJoin;
+    ABSItemABCXYZ   abcXyzAgg;
+    ABSMRPException exception;
+    ABSExcessObsolete eo;
+    real            totalValue;
+    int             classifiedCount;
+    real            totalUsage;
+    real            usageA;
+    real            pctA;
+    int             attentionCount;
+    real            eoValueAtRisk;
+    real            eoPct;
+    real            turnover;
+
+    super();
+
+    // Total inventory value across classified items.
+    select sum(PostedValue) from inventSumAgg
+        join inventDimJoin
+            where inventDimJoin.inventDimId == inventSumAgg.inventDimId
+        exists join abcXyzJoin
+            where abcXyzJoin.ItemId == inventSumAgg.ItemId
+               && abcXyzJoin.SiteId == inventDimJoin.InventSiteId;
+    totalValue = inventSumAgg.PostedValue;
+
+    // Total classified items.
+    select count(RecId) from abcXyzAgg;
+    classifiedCount = any2int(abcXyzAgg.RecId);
+
+    // Share of 12-month usage value held by A-class items.
+    select sum(SalesAmt12M) from abcXyzAgg;
+    totalUsage = abcXyzAgg.SalesAmt12M;
+
+    select sum(SalesAmt12M) from abcXyzAgg
+        where abcXyzAgg.ABCClass == ABSABCClassification::A;
+    usageA = abcXyzAgg.SalesAmt12M;
+
+    pctA = totalUsage ? (usageA / totalUsage) * 100 : 0;
+
+    // Items needing attention = open, high-severity MRP exceptions.
+    select count(RecId) from exception
+        where exception.Status   == ABSMRPExceptionStatus::Open
+           && exception.Severity == ABSMRPExceptionSeverity::High;
+    attentionCount = any2int(exception.RecId);
+
+    // Phase 5: capital tied up in excess/obsolete stock (Dormant + Dead buckets),
+    // sourced from the E&O cockpit. The tile drills to ABSExcessObsolete.
+    select sum(OnHandValue) from eo
+        where eo.AgingBucket == ABSEOAgingBucket::Dormant
+           || eo.AgingBucket == ABSEOAgingBucket::Dead;
+    eoValueAtRisk = eo.OnHandValue;
+    eoPct = totalValue ? (eoValueAtRisk / totalValue) * 100 : 0;
+
+    // Phase 5: inventory turnover = 12-month usage value / on-hand value.
+    turnover = totalValue ? totalUsage / totalValue : 0;
+
+    InventValueText.text(num2str(totalValue, 0, 0, 1, 3));
+    ClassifiedText.text(int2str(classifiedCount));
+    PctAText.text(num2str(pctA, 0, 1, 1, 3) + '%');
+    AttentionText.text(int2str(attentionCount));
+    EOValueText.text(strFmt('%1 (%2%)', num2str(eoValueAtRisk, 0, 0, 1, 3), num2str(eoPct, 0, 1, 1, 3)));
+    TurnoverText.text(num2str(turnover, 0, 1, 1, 3) + 'x');
+}
+]]></Source>
+			</Method>
+		</Methods>
+		<DataSources xmlns="" />
+		<DataControls xmlns="" />
+		<Members xmlns="" />
+	</SourceCode>
+	<DataSources />
+	<Design>
+		<Caption xmlns="">@ABS:ABSWorkspaceHeadlineCaption</Caption>
+		<Pattern xmlns="">Custom</Pattern>
+		<Style xmlns="">DetailsFormMaster</Style>
+		<Controls xmlns="">
+			<AxFormControl xmlns="" i:type="AxFormGroupControl">
+				<Name>KpiStripGroup</Name>
+				<Pattern>Custom</Pattern>
+				<Type>Group</Type>
+				<FormControlExtension i:nil="true" />
+				<HeightMode>SizeToContent</HeightMode>
+				<WidthMode>SizeToAvailable</WidthMode>
+				<Controls>
+					<AxFormControl xmlns="" i:type="AxFormGroupControl">
+						<Name>KpiInventValueGroup</Name>
+						<Pattern>Custom</Pattern>
+						<Type>Group</Type>
+						<FormControlExtension i:nil="true" />
+						<HeightMode>SizeToContent</HeightMode>
+						<Controls>
+							<AxFormControl xmlns="" i:type="AxFormStaticTextControl">
+								<Name>InventValueLabel</Name>
+								<Type>StaticText</Type>
+								<FormControlExtension i:nil="true" />
+								<Text>@ABS:ABSWorkspaceHeadlineInventValue</Text>
+							</AxFormControl>
+							<AxFormControl xmlns="" i:type="AxFormButtonControl">
+								<Name>InventValueText</Name>
+								<AutoDeclaration>Yes</AutoDeclaration>
+								<Type>Button</Type>
+								<FormControlExtension i:nil="true" />
+								<Text>@ABS:ABSWorkspaceHeadlineInventValue</Text>
+							</AxFormControl>
+						</Controls>
+						<ArrangeMethod>Vertical</ArrangeMethod>
+					</AxFormControl>
+					<AxFormControl xmlns="" i:type="AxFormGroupControl">
+						<Name>KpiClassifiedGroup</Name>
+						<Pattern>Custom</Pattern>
+						<Type>Group</Type>
+						<FormControlExtension i:nil="true" />
+						<HeightMode>SizeToContent</HeightMode>
+						<Controls>
+							<AxFormControl xmlns="" i:type="AxFormStaticTextControl">
+								<Name>ClassifiedLabel</Name>
+								<Type>StaticText</Type>
+								<FormControlExtension i:nil="true" />
+								<Text>@ABS:ABSWorkspaceHeadlineClassified</Text>
+							</AxFormControl>
+							<AxFormControl xmlns="" i:type="AxFormButtonControl">
+								<Name>ClassifiedText</Name>
+								<AutoDeclaration>Yes</AutoDeclaration>
+								<Type>Button</Type>
+								<FormControlExtension i:nil="true" />
+								<Text>@ABS:ABSWorkspaceHeadlineClassified</Text>
+							</AxFormControl>
+						</Controls>
+						<ArrangeMethod>Vertical</ArrangeMethod>
+					</AxFormControl>
+					<AxFormControl xmlns="" i:type="AxFormGroupControl">
+						<Name>KpiPctAGroup</Name>
+						<Pattern>Custom</Pattern>
+						<Type>Group</Type>
+						<FormControlExtension i:nil="true" />
+						<HeightMode>SizeToContent</HeightMode>
+						<Controls>
+							<AxFormControl xmlns="" i:type="AxFormStaticTextControl">
+								<Name>PctALabel</Name>
+								<Type>StaticText</Type>
+								<FormControlExtension i:nil="true" />
+								<Text>@ABS:ABSWorkspaceHeadlinePctA</Text>
+							</AxFormControl>
+							<AxFormControl xmlns="" i:type="AxFormButtonControl">
+								<Name>PctAText</Name>
+								<AutoDeclaration>Yes</AutoDeclaration>
+								<Type>Button</Type>
+								<FormControlExtension i:nil="true" />
+								<Text>@ABS:ABSWorkspaceHeadlinePctA</Text>
+							</AxFormControl>
+						</Controls>
+						<ArrangeMethod>Vertical</ArrangeMethod>
+					</AxFormControl>
+					<AxFormControl xmlns="" i:type="AxFormGroupControl">
+						<Name>KpiAttentionGroup</Name>
+						<Pattern>Custom</Pattern>
+						<Type>Group</Type>
+						<FormControlExtension i:nil="true" />
+						<HeightMode>SizeToContent</HeightMode>
+						<Controls>
+							<AxFormControl xmlns="" i:type="AxFormStaticTextControl">
+								<Name>AttentionLabel</Name>
+								<Type>StaticText</Type>
+								<FormControlExtension i:nil="true" />
+								<Text>@ABS:ABSWorkspaceHeadlineAttention</Text>
+							</AxFormControl>
+							<AxFormControl xmlns="" i:type="AxFormMenuFunctionButtonControl">
+								<Name>AttentionText</Name>
+								<AutoDeclaration>Yes</AutoDeclaration>
+								<Type>MenuFunctionButton</Type>
+								<FormControlExtension i:nil="true" />
+								<ButtonDisplay>TextOnly</ButtonDisplay>
+								<MenuItemName>ABSMRPExceptionAttention</MenuItemName>
+								<MenuItemType>Display</MenuItemType>
+							</AxFormControl>
+						</Controls>
+						<ArrangeMethod>Vertical</ArrangeMethod>
+					</AxFormControl>
+					<AxFormControl xmlns="" i:type="AxFormGroupControl">
+						<Name>KpiEOValueGroup</Name>
+						<Pattern>Custom</Pattern>
+						<Type>Group</Type>
+						<FormControlExtension i:nil="true" />
+						<HeightMode>SizeToContent</HeightMode>
+						<Controls>
+							<AxFormControl xmlns="" i:type="AxFormStaticTextControl">
+								<Name>EOValueLabel</Name>
+								<Type>StaticText</Type>
+								<FormControlExtension i:nil="true" />
+								<Text>@ABS:ABSWorkspaceHeadlineEOValue</Text>
+							</AxFormControl>
+							<AxFormControl xmlns="" i:type="AxFormMenuFunctionButtonControl">
+								<Name>EOValueText</Name>
+								<AutoDeclaration>Yes</AutoDeclaration>
+								<Type>MenuFunctionButton</Type>
+								<FormControlExtension i:nil="true" />
+								<ButtonDisplay>TextOnly</ButtonDisplay>
+								<MenuItemName>ABSExcessObsolete</MenuItemName>
+								<MenuItemType>Display</MenuItemType>
+							</AxFormControl>
+						</Controls>
+						<ArrangeMethod>Vertical</ArrangeMethod>
+					</AxFormControl>
+					<AxFormControl xmlns="" i:type="AxFormGroupControl">
+						<Name>KpiTurnoverGroup</Name>
+						<Pattern>Custom</Pattern>
+						<Type>Group</Type>
+						<FormControlExtension i:nil="true" />
+						<HeightMode>SizeToContent</HeightMode>
+						<Controls>
+							<AxFormControl xmlns="" i:type="AxFormStaticTextControl">
+								<Name>TurnoverLabel</Name>
+								<Type>StaticText</Type>
+								<FormControlExtension i:nil="true" />
+								<Text>@ABS:ABSWorkspaceHeadlineTurnover</Text>
+							</AxFormControl>
+							<AxFormControl xmlns="" i:type="AxFormButtonControl">
+								<Name>TurnoverText</Name>
+								<AutoDeclaration>Yes</AutoDeclaration>
+								<Type>Button</Type>
+								<FormControlExtension i:nil="true" />
+								<Text>@ABS:ABSWorkspaceHeadlineTurnover</Text>
+							</AxFormControl>
+						</Controls>
+						<ArrangeMethod>Vertical</ArrangeMethod>
+					</AxFormControl>
+				</Controls>
+				<ArrangeMethod>HorizontalLeft</ArrangeMethod>
+			</AxFormControl>
+		</Controls>
+	</Design>
+</AxForm>

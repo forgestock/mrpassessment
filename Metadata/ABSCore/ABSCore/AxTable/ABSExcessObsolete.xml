@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxTable xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>ABSExcessObsolete</Name>
+  <SourceCode>
+    <Declaration><![CDATA[
+public class ABSExcessObsolete extends common
+{
+}
+    ]]></Declaration>
+    <Methods>
+      <Method>
+        <Name>find</Name>
+        <Source><![CDATA[
+public static ABSExcessObsolete find(ItemId _itemId, InventSiteId _siteId, boolean _forUpdate = false)
+{
+    ABSExcessObsolete ret;
+
+    ret.selectForUpdate(_forUpdate);
+
+    select firstonly ret
+        where ret.ItemId == _itemId
+           && ret.SiteId == _siteId;
+
+    return ret;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>exist</Name>
+        <Source><![CDATA[
+public static boolean exist(ItemId _itemId, InventSiteId _siteId)
+{
+    return (select firstonly RecId from ABSExcessObsolete
+                where ABSExcessObsolete.ItemId == _itemId
+                   && ABSExcessObsolete.SiteId == _siteId).RecId != 0;
+}
+        ]]></Source>
+      </Method>
+    </Methods>
+  </SourceCode>
+  <DeveloperDocumentation>@ABS:ABSExcessObsoleteDeveloperDocumentation</DeveloperDocumentation>
+  <Label>@ABS:ABSExcessObsolete</Label>
+  <TableGroup>Main</TableGroup>
+  <TitleField1>ItemId</TitleField1>
+  <TitleField2>SiteId</TitleField2>
+  <CacheLookup>None</CacheLookup>
+  <ClusteredIndex>ItemSiteIdx</ClusteredIndex>
+  <PrimaryIndex>SurrogateKey</PrimaryIndex>
+  <ReplacementKey>ItemSiteIdx</ReplacementKey>
+  <FormRef>ABSExcessObsolete</FormRef>
+  <SaveDataPerCompany>Yes</SaveDataPerCompany>
+  <Fields>
+    <AxTableField xmlns="" i:type="AxTableFieldString">
+      <Name>ItemId</Name>
+      <ExtendedDataType>ItemId</ExtendedDataType>
+      <Mandatory>Yes</Mandatory>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldString">
+      <Name>SiteId</Name>
+      <ExtendedDataType>InventSiteId</ExtendedDataType>
+      <Mandatory>Yes</Mandatory>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldEnum">
+      <Name>ABCClass</Name>
+      <EnumType>ABSABCClassification</EnumType>
+      <Label>@ABS:ABCClass</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldEnum">
+      <Name>XYZClass</Name>
+      <EnumType>ABSXYZClassification</EnumType>
+      <Label>@ABS:XYZClass</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldDate">
+      <Name>LastIssueDate</Name>
+      <ExtendedDataType>TransDate</ExtendedDataType>
+      <Label>@ABS:ABSEOLastIssueDate</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldInt">
+      <Name>MonthsSinceLastIssue</Name>
+      <Label>@ABS:ABSEOMonthsSinceLastIssue</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldEnum">
+      <Name>AgingBucket</Name>
+      <EnumType>ABSEOAgingBucket</EnumType>
+      <Label>@ABS:ABSEOAgingBucket</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldReal">
+      <Name>OnHandQty</Name>
+      <ExtendedDataType>InventQty</ExtendedDataType>
+      <Label>@ABS:ABSEOOnHandQty</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldReal">
+      <Name>OnHandValue</Name>
+      <ExtendedDataType>AmountMST</ExtendedDataType>
+      <Label>@ABS:ABSEOOnHandValue</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldReal">
+      <Name>DemandMean</Name>
+      <ExtendedDataType>InventQty</ExtendedDataType>
+      <Label>@ABS:DemandMean</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldReal">
+      <Name>MonthsOfCoverage</Name>
+      <Label>@ABS:ABSEOMonthsOfCoverage</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldEnum">
+      <Name>ExcessFlag</Name>
+      <EnumType>NoYes</EnumType>
+      <Label>@ABS:ABSEOExcessFlag</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldEnum">
+      <Name>OpenSupplyFlag</Name>
+      <EnumType>NoYes</EnumType>
+      <Label>@ABS:ABSEOOpenSupplyFlag</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldReal">
+      <Name>ProvisionPct</Name>
+      <ExtendedDataType>Percent</ExtendedDataType>
+      <Label>@ABS:ABSEOProvisionPct</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldReal">
+      <Name>ProvisionValue</Name>
+      <ExtendedDataType>AmountMST</ExtendedDataType>
+      <Label>@ABS:ABSEOProvisionValue</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldEnum">
+      <Name>Recommendation</Name>
+      <EnumType>ABSEORecommendation</EnumType>
+      <Label>@ABS:ABSEORecommendation</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldInt">
+      <Name>HistoryMonthsAvailable</Name>
+      <Label>@ABS:ABSEOHistoryMonthsAvailable</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldDate">
+      <Name>CalculatedDate</Name>
+      <ExtendedDataType>TransDate</ExtendedDataType>
+      <Label>@ABS:CalculatedDate</Label>
+    </AxTableField>
+  </Fields>
+  <FieldGroups>
+    <AxTableFieldGroup>
+      <Name>AutoReport</Name>
+      <Fields>
+        <AxTableFieldGroupField>
+          <DataField>ItemId</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>SiteId</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>AgingBucket</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>Recommendation</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>OnHandValue</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>ProvisionValue</DataField>
+        </AxTableFieldGroupField>
+      </Fields>
+    </AxTableFieldGroup>
+    <AxTableFieldGroup>
+      <Name>AutoLookup</Name>
+      <Fields />
+    </AxTableFieldGroup>
+    <AxTableFieldGroup>
+      <Name>AutoIdentification</Name>
+      <AutoPopulate>Yes</AutoPopulate>
+      <Fields>
+        <AxTableFieldGroupField>
+          <DataField>ItemId</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>SiteId</DataField>
+        </AxTableFieldGroupField>
+      </Fields>
+    </AxTableFieldGroup>
+    <AxTableFieldGroup>
+      <Name>AutoSummary</Name>
+      <Fields />
+    </AxTableFieldGroup>
+    <AxTableFieldGroup>
+      <Name>AutoBrowse</Name>
+      <Fields />
+    </AxTableFieldGroup>
+    <AxTableFieldGroup>
+      <Name>Overview</Name>
+      <Label>@ABS:ABSExcessObsolete</Label>
+      <Fields>
+        <AxTableFieldGroupField>
+          <DataField>ItemId</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>SiteId</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>ABCClass</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>XYZClass</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>AgingBucket</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>Recommendation</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>LastIssueDate</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>MonthsSinceLastIssue</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>MonthsOfCoverage</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>ExcessFlag</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>OpenSupplyFlag</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>HistoryMonthsAvailable</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>CalculatedDate</DataField>
+        </AxTableFieldGroupField>
+      </Fields>
+    </AxTableFieldGroup>
+    <AxTableFieldGroup>
+      <Name>Financials</Name>
+      <Label>@ABS:ABSEOFinancialsGroup</Label>
+      <Fields>
+        <AxTableFieldGroupField>
+          <DataField>OnHandQty</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>OnHandValue</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>DemandMean</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>ProvisionPct</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>ProvisionValue</DataField>
+        </AxTableFieldGroupField>
+      </Fields>
+    </AxTableFieldGroup>
+  </FieldGroups>
+  <Indexes>
+    <AxTableIndex>
+      <Name>ItemSiteIdx</Name>
+      <AlternateKey>Yes</AlternateKey>
+      <Fields>
+        <AxTableIndexField>
+          <DataField>ItemId</DataField>
+        </AxTableIndexField>
+        <AxTableIndexField>
+          <DataField>SiteId</DataField>
+        </AxTableIndexField>
+      </Fields>
+    </AxTableIndex>
+    <AxTableIndex>
+      <Name>BucketIdx</Name>
+      <AllowDuplicates>Yes</AllowDuplicates>
+      <Fields>
+        <AxTableIndexField>
+          <DataField>AgingBucket</DataField>
+        </AxTableIndexField>
+      </Fields>
+    </AxTableIndex>
+  </Indexes>
+  <DeleteActions />
+  <Relations />
+</AxTable>

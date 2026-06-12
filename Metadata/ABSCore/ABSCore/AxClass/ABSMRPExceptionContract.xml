@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>ABSMRPExceptionContract</Name>
+  <SourceCode>
+    <Declaration><![CDATA[
+[DataContractAttribute]
+class ABSMRPExceptionContract
+{
+    ReqPlanId       planId;
+}
+    ]]></Declaration>
+    <Methods>
+      <Method>
+        <Name>parmPlanId</Name>
+        <Source><![CDATA[
+[DataMemberAttribute('PlanId'),
+ SysOperationLabelAttribute(literalStr("@ABS:MRPPlanId")),
+ SysOperationDisplayOrderAttribute('1')]
+public ReqPlanId parmPlanId(ReqPlanId _planId = planId)
+{
+    planId = _planId;
+    return planId;
+}
+        ]]></Source>
+      </Method>
+    </Methods>
+  </SourceCode>
+</AxClass>

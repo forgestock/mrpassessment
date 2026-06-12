@@ -1,0 +1,360 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AxForm xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="Microsoft.Dynamics.AX.Metadata.V6">
+        <Name>ABSMRPAssessment</Name>
+        <SourceCode>
+                <Methods xmlns="">
+                        <Method>
+                                <Name>classDeclaration</Name>
+                                <Source><![CDATA[
+[Form]
+public class ABSMRPAssessment extends FormRun
+{
+}
+]]></Source>
+                        </Method>
+                        <Method>
+                                <Name>init</Name>
+                                <Source><![CDATA[
+public void init()
+{
+    super();
+
+    if (TrendChart)
+    {
+        TrendChart.update();
+    }
+}
+]]></Source>
+                        </Method>
+                </Methods>
+                <DataSources xmlns="" />
+                <DataControls xmlns="" />
+                <Members xmlns="" />
+        </SourceCode>
+        <DataSources>
+                <AxFormDataSource xmlns="">
+                        <Name>ABSMRPAssessmentRun</Name>
+                        <Table>ABSMRPAssessmentRun</Table>
+                        <Index>RunIdx</Index>
+                        <ReferencedDataSources />
+                        <InsertIfEmpty>No</InsertIfEmpty>
+                        <DataSourceLinks />
+                        <DerivedDataSources />
+                </AxFormDataSource>
+                <AxFormDataSource xmlns="">
+                        <Name>ABSMRPAssessmentResult</Name>
+                        <Table>ABSMRPAssessmentResult</Table>
+                        <JoinSource>ABSMRPAssessmentRun</JoinSource>
+                        <LinkType>Delayed</LinkType>
+                        <ReferencedDataSources />
+                        <InsertIfEmpty>No</InsertIfEmpty>
+                        <DataSourceLinks>
+                                <AxFormDataSourceLink>
+                                        <ChildField>RunId</ChildField>
+                                        <ParentField>RunId</ParentField>
+                                </AxFormDataSourceLink>
+                        </DataSourceLinks>
+                        <DerivedDataSources />
+                </AxFormDataSource>
+                <AxFormDataSource xmlns="">
+                        <Name>ABSMRPAssessmentDetail</Name>
+                        <Table>ABSMRPAssessmentDetail</Table>
+                        <JoinSource>ABSMRPAssessmentResult</JoinSource>
+                        <LinkType>Delayed</LinkType>
+                        <ReferencedDataSources />
+                        <InsertIfEmpty>No</InsertIfEmpty>
+                        <DataSourceLinks>
+                                <AxFormDataSourceLink>
+                                        <ChildField>RunId</ChildField>
+                                        <ParentField>RunId</ParentField>
+                                </AxFormDataSourceLink>
+                                <AxFormDataSourceLink>
+                                        <ChildField>CheckCode</ChildField>
+                                        <ParentField>CheckCode</ParentField>
+                                </AxFormDataSourceLink>
+                        </DataSourceLinks>
+                        <DerivedDataSources />
+                </AxFormDataSource>
+        </DataSources>
+        <Design>
+                <Caption xmlns="">@ABS:ABSMRPAssessment</Caption>
+                <Pattern xmlns="">Custom</Pattern>
+                <Style xmlns="">DetailsFormMaster</Style>
+                <Controls xmlns="">
+                <AxFormControl xmlns="" i:type="AxFormActionPaneControl">
+                        <Name>ActionPane</Name>
+                        <Type>ActionPane</Type>
+                        <FormControlExtension i:nil="true" />
+                        <Controls>
+                                <AxFormControl xmlns="" i:type="AxFormActionPaneTabControl">
+                                        <Name>ActionPaneTabActions</Name>
+                                        <AutoDeclaration>Yes</AutoDeclaration>
+                                        <Type>ActionPaneTab</Type>
+                                        <FormControlExtension i:nil="true" />
+                                        <Controls>
+                                                <AxFormControl xmlns="" i:type="AxFormButtonGroupControl">
+                                                        <Name>ViewDetailGroup</Name>
+                                                        <Type>ButtonGroup</Type>
+                                                        <FormControlExtension i:nil="true" />
+                                                        <Controls>
+                                                                <AxFormControl xmlns="" i:type="AxFormMenuFunctionButtonControl">
+                                                                        <Name>ViewDetailBtn</Name>
+                                                                        <Type>MenuFunctionButton</Type>
+                                                                        <FormControlExtension i:nil="true" />
+                                                                        <ButtonDisplay>TextOnly</ButtonDisplay>
+                                                                        <DataSource>ABSMRPAssessmentRun</DataSource>
+                                                                        <MenuItemName>ABSMRPAssessmentRunDetail</MenuItemName>
+                                                                        <MenuItemType>Display</MenuItemType>
+                                                                        <NeedsRecord>Yes</NeedsRecord>
+                                                                </AxFormControl>
+                                                        </Controls>
+                                                        <ArrangeMethod>Vertical</ArrangeMethod>
+                                                        <Caption>@ABS:ViewDetail</Caption>
+                                                </AxFormControl>
+                                                <AxFormControl xmlns="" i:type="AxFormButtonGroupControl">
+                                                        <Name>PrintGroup</Name>
+                                                        <Type>ButtonGroup</Type>
+                                                        <FormControlExtension i:nil="true" />
+                                                        <Controls>
+                                                                <AxFormControl xmlns="" i:type="AxFormMenuFunctionButtonControl">
+                                                                        <Name>PrintButton</Name>
+                                                                        <Type>MenuFunctionButton</Type>
+                                                                        <FormControlExtension i:nil="true" />
+                                                                        <ButtonDisplay>TextOnly</ButtonDisplay>
+                                                                        <DataSource>ABSMRPAssessmentRun</DataSource>
+                                                                        <MenuItemName>ABSMRPAssessmentReport</MenuItemName>
+                                                                        <MenuItemType>Action</MenuItemType>
+                                                                        <NeedsRecord>Yes</NeedsRecord>
+                                                                </AxFormControl>
+                                                        </Controls>
+                                                        <ArrangeMethod>Vertical</ArrangeMethod>
+                                                        <Caption>@ABS:ABSMRPAssessmentReportPrint</Caption>
+                                                </AxFormControl>
+                                        </Controls>
+                                        <AlignChild>No</AlignChild>
+                                        <AlignChildren>No</AlignChildren>
+                                        <ArrangeMethod>Vertical</ArrangeMethod>
+                                        <Caption>@ABS:ABSActionsTab</Caption>
+                                </AxFormControl>
+                        </Controls>
+                        <AlignChild>No</AlignChild>
+                        <AlignChildren>No</AlignChildren>
+                        <ArrangeMethod>Vertical</ArrangeMethod>
+                </AxFormControl>
+                        <AxFormControl xmlns="" i:type="AxFormGroupControl">
+                                <Name>FilterGroup</Name>
+                                <Pattern>CustomAndQuickFilters</Pattern>
+                                <PatternVersion>1.1</PatternVersion>
+                                <Type>Group</Type>
+                                <WidthMode>SizeToAvailable</WidthMode>
+                                <FormControlExtension i:nil="true" />
+                                <Controls>
+                                        <AxFormControl>
+                                                <Name>QuickFilter</Name>
+                                                <FormControlExtension>
+                                                        <Name>QuickFilterControl</Name>
+                                                        <ExtensionComponents />
+                                                        <ExtensionProperties>
+                                                                <AxFormControlExtensionProperty>
+                                                                        <Name>targetControlName</Name>
+                                                                        <Type>String</Type>
+                                                                        <Value>RunGrid</Value>
+                                                                </AxFormControlExtensionProperty>
+                                                        </ExtensionProperties>
+                                                </FormControlExtension>
+                                        </AxFormControl>
+                                </Controls>
+                                <ArrangeMethod>HorizontalLeft</ArrangeMethod>
+                                <FrameType>None</FrameType>
+                                <Style>CustomFilter</Style>
+                                <ViewEditMode>Edit</ViewEditMode>
+                        </AxFormControl>
+                        <AxFormControl xmlns="" i:type="AxFormGroupControl">
+                                <Name>TrendChartGroup</Name>
+                                <Pattern>Custom</Pattern>
+                                <Type>Group</Type>
+                                <FormControlExtension i:nil="true" />
+                                <HeightMode>SizeToContent</HeightMode>
+                                <WidthMode>SizeToAvailable</WidthMode>
+                                <Controls>
+                                        <AxFormControl xmlns="" i:type="AxFormContainerControl">
+                                                <Name>TrendChart</Name>
+                                                <AutoDeclaration>Yes</AutoDeclaration>
+                                                <Type>Container</Type>
+                                                <Visible>Yes</Visible>
+                                                <Width>1000</Width>
+                                                <WidthMode>Manual</WidthMode>
+                                                <Height>280</Height>
+                                                <HeightMode>Manual</HeightMode>
+                                                <FormControlExtension>
+                                                        <Name>SysChart</Name>
+                                                        <ExtensionComponents>
+                                                                <AxFormControlExtensionComponent xmlns="" i:type="AxFormControlExtensionComponentComposite">
+                                                                        <Name>parmDataSets</Name>
+                                                                        <ExtensionComponents>
+                                                                                <AxFormControlExtensionComponent xmlns="" i:type="AxFormControlExtensionComponentLeaf">
+                                                                                        <Name>TrendDataSet</Name>
+                                                                                        <ComponentType>SysBuildChartDataSet</ComponentType>
+                                                                                        <ExtensionProperties>
+                                                                                                <AxFormControlExtensionProperty>
+                                                                                                        <Name>parmDataSource</Name>
+                                                                                                        <Type>String</Type>
+                                                                                                        <Value>ABSMRPAssessmentRun</Value>
+                                                                                                </AxFormControlExtensionProperty>
+                                                                                                <AxFormControlExtensionProperty>
+                                                                                                        <Name>parmCategoryField</Name>
+                                                                                                        <Type>String</Type>
+                                                                                                        <Value>AssessmentDate</Value>
+                                                                                                </AxFormControlExtensionProperty>
+                                                                                                <AxFormControlExtensionProperty>
+                                                                                                        <Name>parmGroupBy</Name>
+                                                                                                        <Type>String</Type>
+                                                                                                        <Value>PlanId</Value>
+                                                                                                </AxFormControlExtensionProperty>
+                                                                                        </ExtensionProperties>
+                                                                                </AxFormControlExtensionComponent>
+                                                                        </ExtensionComponents>
+                                                                </AxFormControlExtensionComponent>
+                                                                <AxFormControlExtensionComponent xmlns="" i:type="AxFormControlExtensionComponentComposite">
+                                                                        <Name>parmMeasures</Name>
+                                                                        <ExtensionComponents>
+                                                                                <AxFormControlExtensionComponent xmlns="" i:type="AxFormControlExtensionComponentLeaf">
+                                                                                        <Name>IssuesFound</Name>
+                                                                                        <ComponentType>SysBuildChartMeasure</ComponentType>
+                                                                                        <ExtensionProperties>
+                                                                                                <AxFormControlExtensionProperty>
+                                                                                                        <Name>parmChartType</Name>
+                                                                                                        <Type>Enum</Type>
+                                                                                                        <TypeName>SysChartType</TypeName>
+                                                                                                        <Value>Line</Value>
+                                                                                                </AxFormControlExtensionProperty>
+                                                                                                <AxFormControlExtensionProperty>
+                                                                                                        <Name>parmDataSet</Name>
+                                                                                                        <Type>String</Type>
+                                                                                                        <Value>TrendDataSet</Value>
+                                                                                                </AxFormControlExtensionProperty>
+                                                                                                <AxFormControlExtensionProperty>
+                                                                                                        <Name>parmMeasureField</Name>
+                                                                                                        <Type>String</Type>
+                                                                                                        <Value>IssuesFound</Value>
+                                                                                                </AxFormControlExtensionProperty>
+                                                                                                <AxFormControlExtensionProperty>
+                                                                                                        <Name>parmUseSecondaryYAxis</Name>
+                                                                                                        <Type>Enum</Type>
+                                                                                                        <TypeName>boolean</TypeName>
+                                                                                                        <Value>False</Value>
+                                                                                                </AxFormControlExtensionProperty>
+                                                                                        </ExtensionProperties>
+                                                                                </AxFormControlExtensionComponent>
+                                                                        </ExtensionComponents>
+                                                                </AxFormControlExtensionComponent>
+                                                                <AxFormControlExtensionComponent xmlns="" i:type="AxFormControlExtensionComponentComposite">
+                                                                        <Name>parmSecondaryYAxes</Name>
+                                                                        <ExtensionComponents />
+                                                                </AxFormControlExtensionComponent>
+                                                        </ExtensionComponents>
+                                                        <ExtensionProperties>
+                                                                <AxFormControlExtensionProperty>
+                                                                        <Name>parmLegendEnabled</Name>
+                                                                        <Type>Enum</Type>
+                                                                        <TypeName>boolean</TypeName>
+                                                                        <Value>True</Value>
+                                                                </AxFormControlExtensionProperty>
+                                                                <AxFormControlExtensionProperty>
+                                                                        <Name>parmLegendPosition</Name>
+                                                                        <Type>Enum</Type>
+                                                                        <TypeName>SysChartVerticalAlignment</TypeName>
+                                                                        <Value>Bottom</Value>
+                                                                </AxFormControlExtensionProperty>
+                                                                <AxFormControlExtensionProperty>
+                                                                        <Name>parmText</Name>
+                                                                        <Type>String</Type>
+                                                                        <Value>@ABS:ABSMRPAssessmentTrendChartTitle</Value>
+                                                                </AxFormControlExtensionProperty>
+                                                                <AxFormControlExtensionProperty>
+                                                                        <Name>parmTitlePosition</Name>
+                                                                        <Type>Enum</Type>
+                                                                        <TypeName>SysChartVerticalAlignment</TypeName>
+                                                                        <Value>Top</Value>
+                                                                </AxFormControlExtensionProperty>
+                                                                <AxFormControlExtensionProperty>
+                                                                        <Name>parmSerializedButtons</Name>
+                                                                        <Type>String</Type>
+                                                                        <Value>Line;Column;Bar</Value>
+                                                                </AxFormControlExtensionProperty>
+                                                                <AxFormControlExtensionProperty>
+                                                                        <Name>parmYAxisTitle</Name>
+                                                                        <Type>String</Type>
+                                                                        <Value>@ABS:IssuesFound</Value>
+                                                                </AxFormControlExtensionProperty>
+                                                                <AxFormControlExtensionProperty>
+                                                                        <Name>parmXAxisTitle</Name>
+                                                                        <Type>String</Type>
+                                                                        <Value>@ABS:AssessmentDate</Value>
+                                                                </AxFormControlExtensionProperty>
+                                                                <AxFormControlExtensionProperty>
+                                                                        <Name>parmToolbarEnabled</Name>
+                                                                        <Type>Enum</Type>
+                                                                        <TypeName>boolean</TypeName>
+                                                                        <Value>True</Value>
+                                                                </AxFormControlExtensionProperty>
+                                                                <AxFormControlExtensionProperty>
+                                                                        <Name>parmPadMargin</Name>
+                                                                        <Type>Int32</Type>
+                                                                        <Value>0</Value>
+                                                                </AxFormControlExtensionProperty>
+                                                        </ExtensionProperties>
+                                                </FormControlExtension>
+                                                <Controls />
+                                        </AxFormControl>
+                                </Controls>
+                                <ArrangeMethod>Vertical</ArrangeMethod>
+                        </AxFormControl>
+                        <AxFormControl xmlns="" i:type="AxFormGridControl">
+                                <Name>RunGrid</Name>
+                                <Type>Grid</Type>
+                                <WidthMode>SizeToAvailable</WidthMode>
+                                <Controls>
+                                        <AxFormControl xmlns="" i:type="AxFormStringControl">
+                                                <Name>Run_RunId</Name>
+                                                <DataField>RunId</DataField>
+                                                <DataSource>ABSMRPAssessmentRun</DataSource>
+                                        </AxFormControl>
+                                        <AxFormControl xmlns="" i:type="AxFormStringControl">
+                                                <Name>Run_PlanId</Name>
+                                                <DataField>PlanId</DataField>
+                                                <DataSource>ABSMRPAssessmentRun</DataSource>
+                                        </AxFormControl>
+                                        <AxFormControl xmlns="" i:type="AxFormDateControl">
+                                                <Name>Run_AssessmentDate</Name>
+                                                <DataField>AssessmentDate</DataField>
+                                                <DataSource>ABSMRPAssessmentRun</DataSource>
+                                        </AxFormControl>
+                                        <AxFormControl xmlns="" i:type="AxFormComboBoxControl">
+                                                <Name>Run_Status</Name>
+                                                <DataField>Status</DataField>
+                                                <DataSource>ABSMRPAssessmentRun</DataSource>
+                                        </AxFormControl>
+                                        <AxFormControl xmlns="" i:type="AxFormComboBoxControl">
+                                                <Name>Run_OverallSeverity</Name>
+                                                <DataField>OverallSeverity</DataField>
+                                                <DataSource>ABSMRPAssessmentRun</DataSource>
+                                        </AxFormControl>
+                                        <AxFormControl xmlns="" i:type="AxFormIntegerControl">
+                                                <Name>Run_IssuesFound</Name>
+                                                <DataField>IssuesFound</DataField>
+                                                <DataSource>ABSMRPAssessmentRun</DataSource>
+                                        </AxFormControl>
+                                        <AxFormControl xmlns="" i:type="AxFormComboBoxControl">
+                                                <Name>Run_PlanningEngine</Name>
+                                                <DataField>PlanningEngine</DataField>
+                                                <DataSource>ABSMRPAssessmentRun</DataSource>
+                                        </AxFormControl>
+                                </Controls>
+                                <DataSource>ABSMRPAssessmentRun</DataSource>
+                                <Style>Tabular</Style>
+                        </AxFormControl>
+                </Controls>
+        </Design>
+        <Parts />
+</AxForm>

@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxForm xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="Microsoft.Dynamics.AX.Metadata.V6">
+	<Name>ABSWorkspaceCardGrid</Name>
+	<SourceCode>
+		<Methods xmlns="">
+			<Method>
+				<Name>classDeclaration</Name>
+				<Source><![CDATA[
+[Form]
+public class ABSWorkspaceCardGrid extends FormRun
+{
+}
+]]></Source>
+			</Method>
+			<Method>
+				<Name>run</Name>
+				<Source><![CDATA[
+    public void run()
+    {
+        super();
+        this.forceLegacyGrid();
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>populateCards</Name>
+				<Source><![CDATA[
+    public void populateCards(ABSWorkspaceCardData _cursor)
+    {
+        ABSItemABCXYZ           abcXyzAgg;
+        ABSItemABCXYZ           abcXyzNoHist;
+        ABSItemABCXYZ           abcXyzJoin;
+        InventSum               inventSumAgg;
+        InventDim               inventDimJoin;
+        int                     abcInt;
+        int                     xyzInt;
+
+        delete_from _cursor;
+
+        for (abcInt = 1; abcInt <= 3; abcInt++)
+        {
+            for (xyzInt = 1; xyzInt <= 3; xyzInt++)
+            {
+                ABSABCClassification abcClass = abcInt;
+                ABSXYZClassification xyzClass = xyzInt;
+
+                select count(RecId), sum(SalesAmt12M) from abcXyzAgg
+                    where abcXyzAgg.ABCClass == abcClass
+                       && abcXyzAgg.XYZClass == xyzClass;
+
+                // W6: count items with no demand history (C/Z completeness-sweep defaults)
+                // so the card can separate measured demand from sweep noise.
+                select count(RecId) from abcXyzNoHist
+                    where abcXyzNoHist.ABCClass               == abcClass
+                       && abcXyzNoHist.XYZClass               == xyzClass
+                       && abcXyzNoHist.HistoryMonthsAvailable == 0;
+
+                select sum(PostedValue) from inventSumAgg
+                    join inventDimJoin
+                        where inventDimJoin.inventDimId == inventSumAgg.inventDimId
+                    exists join abcXyzJoin
+                        where abcXyzJoin.ItemId   == inventSumAgg.ItemId
+                           && abcXyzJoin.SiteId   == inventDimJoin.InventSiteId
+                           && abcXyzJoin.ABCClass == abcClass
+                           && abcXyzJoin.XYZClass == xyzClass;
+
+                _cursor.ABCClass            = abcClass;
+                _cursor.XYZClass            = xyzClass;
+                _cursor.ItemCount           = any2Int(abcXyzAgg.RecId);
+                _cursor.NoHistoryCount      = any2Int(abcXyzNoHist.RecId);
+                _cursor.TotalConsumption12M = abcXyzAgg.SalesAmt12M;
+                _cursor.TotalInventoryValue = inventSumAgg.PostedValue;
+                _cursor.insert();
+            }
+        }
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+		<DataSources xmlns="">
+			<DataSource>
+				<Name>ABSWorkspaceCardData</Name>
+				<Methods>
+					<Method>
+						<Name>executeQuery</Name>
+						<Source><![CDATA[
+        public void executeQuery()
+        {
+            element.populateCards(ABSWorkspaceCardData);
+            super();
+        }
+
+]]></Source>
+					</Method>
+					<Method>
+						<Name>ABCXYZLabel</Name>
+						<Source><![CDATA[
+        public display str ABCXYZLabel(ABSWorkspaceCardData _cardData)
+        {
+            str abcDesc;
+            str xyzDesc;
+
+            switch (_cardData.ABCClass)
+            {
+                case ABSABCClassification::A:
+                    abcDesc = 'High';
+                    break;
+                case ABSABCClassification::B:
+                    abcDesc = 'Medium';
+                    break;
+                case ABSABCClassification::C:
+                    abcDesc = 'Low';
+                    break;
+                default:
+                    abcDesc = '';
+            }
+
+            switch (_cardData.XYZClass)
+            {
+                case ABSXYZClassification::X:
+                    xyzDesc = 'stable';
+                    break;
+                case ABSXYZClassification::Y:
+                    xyzDesc = 'variable';
+                    break;
+                case ABSXYZClassification::Z:
+                    xyzDesc = 'irregular';
+                    break;
+                default:
+                    xyzDesc = '';
+            }
+
+            return strFmt('%1%2 – %3, %4',
+                enum2Str(_cardData.ABCClass),
+                enum2Str(_cardData.XYZClass),
+                abcDesc,
+                xyzDesc);
+        }
+
+]]></Source>
+					</Method>
+					<Method>
+						<Name>itemCountDisplay</Name>
+						<Source><![CDATA[
+        /// W6: shows the segment item count and, when present, how many have no demand history.
+        public display str itemCountDisplay(ABSWorkspaceCardData _cardData)
+        {
+            if (_cardData.NoHistoryCount > 0)
+            {
+                return strFmt('@ABS:ABSWorkspaceItemCountWithNoHistory', _cardData.ItemCount, _cardData.NoHistoryCount);
+            }
+
+            return int2str(_cardData.ItemCount);
+        }
+
+]]></Source>
+					</Method>
+					<Method>
+						<Name>displayOption</Name>
+						<Source><![CDATA[
+        public void displayOption(Common _record, FormRowDisplayOption _options)
+        {
+            ABSWorkspaceCardData cardData = _record;
+            int bgColor;
+
+            // W4: empty segments recede (near-white) so the eye lands on populated cells.
+            if (cardData.ItemCount == 0)
+            {
+                _options.backColor(ABSUIColors::muted());
+                super(_record, _options);
+                return;
+            }
+
+            // W2: colour by ABC class as an *importance* scale (cool A→C ramp),
+            // NOT a green/red health judgement (AZ is not "good", CX is not "bad").
+            switch (cardData.ABCClass)
+            {
+                case ABSABCClassification::A:
+                    bgColor = ABSUIColors::segmentA();
+                    break;
+                case ABSABCClassification::B:
+                    bgColor = ABSUIColors::segmentB();
+                    break;
+                case ABSABCClassification::C:
+                    bgColor = ABSUIColors::segmentC();
+                    break;
+                default:
+                    super(_record, _options);
+                    return;
+            }
+
+            _options.backColor(bgColor);
+            super(_record, _options);
+        }
+
+]]></Source>
+					</Method>
+				</Methods>
+			</DataSource>
+		</DataSources>
+		<DataControls xmlns="">
+			<Control>
+				<Name>ABCXYZLabel</Name>
+				<Type>String</Type>
+				<Methods>
+					<Method>
+						<Name>jumpRef</Name>
+						<Source><![CDATA[
+        /// W3: clicking a card drills down to ABSItemABCXYZ pre-filtered to that segment
+        /// (the per-segment display menu items ABSItemABCXYZ_AX..CZ), replacing the tile row.
+        public void jumpRef()
+        {
+            MenuFunction menuFunction;
+            str          menuItemName;
+
+            menuItemName = strFmt('ABSItemABCXYZ_%1%2',
+                enum2Str(ABSWorkspaceCardData.ABCClass),
+                enum2Str(ABSWorkspaceCardData.XYZClass));
+
+            menuFunction = new MenuFunction(menuItemName, MenuItemType::Display);
+            menuFunction.run();
+        }
+    ]]></Source>
+					</Method>
+				</Methods>
+			</Control>
+		</DataControls>
+		<Members xmlns="" />
+	</SourceCode>
+	<DataSources>
+		<AxFormDataSource xmlns="">
+			<Name>ABSWorkspaceCardData</Name>
+			<Table>ABSWorkspaceCardData</Table>
+			<Fields>
+				<AxFormDataSourceField>
+					<DataField>ABCClass</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>XYZClass</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ItemCount</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>TotalConsumption12M</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>TotalInventoryValue</DataField>
+				</AxFormDataSourceField>
+			</Fields>
+			<ReferencedDataSources />
+			<AllowCreate>No</AllowCreate>
+			<AllowDelete>No</AllowDelete>
+			<AllowEdit>No</AllowEdit>
+			<InsertAtEnd>No</InsertAtEnd>
+			<DataSourceLinks />
+			<DerivedDataSources />
+		</AxFormDataSource>
+	</DataSources>
+	<Design>
+		<Caption xmlns="">@ABS:ABSWorkspaceSummaryCaption</Caption>
+		<DataSource xmlns="">ABSWorkspaceCardData</DataSource>
+		<HideIfEmpty xmlns="">No</HideIfEmpty>
+		<Pattern xmlns="">FormPartSectionList</Pattern>
+		<PatternVersion xmlns="">1.2</PatternVersion>
+		<Style xmlns="">FormPart</Style>
+		<TitleDataSource xmlns="">ABSWorkspaceCardData</TitleDataSource>
+		<Controls xmlns="">
+			<AxFormControl xmlns=""
+				i:type="AxFormGridControl">
+				<Name>Grid</Name>
+				<AllowEdit>No</AllowEdit>
+				<ExtendedStyle>cardList</ExtendedStyle>
+				<Type>Grid</Type>
+				<FormControlExtension
+					i:nil="true" />
+				<Controls>
+					<AxFormControl xmlns=""
+						i:type="AxFormStringControl">
+						<Name>ABCXYZLabel</Name>
+						<AllowEdit>No</AllowEdit>
+						<Type>String</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Alignment>Left</Alignment>
+						<CacheDataMethod>Yes</CacheDataMethod>
+						<DataMethod>ABCXYZLabel</DataMethod>
+						<DataSource>ABSWorkspaceCardData</DataSource>
+						<ShowLabel>No</ShowLabel>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormGroupControl">
+						<Name>ItemCountGroup</Name>
+						<AllowEdit>No</AllowEdit>
+						<Type>Group</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormStaticTextControl">
+								<Name>ItemCountLabel</Name>
+								<AllowEdit>No</AllowEdit>
+								<Type>StaticText</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<Text>@ABS:ABSWorkspaceItemCount</Text>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>ItemCount</Name>
+								<AllowEdit>No</AllowEdit>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<Alignment>Center</Alignment>
+								<CacheDataMethod>Yes</CacheDataMethod>
+								<DataMethod>itemCountDisplay</DataMethod>
+								<DataSource>ABSWorkspaceCardData</DataSource>
+								<ShowLabel>No</ShowLabel>							<WidthMode>SizeToAvailable</WidthMode>							</AxFormControl>
+						</Controls>
+						<ArrangeMethod>HorizontalLeft</ArrangeMethod>
+						<Columns>3</Columns>
+						<HideIfEmpty>No</HideIfEmpty>
+						<Style>Card</Style>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormGroupControl">
+						<Name>ConsumptionGroup</Name>
+						<AllowEdit>No</AllowEdit>
+						<Type>Group</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormStaticTextControl">
+								<Name>ConsumptionLabel</Name>
+								<AllowEdit>No</AllowEdit>
+								<Type>StaticText</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<Text>@ABS:ABSWorkspaceTotalConsumption</Text>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormRealControl">
+								<Name>TotalConsumption12M</Name>
+								<AllowEdit>No</AllowEdit>
+								<Type>Real</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<Alignment>Center</Alignment>
+								<DataField>TotalConsumption12M</DataField>
+								<DataSource>ABSWorkspaceCardData</DataSource>
+								<MinNoOfDecimals>2</MinNoOfDecimals>
+								<NoOfDecimals>2</NoOfDecimals>
+								<ShowLabel>No</ShowLabel>							<WidthMode>SizeToAvailable</WidthMode>							</AxFormControl>
+						</Controls>
+						<ArrangeMethod>HorizontalLeft</ArrangeMethod>
+						<Columns>3</Columns>
+						<HideIfEmpty>No</HideIfEmpty>
+						<Style>Card</Style>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormGroupControl">
+						<Name>InventValueGroup</Name>
+						<AllowEdit>No</AllowEdit>
+						<Type>Group</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormStaticTextControl">
+								<Name>InventValueLabel</Name>
+								<AllowEdit>No</AllowEdit>
+								<Type>StaticText</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<Text>@ABS:ABSWorkspaceTotalInventValue</Text>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormRealControl">
+								<Name>TotalInventoryValue</Name>
+								<AllowEdit>No</AllowEdit>
+								<Type>Real</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<Alignment>Center</Alignment>
+								<DataField>TotalInventoryValue</DataField>
+								<DataSource>ABSWorkspaceCardData</DataSource>
+								<MinNoOfDecimals>2</MinNoOfDecimals>
+								<NoOfDecimals>2</NoOfDecimals>
+								<ShowLabel>No</ShowLabel>							<WidthMode>SizeToAvailable</WidthMode>							</AxFormControl>
+						</Controls>
+						<ArrangeMethod>HorizontalLeft</ArrangeMethod>
+						<Columns>3</Columns>
+						<HideIfEmpty>No</HideIfEmpty>
+						<Style>Card</Style>
+					</AxFormControl>
+				</Controls>
+				<DataSource>ABSWorkspaceCardData</DataSource>
+				<MultiSelect>No</MultiSelect>
+				<ShowColLabels>No</ShowColLabels>
+				<ShowRowLabels>No</ShowRowLabels>
+				<Style>List</Style>
+				<VisibleCols>3</VisibleCols>
+				<VisibleColsMode>Fixed</VisibleColsMode>
+				<VisibleRows>3</VisibleRows>
+				<VisibleRowsMode>Fixed</VisibleRowsMode>
+			</AxFormControl>
+		</Controls>
+	</Design>
+</AxForm>

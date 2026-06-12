@@ -1,0 +1,480 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AxFormExtension xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="Microsoft.Dynamics.AX.Metadata.V6">
+  <Name>InventParameters.ABSExtension</Name>
+  <ControlModifications />
+  <Controls>
+    <AxFormExtensionControl xmlns="">
+      <Name>FormExtensionControlABSInventoryOptimizer</Name>
+      <FormControl xmlns="" i:type="AxFormTabPageControl">
+        <Name>ABSInventoryOptimizerTabPage</Name>
+        <Type>TabPage</Type>
+        <FormControlExtension i:nil="true" />
+        <Controls>
+          <AxFormControl xmlns="" i:type="AxFormGroupControl">
+            <Name>ABSInventoryOptimizerTitleGroup</Name>
+            <Skip>Yes</Skip>
+            <Type>Group</Type>
+            <WidthMode>SizeToAvailable</WidthMode>
+            <FormControlExtension i:nil="true" />
+            <Controls>
+              <AxFormControl xmlns="" i:type="AxFormStaticTextControl">
+                <Name>ABSInventoryOptimizerTitleText</Name>
+                <Skip>Yes</Skip>
+                <Type>StaticText</Type>
+                <WidthMode>SizeToAvailable</WidthMode>
+                <FormControlExtension i:nil="true" />
+                <Style>MainInstruction</Style>
+                <Text>Enable or disable MRP Assessment check codes. Disabled checks are skipped when the assessment is run.</Text>
+              </AxFormControl>
+            </Controls>
+            <AllowUserSetup>No</AllowUserSetup>
+            <FrameType>None</FrameType>
+            <Style>TOCTitleContainer</Style>
+          </AxFormControl>
+          <AxFormControl xmlns="" i:type="AxFormTabControl">
+            <Name>ABSInventoryOptimizerFastTab</Name>
+            <Type>Tab</Type>
+            <FormControlExtension i:nil="true" />
+            <Controls>
+              <AxFormControl xmlns="" i:type="AxFormTabPageControl">
+                <Name>ABSMRPExceptionThresholdsTabPage</Name>
+                <Pattern>Custom</Pattern>
+                <PatternVersion>1.1</PatternVersion>
+                <Type>TabPage</Type>
+                <FormControlExtension i:nil="true" />
+                <Controls>
+                  <AxFormControl xmlns="" i:type="AxFormIntegerControl">
+                    <Name>ABSMRPOverdueHighDays</Name>
+                    <Type>Integer</Type>
+                    <FormControlExtension i:nil="true" />
+                    <DataField>MRPOverdueHighDays</DataField>
+                    <DataSource>InventParameters</DataSource>
+                  </AxFormControl>
+                  <AxFormControl xmlns="" i:type="AxFormIntegerControl">
+                    <Name>ABSMRPOverdueMediumDays</Name>
+                    <Type>Integer</Type>
+                    <FormControlExtension i:nil="true" />
+                    <DataField>MRPOverdueMediumDays</DataField>
+                    <DataSource>InventParameters</DataSource>
+                  </AxFormControl>
+                  <AxFormControl xmlns="" i:type="AxFormIntegerControl">
+                    <Name>ABSMRPOversizedOrderMonths</Name>
+                    <Type>Integer</Type>
+                    <FormControlExtension i:nil="true" />
+                    <DataField>MRPOversizedOrderMonths</DataField>
+                    <DataSource>InventParameters</DataSource>
+                  </AxFormControl>
+                </Controls>
+                <Caption>@ABS:ABSMRPExceptionThresholdsCaption</Caption>
+              </AxFormControl>
+              <AxFormControl xmlns="" i:type="AxFormTabPageControl">
+                <Name>ABSCheckSectionPCTabPage</Name>
+                <Pattern>Custom</Pattern>
+                <PatternVersion>1.1</PatternVersion>
+                <Type>TabPage</Type>
+                <FormControlExtension i:nil="true" />
+                <Controls>
+                  <AxFormControl xmlns="" i:type="AxFormCheckBoxControl">
+                    <Name>ABSCheckCodePC001Enabled</Name>
+                    <Type>CheckBox</Type>
+                    <WidthMode>SizeToAvailable</WidthMode>
+                    <FormControlExtension i:nil="true" />
+                    <Label>PC-001 - Time fence override</Label>
+                    <ShowLabel>Yes</ShowLabel>
+                  </AxFormControl>
+                  <AxFormControl xmlns="" i:type="AxFormCheckBoxControl">
+                    <Name>ABSCheckCodePC002Enabled</Name>
+                    <Type>CheckBox</Type>
+                    <WidthMode>SizeToAvailable</WidthMode>
+                    <FormControlExtension i:nil="true" />
+                    <Label>PC-002 - Negative days too low</Label>
+                    <ShowLabel>Yes</ShowLabel>
+                  </AxFormControl>
+                  <AxFormControl xmlns="" i:type="AxFormCheckBoxControl">
+                    <Name>ABSCheckCodePC003Enabled</Name>
+                    <Type>CheckBox</Type>
+                    <WidthMode>SizeToAvailable</WidthMode>
+                    <FormControlExtension i:nil="true" />
+                    <Label>PC-003 - Coverage period override</Label>
+                    <ShowLabel>Yes</ShowLabel>
+                  </AxFormControl>
+                  <AxFormControl xmlns="" i:type="AxFormCheckBoxControl">
+                    <Name>ABSCheckCodePC005Enabled</Name>
+                    <Type>CheckBox</Type>
+                    <WidthMode>SizeToAvailable</WidthMode>
+                    <FormControlExtension i:nil="true" />
+                    <Label>PC-005 - Auto-firm horizon override</Label>
+                    <ShowLabel>Yes</ShowLabel>
+                  </AxFormControl>
+                </Controls>
+                <Caption>Plan Configuration (PC)</Caption>
+              </AxFormControl>
+              <AxFormControl xmlns="" i:type="AxFormTabPageControl">
+                <Name>ABSCheckSectionDQTabPage</Name>
+                <Pattern>Custom</Pattern>
+                <PatternVersion>1.1</PatternVersion>
+                <Type>TabPage</Type>
+                <FormControlExtension i:nil="true" />
+                <Controls>
+                  <AxFormControl xmlns="" i:type="AxFormCheckBoxControl">
+                    <Name>ABSCheckCodeDQ001Enabled</Name>
+                    <Type>CheckBox</Type>
+                    <WidthMode>SizeToAvailable</WidthMode>
+                    <FormControlExtension i:nil="true" />
+                    <Label>DQ-001 - Missing item coverage group</Label>
+                    <ShowLabel>Yes</ShowLabel>
+                  </AxFormControl>
+                  <AxFormControl xmlns="" i:type="AxFormCheckBoxControl">
+                    <Name>ABSCheckCodeDQ002Enabled</Name>
+                    <Type>CheckBox</Type>
+                    <WidthMode>SizeToAvailable</WidthMode>
+                    <FormControlExtension i:nil="true" />
+                    <Label>DQ-002 - Item with no warehouse on coverage group</Label>
+                    <ShowLabel>Yes</ShowLabel>
+                  </AxFormControl>
+                  <AxFormControl xmlns="" i:type="AxFormCheckBoxControl">
+                    <Name>ABSCheckCodeDQ004Enabled</Name>
+                    <Type>CheckBox</Type>
+                    <WidthMode>SizeToAvailable</WidthMode>
+                    <FormControlExtension i:nil="true" />
+                    <Label>DQ-004 - Item missing default order settings</Label>
+                    <ShowLabel>Yes</ShowLabel>
+                  </AxFormControl>
+                  <AxFormControl xmlns="" i:type="AxFormCheckBoxControl">
+                    <Name>ABSCheckCodeDQ005Enabled</Name>
+                    <Type>CheckBox</Type>
+                    <WidthMode>SizeToAvailable</WidthMode>
+                    <FormControlExtension i:nil="true" />
+                    <Label>DQ-005 - Item missing site-specific order settings</Label>
+                    <ShowLabel>Yes</ShowLabel>
+                  </AxFormControl>
+                  <AxFormControl xmlns="" i:type="AxFormCheckBoxControl">
+                    <Name>ABSCheckCodeDQ006Enabled</Name>
+                    <Type>CheckBox</Type>
+                    <WidthMode>SizeToAvailable</WidthMode>
+                    <FormControlExtension i:nil="true" />
+                    <Label>DQ-006 - Item with negative on-hand</Label>
+                    <ShowLabel>Yes</ShowLabel>
+                  </AxFormControl>
+                  <AxFormControl xmlns="" i:type="AxFormCheckBoxControl">
+                    <Name>ABSCheckCodeDQ007Enabled</Name>
+                    <Type>CheckBox</Type>
+                    <WidthMode>SizeToAvailable</WidthMode>
+                    <FormControlExtension i:nil="true" />
+                    <Label>DQ-007 - Inactive items with open requirements</Label>
+                    <ShowLabel>Yes</ShowLabel>
+                  </AxFormControl>
+                  <AxFormControl xmlns="" i:type="AxFormCheckBoxControl">
+                    <Name>ABSCheckCodeDQ008Enabled</Name>
+                    <Type>CheckBox</Type>
+                    <WidthMode>SizeToAvailable</WidthMode>
+                    <FormControlExtension i:nil="true" />
+                    <Label>DQ-008 - Items missing unit conversions</Label>
+                    <ShowLabel>Yes</ShowLabel>
+                  </AxFormControl>
+                  <AxFormControl xmlns="" i:type="AxFormCheckBoxControl">
+                    <Name>ABSCheckCodeDQ009Enabled</Name>
+                    <Type>CheckBox</Type>
+                    <WidthMode>SizeToAvailable</WidthMode>
+                    <FormControlExtension i:nil="true" />
+                    <Label>DQ-009 - Master plan not active</Label>
+                    <ShowLabel>Yes</ShowLabel>
+                  </AxFormControl>
+                </Controls>
+                <Caption>Data Quality (DQ)</Caption>
+              </AxFormControl>
+              <AxFormControl xmlns="" i:type="AxFormTabPageControl">
+                <Name>ABSCheckSectionSSTabPage</Name>
+                <Pattern>Custom</Pattern>
+                <PatternVersion>1.1</PatternVersion>
+                <Type>TabPage</Type>
+                <FormControlExtension i:nil="true" />
+                <Controls>
+                  <AxFormControl xmlns="" i:type="AxFormCheckBoxControl">
+                    <Name>ABSCheckCodeSS001Enabled</Name>
+                    <Type>CheckBox</Type>
+                    <WidthMode>SizeToAvailable</WidthMode>
+                    <FormControlExtension i:nil="true" />
+                    <Label>SS-001 - No safety stock defined</Label>
+                    <ShowLabel>Yes</ShowLabel>
+                  </AxFormControl>
+                  <AxFormControl xmlns="" i:type="AxFormCheckBoxControl">
+                    <Name>ABSCheckCodeSS002Enabled</Name>
+                    <Type>CheckBox</Type>
+                    <WidthMode>SizeToAvailable</WidthMode>
+                    <FormControlExtension i:nil="true" />
+                    <Label>SS-002 - Safety stock greater than maximum stock</Label>
+                    <ShowLabel>Yes</ShowLabel>
+                  </AxFormControl>
+                  <AxFormControl xmlns="" i:type="AxFormCheckBoxControl">
+                    <Name>ABSCheckCodeSS003Enabled</Name>
+                    <Type>CheckBox</Type>
+                    <WidthMode>SizeToAvailable</WidthMode>
+                    <FormControlExtension i:nil="true" />
+                    <Label>SS-003 - Safety stock greater than ABC A-class threshold</Label>
+                    <ShowLabel>Yes</ShowLabel>
+                  </AxFormControl>
+                  <AxFormControl xmlns="" i:type="AxFormCheckBoxControl">
+                    <Name>ABSCheckCodeSS004Enabled</Name>
+                    <Type>CheckBox</Type>
+                    <WidthMode>SizeToAvailable</WidthMode>
+                    <FormControlExtension i:nil="true" />
+                    <Label>SS-004 - Reorder point lower than safety stock</Label>
+                    <ShowLabel>Yes</ShowLabel>
+                  </AxFormControl>
+                </Controls>
+                <Caption>Safety Stock (SS)</Caption>
+              </AxFormControl>
+              <AxFormControl xmlns="" i:type="AxFormTabPageControl">
+                <Name>ABSCheckSectionCVTabPage</Name>
+                <Pattern>Custom</Pattern>
+                <PatternVersion>1.1</PatternVersion>
+                <Type>TabPage</Type>
+                <FormControlExtension i:nil="true" />
+                <Controls>
+                  <AxFormControl xmlns="" i:type="AxFormCheckBoxControl">
+                    <Name>ABSCheckCodeCV001Enabled</Name>
+                    <Type>CheckBox</Type>
+                    <WidthMode>SizeToAvailable</WidthMode>
+                    <FormControlExtension i:nil="true" />
+                    <Label>CV-001 - Coverage group missing time fences</Label>
+                    <ShowLabel>Yes</ShowLabel>
+                  </AxFormControl>
+                  <AxFormControl xmlns="" i:type="AxFormCheckBoxControl">
+                    <Name>ABSCheckCodeCV002Enabled</Name>
+                    <Type>CheckBox</Type>
+                    <WidthMode>SizeToAvailable</WidthMode>
+                    <FormControlExtension i:nil="true" />
+                    <Label>CV-002 - Coverage group has lot-for-lot but no min/max</Label>
+                    <ShowLabel>Yes</ShowLabel>
+                  </AxFormControl>
+                  <AxFormControl xmlns="" i:type="AxFormCheckBoxControl">
+                    <Name>ABSCheckCodeCV003Enabled</Name>
+                    <Type>CheckBox</Type>
+                    <WidthMode>SizeToAvailable</WidthMode>
+                    <FormControlExtension i:nil="true" />
+                    <Label>CV-003 - Min/max coverage with zero min</Label>
+                    <ShowLabel>Yes</ShowLabel>
+                  </AxFormControl>
+                  <AxFormControl xmlns="" i:type="AxFormCheckBoxControl">
+                    <Name>ABSCheckCodeCV004Enabled</Name>
+                    <Type>CheckBox</Type>
+                    <WidthMode>SizeToAvailable</WidthMode>
+                    <FormControlExtension i:nil="true" />
+                    <Label>CV-004 - Min/max coverage with min greater than max</Label>
+                    <ShowLabel>Yes</ShowLabel>
+                  </AxFormControl>
+                </Controls>
+                <Caption>Coverage (CV)</Caption>
+              </AxFormControl>
+              <AxFormControl xmlns="" i:type="AxFormTabPageControl">
+                <Name>ABSCheckSectionPRTabPage</Name>
+                <Pattern>Custom</Pattern>
+                <PatternVersion>1.1</PatternVersion>
+                <Type>TabPage</Type>
+                <FormControlExtension i:nil="true" />
+                <Controls>
+                  <AxFormControl xmlns="" i:type="AxFormCheckBoxControl">
+                    <Name>ABSCheckCodePR001Enabled</Name>
+                    <Type>CheckBox</Type>
+                    <WidthMode>SizeToAvailable</WidthMode>
+                    <FormControlExtension i:nil="true" />
+                    <Label>PR-001 - Released item missing route</Label>
+                    <ShowLabel>Yes</ShowLabel>
+                  </AxFormControl>
+                  <AxFormControl xmlns="" i:type="AxFormCheckBoxControl">
+                    <Name>ABSCheckCodePR002Enabled</Name>
+                    <Type>CheckBox</Type>
+                    <WidthMode>SizeToAvailable</WidthMode>
+                    <FormControlExtension i:nil="true" />
+                    <Label>PR-002 - Released item missing BOM</Label>
+                    <ShowLabel>Yes</ShowLabel>
+                  </AxFormControl>
+                  <AxFormControl xmlns="" i:type="AxFormCheckBoxControl">
+                    <Name>ABSCheckCodePR003Enabled</Name>
+                    <Type>CheckBox</Type>
+                    <WidthMode>SizeToAvailable</WidthMode>
+                    <FormControlExtension i:nil="true" />
+                    <Label>PR-003 - Released item with both BOM and purchase</Label>
+                    <ShowLabel>Yes</ShowLabel>
+                  </AxFormControl>
+                </Controls>
+                <Caption>Production (PR)</Caption>
+              </AxFormControl>
+              <AxFormControl xmlns="" i:type="AxFormTabPageControl">
+                <Name>ABSCheckSectionFWTabPage</Name>
+                <Pattern>Custom</Pattern>
+                <PatternVersion>1.1</PatternVersion>
+                <Type>TabPage</Type>
+                <FormControlExtension i:nil="true" />
+                <Controls>
+                  <AxFormControl xmlns="" i:type="AxFormCheckBoxControl">
+                    <Name>ABSCheckCodeFW001Enabled</Name>
+                    <Type>CheckBox</Type>
+                    <WidthMode>SizeToAvailable</WidthMode>
+                    <FormControlExtension i:nil="true" />
+                    <Label>FW-001 - Active forecast missing for planned items</Label>
+                    <ShowLabel>Yes</ShowLabel>
+                  </AxFormControl>
+                  <AxFormControl xmlns="" i:type="AxFormCheckBoxControl">
+                    <Name>ABSCheckCodeFW002Enabled</Name>
+                    <Type>CheckBox</Type>
+                    <WidthMode>SizeToAvailable</WidthMode>
+                    <FormControlExtension i:nil="true" />
+                    <Label>FW-002 - Forecast horizon shorter than coverage horizon</Label>
+                    <ShowLabel>Yes</ShowLabel>
+                  </AxFormControl>
+                  <AxFormControl xmlns="" i:type="AxFormCheckBoxControl">
+                    <Name>ABSCheckCodeFW003Enabled</Name>
+                    <Type>CheckBox</Type>
+                    <WidthMode>SizeToAvailable</WidthMode>
+                    <FormControlExtension i:nil="true" />
+                    <Label>FW-003 - Demand forecast reduction misconfigured</Label>
+                    <ShowLabel>Yes</ShowLabel>
+                  </AxFormControl>
+                </Controls>
+                <Caption>Forecast and Workflow (FW)</Caption>
+              </AxFormControl>
+              <AxFormControl xmlns="" i:type="AxFormTabPageControl">
+                <Name>ABSCheckSectionBRTabPage</Name>
+                <Pattern>Custom</Pattern>
+                <PatternVersion>1.1</PatternVersion>
+                <Type>TabPage</Type>
+                <FormControlExtension i:nil="true" />
+                <Controls>
+                  <AxFormControl xmlns="" i:type="AxFormCheckBoxControl">
+                    <Name>ABSCheckCodeBR001Enabled</Name>
+                    <Type>CheckBox</Type>
+                    <WidthMode>SizeToAvailable</WidthMode>
+                    <FormControlExtension i:nil="true" />
+                    <Label>BR-001 - Vendor missing for buy items</Label>
+                    <ShowLabel>Yes</ShowLabel>
+                  </AxFormControl>
+                  <AxFormControl xmlns="" i:type="AxFormCheckBoxControl">
+                    <Name>ABSCheckCodeBR002Enabled</Name>
+                    <Type>CheckBox</Type>
+                    <WidthMode>SizeToAvailable</WidthMode>
+                    <FormControlExtension i:nil="true" />
+                    <Label>BR-002 - Lead time missing</Label>
+                    <ShowLabel>Yes</ShowLabel>
+                  </AxFormControl>
+                  <AxFormControl xmlns="" i:type="AxFormCheckBoxControl">
+                    <Name>ABSCheckCodeBR003Enabled</Name>
+                    <Type>CheckBox</Type>
+                    <WidthMode>SizeToAvailable</WidthMode>
+                    <FormControlExtension i:nil="true" />
+                    <Label>BR-003 - Replenishment quantity zero</Label>
+                    <ShowLabel>Yes</ShowLabel>
+                  </AxFormControl>
+                </Controls>
+                <Caption>Batch and Replenishment (BR)</Caption>
+              </AxFormControl>
+              <AxFormControl xmlns="" i:type="AxFormTabPageControl">
+                <Name>ABSCheckSectionPBTabPage</Name>
+                <Pattern>Custom</Pattern>
+                <PatternVersion>1.1</PatternVersion>
+                <Type>TabPage</Type>
+                <FormControlExtension i:nil="true" />
+                <Controls>
+                  <AxFormControl xmlns="" i:type="AxFormCheckBoxControl">
+                    <Name>ABSCheckCodePB001Enabled</Name>
+                    <Type>CheckBox</Type>
+                    <WidthMode>SizeToAvailable</WidthMode>
+                    <FormControlExtension i:nil="true" />
+                    <Label>PB-001 - Planning BOM item missing planning percentage</Label>
+                    <ShowLabel>Yes</ShowLabel>
+                  </AxFormControl>
+                  <AxFormControl xmlns="" i:type="AxFormCheckBoxControl">
+                    <Name>ABSCheckCodePB002Enabled</Name>
+                    <Type>CheckBox</Type>
+                    <WidthMode>SizeToAvailable</WidthMode>
+                    <FormControlExtension i:nil="true" />
+                    <Label>PB-002 - Planning BOM percentages do not sum to 100</Label>
+                    <ShowLabel>Yes</ShowLabel>
+                  </AxFormControl>
+                  <AxFormControl xmlns="" i:type="AxFormCheckBoxControl">
+                    <Name>ABSCheckCodePB003Enabled</Name>
+                    <Type>CheckBox</Type>
+                    <WidthMode>SizeToAvailable</WidthMode>
+                    <FormControlExtension i:nil="true" />
+                    <Label>PB-003 - Planning BOM marked active but no version</Label>
+                    <ShowLabel>Yes</ShowLabel>
+                  </AxFormControl>
+                </Controls>
+                <Caption>Planning BOM (PB)</Caption>
+              </AxFormControl>
+              <AxFormControl xmlns="" i:type="AxFormTabPageControl">
+                <Name>ABSCheckSectionPOTabPage</Name>
+                <Pattern>Custom</Pattern>
+                <PatternVersion>1.1</PatternVersion>
+                <Type>TabPage</Type>
+                <FormControlExtension i:nil="true" />
+                <Controls>
+                  <AxFormControl xmlns="" i:type="AxFormCheckBoxControl">
+                    <Name>ABSCheckCodePO001Enabled</Name>
+                    <Type>CheckBox</Type>
+                    <WidthMode>SizeToAvailable</WidthMode>
+                    <FormControlExtension i:nil="true" />
+                    <Label>PO-001 - Items excluded from Planning Optimization</Label>
+                    <ShowLabel>Yes</ShowLabel>
+                  </AxFormControl>
+                  <AxFormControl xmlns="" i:type="AxFormCheckBoxControl">
+                    <Name>ABSCheckCodePO002Enabled</Name>
+                    <Type>CheckBox</Type>
+                    <WidthMode>SizeToAvailable</WidthMode>
+                    <FormControlExtension i:nil="true" />
+                    <Label>PO-002 - Coverage group has unsupported settings</Label>
+                    <ShowLabel>Yes</ShowLabel>
+                  </AxFormControl>
+                  <AxFormControl xmlns="" i:type="AxFormCheckBoxControl">
+                    <Name>ABSCheckCodePO003Enabled</Name>
+                    <Type>CheckBox</Type>
+                    <WidthMode>SizeToAvailable</WidthMode>
+                    <FormControlExtension i:nil="true" />
+                    <Label>PO-003 - Negative days exceeds PO limit</Label>
+                    <ShowLabel>Yes</ShowLabel>
+                  </AxFormControl>
+                  <AxFormControl xmlns="" i:type="AxFormCheckBoxControl">
+                    <Name>ABSCheckCodePO004Enabled</Name>
+                    <Type>CheckBox</Type>
+                    <WidthMode>SizeToAvailable</WidthMode>
+                    <FormControlExtension i:nil="true" />
+                    <Label>PO-004 - Item-coverage exception count</Label>
+                    <ShowLabel>Yes</ShowLabel>
+                  </AxFormControl>
+                  <AxFormControl xmlns="" i:type="AxFormCheckBoxControl">
+                    <Name>ABSCheckCodePO005Enabled</Name>
+                    <Type>CheckBox</Type>
+                    <WidthMode>SizeToAvailable</WidthMode>
+                    <FormControlExtension i:nil="true" />
+                    <Label>PO-005 - Forecast model unsupported</Label>
+                    <ShowLabel>Yes</ShowLabel>
+                  </AxFormControl>
+                  <AxFormControl xmlns="" i:type="AxFormCheckBoxControl">
+                    <Name>ABSCheckCodePO006Enabled</Name>
+                    <Type>CheckBox</Type>
+                    <WidthMode>SizeToAvailable</WidthMode>
+                    <FormControlExtension i:nil="true" />
+                    <Label>PO-006 - Fit analysis issue count</Label>
+                    <ShowLabel>Yes</ShowLabel>
+                  </AxFormControl>
+                </Controls>
+                <Caption>Planning Optimization (PO)</Caption>
+              </AxFormControl>
+            </Controls>
+            <Style>FastTabs</Style>
+          </AxFormControl>
+        </Controls>
+        <Caption>@ABS:ABSPlanningOptimizationMenu</Caption>
+      </FormControl>
+      <Parent>Tab</Parent>
+      <PositionType>AfterItem</PositionType>
+      <PreviousSibling>BOM</PreviousSibling>
+    </AxFormExtensionControl>
+  </Controls>
+  <DataSourceModifications />
+  <DataSourceReferences />
+  <DataSources />
+  <Parts />
+  <PropertyModifications />
+</AxFormExtension>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxTableExtension xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>InventParameters.ABSExtension</Name>
+	<FieldGroupExtensions />
+	<FieldGroups />
+	<FieldModifications />
+	<Fields>
+		<AxTableField xmlns="" i:type="AxTableFieldString">
+			<Name>OpenAIEndpoint</Name>
+			<Label>@ABS:OpenAIEndpoint</Label>
+			<StringSize>500</StringSize>
+		</AxTableField>
+		<AxTableField xmlns="" i:type="AxTableFieldString">
+			<Name>OpenAIDeploymentId</Name>
+			<Label>@ABS:OpenAIDeploymentId</Label>
+			<StringSize>100</StringSize>
+		</AxTableField>
+		<AxTableField xmlns="" i:type="AxTableFieldString">
+			<Name>OpenAIApiKey</Name>
+			<Label>@ABS:OpenAIApiKey</Label>
+			<StringSize>500</StringSize>
+		</AxTableField>
+		<AxTableField xmlns="" i:type="AxTableFieldInt">
+			<Name>MaxTokens</Name>
+			<Label>@ABS:OpenAIMaxTokens</Label>
+		</AxTableField>
+		<AxTableField xmlns="" i:type="AxTableFieldString">
+			<Name>SystemPromptPrefix</Name>
+			<Label>@ABS:OpenAISystemPromptPrefix</Label>
+			<ExtendedDataType>Notes</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns="" i:type="AxTableFieldEnum">
+			<Name>CopilotEnabled</Name>
+			<Label>@ABS:CopilotEnabled</Label>
+			<EnumType>NoYes</EnumType>
+		</AxTableField>
+		<AxTableField xmlns="" i:type="AxTableFieldInt">
+			<Name>MRPOverdueHighDays</Name>
+			<Label>@ABS:ABSMRPOverdueHighDays</Label>
+			<HelpText>@ABS:ABSMRPOverdueHighDaysHelp</HelpText>
+		</AxTableField>
+		<AxTableField xmlns="" i:type="AxTableFieldInt">
+			<Name>MRPOverdueMediumDays</Name>
+			<Label>@ABS:ABSMRPOverdueMediumDays</Label>
+			<HelpText>@ABS:ABSMRPOverdueMediumDaysHelp</HelpText>
+		</AxTableField>
+		<AxTableField xmlns="" i:type="AxTableFieldInt">
+			<Name>MRPOversizedOrderMonths</Name>
+			<Label>@ABS:ABSMRPOversizedOrderMonths</Label>
+			<HelpText>@ABS:ABSMRPOversizedOrderMonthsHelp</HelpText>
+		</AxTableField>
+	</Fields>
+	<FullTextIndexes />
+	<Indexes />
+	<Mappings />
+	<PropertyModifications />
+	<RelationExtensions />
+	<RelationModifications />
+	<Relations />
+</AxTableExtension>

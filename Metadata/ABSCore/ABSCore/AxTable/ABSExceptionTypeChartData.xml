@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxTable xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>ABSExceptionTypeChartData</Name>
+  <SourceCode>
+    <Declaration><![CDATA[
+public class ABSExceptionTypeChartData extends common
+{
+}
+    ]]></Declaration>
+  </SourceCode>
+  <DeveloperDocumentation>@ABS:ABSExceptionTypeChartDataDeveloperDocumentation</DeveloperDocumentation>
+  <Label>@ABS:ABSAnalyticsExceptionTypeChartTitle</Label>
+  <TableGroup>WorksheetLine</TableGroup>
+  <TableType>InMemory</TableType>
+  <SaveDataPerCompany>No</SaveDataPerCompany>
+  <Fields>
+    <AxTableField xmlns="" i:type="AxTableFieldString">
+      <Name>TypeName</Name>
+      <ExtendedDataType>Description</ExtendedDataType>
+      <Label>@ABS:ABSMRPExceptionType</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldInt">
+      <Name>ExceptionCount</Name>
+      <Label>@ABS:ABSWorkspaceItemCount</Label>
+    </AxTableField>
+  </Fields>
+  <FieldGroups>
+    <AxTableFieldGroup>
+      <Name>AutoReport</Name>
+      <Label>@SYS21932</Label>
+      <Fields>
+        <AxTableFieldGroupField>
+          <DataField>TypeName</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>ExceptionCount</DataField>
+        </AxTableFieldGroupField>
+      </Fields>
+    </AxTableFieldGroup>
+    <AxTableFieldGroup>
+      <Name>AutoIdentification</Name>
+      <AutoPopulate>Yes</AutoPopulate>
+      <Label>@SYS19069</Label>
+      <Fields />
+    </AxTableFieldGroup>
+  </FieldGroups>
+  <Indexes />
+  <Mappings />
+  <Relations />
+  <StateMachines />
+</AxTable>

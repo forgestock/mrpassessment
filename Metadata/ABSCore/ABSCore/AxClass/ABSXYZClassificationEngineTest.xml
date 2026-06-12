@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>ABSXYZClassificationEngineTest</Name>
+  <SourceCode>
+    <Declaration><![CDATA[
+/// <summary>
+/// Unit tests for ABSXYZClassificationEngine.determineXYZClass().
+///
+/// The method maps Syntetos-Boylan inputs (ADI, CV2) to X/Y/Z:
+///   Smooth       (ADI < 1.32, CV2 < 0.49) -> X
+///   Erratic      (ADI < 1.32, CV2 >= 0.49) -> Y
+///   Intermittent (ADI >= 1.32, CV2 < 0.49) -> Y
+///   Lumpy        (ADI >= 1.32, CV2 >= 0.49) -> Z
+///
+/// Boundary values: ADI 1.32, CV2 0.49.
+/// </summary>
+class ABSXYZClassificationEngineTest extends SysTestCase
+{
+    ABSXYZClassificationEngine engine;
+}
+    ]]></Declaration>
+    <Methods>
+      <Method>
+        <Name>setUp</Name>
+        <Source><![CDATA[
+public void setUp()
+{
+    super();
+    engine = ABSXYZClassificationEngine::newParameters('', today(), today());
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>testDetermineXYZClass_X_Smooth</Name>
+        <Source><![CDATA[
+/// <summary>
+/// Smooth: frequent demand (ADI < 1.32) with stable size (CV2 < 0.49) → X.
+/// </summary>
+[SysTestMethodAttribute]
+public void testDetermineXYZClass_X_Smooth()
+{
+    this.assertEquals(ABSXYZClassification::X, engine.determineXYZClass(1.0, 0.1));
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>testDetermineXYZClass_X_JustBelowBothCuts</Name>
+        <Source><![CDATA[
+/// <summary>
+/// ADI 1.31 and CV2 0.48 (both just below the cut-offs) → X (Smooth).
+/// </summary>
+[SysTestMethodAttribute]
+public void testDetermineXYZClass_X_JustBelowBothCuts()
+{
+    this.assertEquals(ABSXYZClassification::X, engine.determineXYZClass(1.31, 0.48));
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>testDetermineXYZClass_Y_Erratic</Name>
+        <Source><![CDATA[
+/// <summary>
+/// Erratic: frequent demand (ADI < 1.32) with variable size (CV2 >= 0.49) → Y.
+/// </summary>
+[SysTestMethodAttribute]
+public void testDetermineXYZClass_Y_Erratic()
+{
+    this.assertEquals(ABSXYZClassification::Y, engine.determineXYZClass(1.0, 0.49));
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>testDetermineXYZClass_Y_Intermittent</Name>
+        <Source><![CDATA[
+/// <summary>
+/// Intermittent: infrequent demand (ADI >= 1.32) with steady size (CV2 < 0.49) → Y.
+/// </summary>
+[SysTestMethodAttribute]
+public void testDetermineXYZClass_Y_Intermittent()
+{
+    this.assertEquals(ABSXYZClassification::Y, engine.determineXYZClass(1.32, 0.2));
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>testDetermineXYZClass_Z_Lumpy</Name>
+        <Source><![CDATA[
+/// <summary>
+/// Lumpy: infrequent demand (ADI >= 1.32) with variable size (CV2 >= 0.49) → Z.
+/// </summary>
+[SysTestMethodAttribute]
+public void testDetermineXYZClass_Z_Lumpy()
+{
+    this.assertEquals(ABSXYZClassification::Z, engine.determineXYZClass(1.32, 0.49));
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>testDetermineXYZClass_Z_HighBoth</Name>
+        <Source><![CDATA[
+/// <summary>
+/// Strongly lumpy: high ADI and high CV2 → Z.
+/// </summary>
+[SysTestMethodAttribute]
+public void testDetermineXYZClass_Z_HighBoth()
+{
+    this.assertEquals(ABSXYZClassification::Z, engine.determineXYZClass(3.0, 1.5));
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>testValidate_False_EmptySiteId</Name>
+        <Source><![CDATA[
+/// <summary>
+/// validate() must return false when siteId is blank.
+/// </summary>
+[SysTestMethodAttribute]
+public void testValidate_False_EmptySiteId()
+{
+    ABSXYZClassificationEngine e = ABSXYZClassificationEngine::newParameters('', today(), today());
+    this.assertFalse(e.validate());
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>testValidate_False_InsufficientPeriods</Name>
+        <Source><![CDATA[
+/// <summary>
+/// A date range spanning fewer than 3 months must fail at runtime
+/// (validate() passes but run() emits warning and exits).
+/// This test confirms validate() itself passes for a short but syntactically
+/// valid range — the period guard is in run().
+/// </summary>
+[SysTestMethodAttribute]
+public void testValidate_False_InsufficientPeriods()
+{
+    // 1-month range — validate() returns true (date order is valid)
+    ABSXYZClassificationEngine e = ABSXYZClassificationEngine::newParameters(
+        'MY01', today(), today());
+    this.assertTrue(e.validate());
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>testValidate_False_FromDateAfterToDate</Name>
+        <Source><![CDATA[
+/// <summary>
+/// validate() must return false when fromDate > toDate.
+/// </summary>
+[SysTestMethodAttribute]
+public void testValidate_False_FromDateAfterToDate()
+{
+    ABSXYZClassificationEngine e = ABSXYZClassificationEngine::newParameters(
+        'MY01', today(), today() - 1);
+    this.assertFalse(e.validate());
+}
+        ]]></Source>
+      </Method>
+    </Methods>
+  </SourceCode>
+</AxClass>

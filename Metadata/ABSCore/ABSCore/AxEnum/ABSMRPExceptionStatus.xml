@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxEnum xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>ABSMRPExceptionStatus</Name>
+  <SourceCode>
+    <Declaration><![CDATA[]]></Declaration>
+  </SourceCode>
+  <DeveloperDocumentation>@ABS:ABSMRPExceptionStatusDeveloperDocumentation</DeveloperDocumentation>
+  <Label>@ABS:ABSMRPExceptionStatus</Label>
+  <EnumValues>
+    <AxEnumValue>
+      <Name>Open</Name>
+      <Label>@ABS:StatusOpen</Label>
+      <Value>0</Value>
+      <DeveloperDocumentation>@ABS:StatusOpenDeveloperDocumentation</DeveloperDocumentation>
+    </AxEnumValue>
+    <AxEnumValue>
+      <Name>Confirmed</Name>
+      <Label>@ABS:StatusConfirmed</Label>
+      <Value>1</Value>
+      <DeveloperDocumentation>@ABS:StatusConfirmedDeveloperDocumentation</DeveloperDocumentation>
+    </AxEnumValue>
+    <AxEnumValue>
+      <Name>Dismissed</Name>
+      <Label>@ABS:StatusDismissed</Label>
+      <Value>2</Value>
+      <DeveloperDocumentation>@ABS:StatusDismissedDeveloperDocumentation</DeveloperDocumentation>
+    </AxEnumValue>
+  </EnumValues>
+</AxEnum>

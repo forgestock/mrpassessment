@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>ABSMRPExceptionEngineTest</Name>
+  <SourceCode>
+    <Declaration><![CDATA[
+/// <summary>
+/// Unit tests for ABSMRPExceptionEngine pure-logic methods.
+///
+/// Covers:
+///   calcSeverity      — 12 cases across all exception types × ABC classes × day thresholds
+///   calcPriorityScore — 5 cases verifying multiplicative score formula
+///   validate          — 2 cases (blank planId, blank siteId)
+/// </summary>
+class ABSMRPExceptionEngineTest extends SysTestCase
+{
+    ABSMRPExceptionEngine engine;
+}
+    ]]></Declaration>
+    <Methods>
+      <Method>
+        <Name>setUp</Name>
+        <Source><![CDATA[
+public void setUp()
+{
+    super();
+    engine = ABSMRPExceptionEngine::newParameters('MRP', 'MY01');
+}
+        ]]></Source>
+      </Method>
+
+      <!-- ═══════════════════════════════════════════════════════
+           calcSeverity — OverdueOrder (day-threshold driven)
+           ═══════════════════════════════════════════════════════ -->
+
+      <Method>
+        <Name>testCalcSeverity_OverdueOrder_High_Over7Days</Name>
+        <Source><![CDATA[
+/// <summary>
+/// OverdueOrder with > 7 days late → High.
+/// </summary>
+[SysTestMethodAttribute]
+public void testCalcSeverity_OverdueOrder_High_Over7Days()
+{
+    ABSMRPExceptionSeverity actual = engine.calcSeverity(
+        ABSMRPExceptionType::OverdueOrder, 8, ABSABCClassification::C);
+
+    this.assertEquals(ABSMRPExceptionSeverity::High, actual);
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>testCalcSeverity_OverdueOrder_Medium_4To7Days</Name>
+        <Source><![CDATA[
+/// <summary>
+/// OverdueOrder with 4 days late (> 3, <= 7) → Medium.
+/// </summary>
+[SysTestMethodAttribute]
+public void testCalcSeverity_OverdueOrder_Medium_4To7Days()
+{
+    ABSMRPExceptionSeverity actual = engine.calcSeverity(
+        ABSMRPExceptionType::OverdueOrder, 4, ABSABCClassification::A);
+
+    this.assertEquals(ABSMRPExceptionSeverity::Medium, actual);
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>testCalcSeverity_OverdueOrder_Low_UpTo3Days</Name>
+        <Source><![CDATA[
+/// <summary>
+/// OverdueOrder with 3 days late (<= 3) → Low.
+/// </summary>
+[SysTestMethodAttribute]
+public void testCalcSeverity_OverdueOrder_Low_UpTo3Days()
+{
+    ABSMRPExceptionSeverity actual = engine.calcSeverity(
+        ABSMRPExceptionType::OverdueOrder, 3, ABSABCClassification::A);
+
+    this.assertEquals(ABSMRPExceptionSeverity::Low, actual);
+}
+        ]]></Source>
+      </Method>
+
+      <!-- ═══════════════════════════════════════════════════════
+           calcSeverity — SafetyStockBreach / LeadTimeViolation (ABC driven)
+           ═══════════════════════════════════════════════════════ -->
+
+      <Method>
+        <Name>testCalcSeverity_SafetyStockBreach_High_ClassA</Name>
+        <Source><![CDATA[
+/// <summary>
+/// SafetyStockBreach on A-class item → High.
+/// </summary>
+[SysTestMethodAttribute]
+public void testCalcSeverity_SafetyStockBreach_High_ClassA()
+{
+    ABSMRPExceptionSeverity actual = engine.calcSeverity(
+        ABSMRPExceptionType::SafetyStockBreach, 0, ABSABCClassification::A);
+
+    this.assertEquals(ABSMRPExceptionSeverity::High, actual);
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>testCalcSeverity_SafetyStockBreach_Medium_ClassB</Name>
+        <Source><![CDATA[
+/// <summary>
+/// SafetyStockBreach on B-class item → Medium.
+/// </summary>
+[SysTestMethodAttribute]
+public void testCalcSeverity_SafetyStockBreach_Medium_ClassB()
+{
+    ABSMRPExceptionSeverity actual = engine.calcSeverity(
+        ABSMRPExceptionType::SafetyStockBreach, 0, ABSABCClassification::B);
+
+    this.assertEquals(ABSMRPExceptionSeverity::Medium, actual);
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>testCalcSeverity_LeadTimeViolation_Low_ClassC</Name>
+        <Source><![CDATA[
+/// <summary>
+/// LeadTimeViolation on C-class item → Low.
+/// </summary>
+[SysTestMethodAttribute]
+public void testCalcSeverity_LeadTimeViolation_Low_ClassC()
+{
+    ABSMRPExceptionSeverity actual = engine.calcSeverity(
+        ABSMRPExceptionType::LeadTimeViolation, 0, ABSABCClassification::C);
+
+    this.assertEquals(ABSMRPExceptionSeverity::Low, actual);
+}
+        ]]></Source>
+      </Method>
+
+      <!-- ═══════════════════════════════════════════════════════
+           calcSeverity — ExcessInventory (ABC driven, capital impact)
+           ═══════════════════════════════════════════════════════ -->
+
+      <Method>
+        <Name>testCalcSeverity_ExcessInventory_High_ClassA</Name>
+        <Source><![CDATA[
+/// <summary>
+/// ExcessInventory on A-class item ties up most capital → High.
+/// </summary>
+[SysTestMethodAttribute]
+public void testCalcSeverity_ExcessInventory_High_ClassA()
+{
+    ABSMRPExceptionSeverity actual = engine.calcSeverity(
+        ABSMRPExceptionType::ExcessInventory, 0, ABSABCClassification::A);
+
+    this.assertEquals(ABSMRPExceptionSeverity::High, actual);
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>testCalcSeverity_ExcessInventory_Low_ClassC</Name>
+        <Source><![CDATA[
+/// <summary>
+/// ExcessInventory on C-class item → Low.
+/// </summary>
+[SysTestMethodAttribute]
+public void testCalcSeverity_ExcessInventory_Low_ClassC()
+{
+    ABSMRPExceptionSeverity actual = engine.calcSeverity(
+        ABSMRPExceptionType::ExcessInventory, 0, ABSABCClassification::C);
+
+    this.assertEquals(ABSMRPExceptionSeverity::Low, actual);
+}
+        ]]></Source>
+      </Method>
+
+      <!-- ═══════════════════════════════════════════════════════
+           calcSeverity — CapacityOverload (always High)
+           ═══════════════════════════════════════════════════════ -->
+
+      <Method>
+        <Name>testCalcSeverity_CapacityOverload_AlwaysHigh</Name>
+        <Source><![CDATA[
+/// <summary>
+/// CapacityOverload is always High regardless of ABC class or days.
+/// </summary>
+[SysTestMethodAttribute]
+public void testCalcSeverity_CapacityOverload_AlwaysHigh()
+{
+    // Verify with C-class (weakest item) — should still be High
+    ABSMRPExceptionSeverity actual = engine.calcSeverity(
+        ABSMRPExceptionType::CapacityOverload, 0, ABSABCClassification::C);
+
+    this.assertEquals(ABSMRPExceptionSeverity::High, actual);
+}
+        ]]></Source>
+      </Method>
+
+      <!-- ═══════════════════════════════════════════════════════
+           calcPriorityScore — multiplicative: severity(1-3) × abc(1-3) × xyz(1-3)
+           ═══════════════════════════════════════════════════════ -->
+
+      <Method>
+        <Name>testCalcPriorityScore_Maximum_HighAZ</Name>
+        <Source><![CDATA[
+/// <summary>
+/// High severity + A-class + Z-class → maximum score 3×3×3 = 27.
+/// Represents worst-case: unpredictable, high-value, critical exception.
+/// </summary>
+[SysTestMethodAttribute]
+public void testCalcPriorityScore_Maximum_HighAZ()
+{
+    real actual = engine.calcPriorityScore(
+        ABSMRPExceptionSeverity::High,
+        ABSABCClassification::A,
+        ABSXYZClassification::Z);
+
+    this.assertEquals(27.0, actual);
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>testCalcPriorityScore_Minimum_LowCX</Name>
+        <Source><![CDATA[
+/// <summary>
+/// Low severity + C-class + X-class → minimum score 1×1×1 = 1.
+/// </summary>
+[SysTestMethodAttribute]
+public void testCalcPriorityScore_Minimum_LowCX()
+{
+    real actual = engine.calcPriorityScore(
+        ABSMRPExceptionSeverity::Low,
+        ABSABCClassification::C,
+        ABSXYZClassification::X);
+
+    this.assertEquals(1.0, actual);
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>testCalcPriorityScore_Medium_MediumBY</Name>
+        <Source><![CDATA[
+/// <summary>
+/// Medium severity + B-class + Y-class → 2×2×2 = 8.
+/// </summary>
+[SysTestMethodAttribute]
+public void testCalcPriorityScore_Medium_MediumBY()
+{
+    real actual = engine.calcPriorityScore(
+        ABSMRPExceptionSeverity::Medium,
+        ABSABCClassification::B,
+        ABSXYZClassification::Y);
+
+    this.assertEquals(8.0, actual);
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>testCalcPriorityScore_HighAX</Name>
+        <Source><![CDATA[
+/// <summary>
+/// High severity + A-class + X-class (predictable high-value) → 3×3×1 = 9.
+/// </summary>
+[SysTestMethodAttribute]
+public void testCalcPriorityScore_HighAX()
+{
+    real actual = engine.calcPriorityScore(
+        ABSMRPExceptionSeverity::High,
+        ABSABCClassification::A,
+        ABSXYZClassification::X);
+
+    this.assertEquals(9.0, actual);
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>testCalcPriorityScore_NoneClassDefaultsTo1</Name>
+        <Source><![CDATA[
+/// <summary>
+/// ABSABCClassification::None falls through to abcScore=1 (same as C).
+/// Low + None + X → 1×1×1 = 1.
+/// </summary>
+[SysTestMethodAttribute]
+public void testCalcPriorityScore_NoneClassDefaultsTo1()
+{
+    real actual = engine.calcPriorityScore(
+        ABSMRPExceptionSeverity::Low,
+        ABSABCClassification::None,
+        ABSXYZClassification::X);
+
+    this.assertEquals(1.0, actual);
+}
+        ]]></Source>
+      </Method>
+
+      <!-- ═══════════════════════════════════════════════════════
+           validate
+           ═══════════════════════════════════════════════════════ -->
+
+      <Method>
+        <Name>testValidate_False_EmptyPlanId</Name>
+        <Source><![CDATA[
+/// <summary>
+/// validate() must return false when planId is blank.
+/// </summary>
+[SysTestMethodAttribute]
+public void testValidate_False_EmptyPlanId()
+{
+    ABSMRPExceptionEngine e = ABSMRPExceptionEngine::newParameters('', 'MY01');
+    this.assertFalse(e.validate());
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>testValidate_False_EmptySiteId</Name>
+        <Source><![CDATA[
+/// <summary>
+/// validate() must return false when siteId is blank.
+/// </summary>
+[SysTestMethodAttribute]
+public void testValidate_False_EmptySiteId()
+{
+    ABSMRPExceptionEngine e = ABSMRPExceptionEngine::newParameters('MRP', '');
+    this.assertFalse(e.validate());
+}
+        ]]></Source>
+      </Method>
+    </Methods>
+  </SourceCode>
+</AxClass>

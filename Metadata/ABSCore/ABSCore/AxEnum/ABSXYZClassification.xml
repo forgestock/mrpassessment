@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxEnum xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>ABSXYZClassification</Name>
+  <SourceCode>
+    <Declaration><![CDATA[]]></Declaration>
+  </SourceCode>
+  <DeveloperDocumentation>@ABS:ABSXYZClassificationDeveloperDocumentation</DeveloperDocumentation>
+  <Label>@ABS:ABSXYZClassification</Label>
+  <EnumValues>
+    <AxEnumValue>
+      <Name>None</Name>
+      <Label>@ABS:ClassificationNone</Label>
+      <Value>0</Value>
+    </AxEnumValue>
+    <AxEnumValue>
+      <Name>X</Name>
+      <Label>@ABS:XYZClassX</Label>
+      <Value>1</Value>
+      <DeveloperDocumentation>@ABS:XYZClassXDeveloperDocumentation</DeveloperDocumentation>
+    </AxEnumValue>
+    <AxEnumValue>
+      <Name>Y</Name>
+      <Label>@ABS:XYZClassY</Label>
+      <Value>2</Value>
+      <DeveloperDocumentation>@ABS:XYZClassYDeveloperDocumentation</DeveloperDocumentation>
+    </AxEnumValue>
+    <AxEnumValue>
+      <Name>Z</Name>
+      <Label>@ABS:XYZClassZ</Label>
+      <Value>3</Value>
+      <DeveloperDocumentation>@ABS:XYZClassZDeveloperDocumentation</DeveloperDocumentation>
+    </AxEnumValue>
+  </EnumValues>
+</AxEnum>

@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>ABSXYZClassificationEngine</Name>
+  <SourceCode>
+    <Declaration><![CDATA[
+class ABSXYZClassificationEngine
+{
+    InventSiteId    siteId;
+    TransDate       fromDate;
+    TransDate       toDate;
+}
+    ]]></Declaration>
+    <Methods>
+      <Method>
+        <Name>newParameters</Name>
+        <Source><![CDATA[
+public static ABSXYZClassificationEngine newParameters(
+    InventSiteId    _siteId,
+    TransDate       _fromDate,
+    TransDate       _toDate)
+{
+    ABSXYZClassificationEngine engine = new ABSXYZClassificationEngine();
+    engine.siteId   = _siteId;
+    engine.fromDate = _fromDate;
+    engine.toDate   = _toDate;
+    return engine;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>validate</Name>
+        <Source><![CDATA[
+public boolean validate()
+{
+    boolean ok = true;
+    if (!fromDate || !toDate)
+    {
+        warning("@ABS:XYZEngineValidateDateRange");
+        ok = false;
+    }
+    else if (fromDate > toDate)
+    {
+        warning("@ABS:XYZEngineValidateDateOrder");
+        ok = false;
+    }
+    return ok;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>determineXYZClass</Name>
+        <Source><![CDATA[
+/// <summary>
+/// Classifies demand variability using the Syntetos-Boylan (SBC) scheme, which
+/// separates the two things that make demand hard to forecast:
+///  - ADI  (average demand interval) = how OFTEN demand occurs (intermittency).
+///  - CV2  (squared CV of demand SIZES, measured only in periods that had demand)
+///          = how much the demand QUANTITY varies when it does occur.
+/// Standard SBC cut-offs (Syntetos, Boylan and Croston, 2005): ADI = 1.32, CV2 = 0.49.
+///  - Smooth      (ADI &lt; 1.32, CV2 &lt; 0.49): regular and stable  -> X
+///  - Erratic     (ADI &lt; 1.32, CV2 &gt;= 0.49): frequent, variable size -> Y
+///  - Intermittent(ADI &gt;= 1.32, CV2 &lt; 0.49): infrequent, steady size -> Y
+///  - Lumpy       (ADI &gt;= 1.32, CV2 &gt;= 0.49): infrequent and variable -> Z
+/// This avoids the classic pitfall of computing CV over all calendar periods
+/// (including zero-demand months), which inflates variability and forces almost
+/// every intermittent item to Z.
+/// </summary>
+public ABSXYZClassification determineXYZClass(real _adi, real _cvSquared)
+{
+    #define.AdiCut(1.32)
+    #define.Cv2Cut(0.49)
+
+    boolean intermittentInterval = _adi >= #AdiCut;
+    boolean variableSize         = _cvSquared >= #Cv2Cut;
+
+    if (!intermittentInterval && !variableSize)
+        return ABSXYZClassification::X;   // Smooth
+
+    if (intermittentInterval && variableSize)
+        return ABSXYZClassification::Z;   // Lumpy
+
+    return ABSXYZClassification::Y;        // Erratic or Intermittent
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>run</Name>
+        <Source><![CDATA[
+public void run()
+{
+    InventTrans         inventTrans;
+    InventDim           inventDim;
+    InventDim           onHandDim;
+    InventSum           inventSum;
+    ABSItemABCXYZ       itemRecord;
+    Map                 monthlyQtyMap;
+    Set                 itemSet;
+    SetEnumerator       itemEnum;
+    ItemId              currentItemId;
+    str                 mapKey;
+    int                 startPeriod;
+    int                 endPeriod;
+    int                 totalMonths;
+    int                 p;
+    int                 zeroPeriods;
+    int                 periodsWithDemand;
+    real                qty;
+    real                sumQty;
+    real                sumQtySq;
+    real                mean;
+    real                variance;
+    real                stddev;
+    real                cv;
+    real                meanSize;
+    real                varianceSize;
+    real                cvSquaredSize;
+    real                adi;
+    real                onHandQty;
+    real                rangeOfCoverage;
+    TransDate           monthStart;
+    int                 periodKey;
+
+    if (!this.validate()) { return; }
+
+    startPeriod = year(fromDate) * 12 + mthOfYr(fromDate) - 1;
+    endPeriod   = year(toDate)   * 12 + mthOfYr(toDate)   - 1;
+    totalMonths = endPeriod - startPeriod + 1;
+
+    if (totalMonths < 3)
+    {
+        warning("@ABS:XYZEngineInsufficientPeriods");
+        return;
+    }
+
+    monthlyQtyMap = new Map(Types::String, Types::Real);
+    itemSet       = new Set(Types::String);
+
+    // Build monthly demand map: key = "ItemId|periodKey", value = sumQty for that month
+    monthStart = mkDate(1, mthOfYr(fromDate), year(fromDate));
+    while (monthStart <= toDate)
+    {
+        periodKey = year(monthStart) * 12 + mthOfYr(monthStart) - 1;
+
+        // Demand = magnitude of all issues (sales deliveries, production
+        // consumption, transfer issues) physically/financially updated in the
+        // month. Captures components that are issued to production but never sold.
+        while select ItemId, sum(Qty) from inventTrans
+            group by inventTrans.ItemId
+            where inventTrans.DatePhysical >= monthStart
+               && inventTrans.DatePhysical <= endMth(monthStart)
+               && inventTrans.ItemId       != ''
+               && inventTrans.Qty          <  0
+               && (inventTrans.StatusIssue == StatusIssue::Sold
+                || inventTrans.StatusIssue == StatusIssue::Deducted)
+            join inventDim
+                where inventDim.inventDimId  == inventTrans.InventDimId
+                   && (siteId == '' || inventDim.InventSiteId == siteId)
+        {
+            mapKey = inventTrans.ItemId + '|' + int2Str(periodKey);
+            // Issue quantities are negative; demand is the positive magnitude.
+            monthlyQtyMap.insert(mapKey, -inventTrans.Qty);
+            itemSet.add(inventTrans.ItemId);
+        }
+
+        monthStart = endMth(monthStart) + 1;
+    }
+
+    if (itemSet.empty()) { return; }
+
+    ttsbegin;
+
+    itemEnum = itemSet.getEnumerator();
+    while (itemEnum.moveNext())
+    {
+        currentItemId = itemEnum.current();
+        sumQty        = 0;
+        sumQtySq      = 0;
+        zeroPeriods   = 0;
+
+        for (p = startPeriod; p <= endPeriod; p++)
+        {
+            mapKey = currentItemId + '|' + int2Str(p);
+            qty    = monthlyQtyMap.exists(mapKey) ? monthlyQtyMap.lookup(mapKey) : 0;
+            if (qty == 0) { zeroPeriods++; }
+            sumQty   += qty;
+            sumQtySq += qty * qty;
+        }
+
+        mean = sumQty / totalMonths;
+        if (mean <= 0) { continue; }
+
+        variance = (sumQtySq / totalMonths) - (mean * mean);
+        if (variance < 0) { variance = 0; }
+        stddev = power(variance, 0.5);
+        cv     = stddev / mean;
+
+        // Syntetos-Boylan inputs (classification only; the per-period mean/stddev/cv
+        // above are kept unchanged for the safety-stock recommender).
+        //  - ADI = average demand interval = periods / periods-with-demand.
+        //  - CV2 = squared CV of demand SIZES measured only in periods that had demand
+        //          (zero months excluded, so intermittency no longer inflates it).
+        periodsWithDemand = totalMonths - zeroPeriods;
+        adi           = periodsWithDemand > 0 ? totalMonths / periodsWithDemand : 0;
+        meanSize      = periodsWithDemand > 0 ? sumQty / periodsWithDemand : 0;
+        varianceSize  = periodsWithDemand > 0 ? (sumQtySq / periodsWithDemand) - (meanSize * meanSize) : 0;
+        if (varianceSize < 0) { varianceSize = 0; }
+        cvSquaredSize = meanSize > 0 ? varianceSize / (meanSize * meanSize) : 0;
+
+        select sum(PhysicalInvent) from inventSum
+            where inventSum.ItemId == currentItemId
+            join onHandDim
+                where onHandDim.inventDimId  == inventSum.InventDimId
+                   && (siteId == '' || onHandDim.InventSiteId == siteId);
+
+        onHandQty       = inventSum.PhysicalInvent;
+        rangeOfCoverage = mean > 0 ? (onHandQty * 30.44) / mean : 0;
+
+        select firstonly forUpdate itemRecord
+            where itemRecord.ItemId == currentItemId
+               && itemRecord.SiteId == siteId;
+
+        if (!itemRecord.RecId)
+        {
+            itemRecord.ItemId = currentItemId;
+            itemRecord.SiteId = siteId;
+        }
+
+        itemRecord.DemandMean       = mean;
+        itemRecord.DemandStdDev     = stddev;
+        itemRecord.DemandCV         = cv;
+        itemRecord.XYZClass         = this.determineXYZClass(adi, cvSquaredSize);
+        itemRecord.ZeroPeriods      = zeroPeriods;
+        itemRecord.HistoryMonthsAvailable = totalMonths - zeroPeriods;
+        itemRecord.RangeOfCoverage  = rangeOfCoverage;
+        itemRecord.CalculatedDate   = DateTimeUtil::getToday(DateTimeUtil::getUserPreferredTimeZone());
+
+        if (itemRecord.RecId) { itemRecord.update(); }
+        else                  { itemRecord.insert(); }
+    }
+
+    ttscommit;
+}
+        ]]></Source>
+      </Method>
+    </Methods>
+  </SourceCode>
+</AxClass>

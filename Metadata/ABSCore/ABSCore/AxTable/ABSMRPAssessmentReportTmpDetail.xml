@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxTable xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>ABSMRPAssessmentReportTmpDetail</Name>
+  <DeveloperDocumentation>@ABS:ABSMRPAssessmentReportTmpDetailDeveloperDocumentation</DeveloperDocumentation>
+  <Label>@ABS:ABSMRPAssessmentReport</Label>
+  <TableType>TempDB</TableType>
+  <SaveDataPerCompany>Yes</SaveDataPerCompany>
+  <Fields>
+    <AxTableField xmlns="" i:type="AxTableFieldString">
+      <Name>RunId</Name>
+      <ExtendedDataType>ABSMRPAssessmentRunId</ExtendedDataType>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldString">
+      <Name>CheckCode</Name>
+      <ExtendedDataType>ABSMRPCheckCode</ExtendedDataType>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldString">
+      <Name>ItemId</Name>
+      <ExtendedDataType>ItemId</ExtendedDataType>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldString">
+      <Name>SiteId</Name>
+      <ExtendedDataType>InventSiteId</ExtendedDataType>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldEnum">
+      <Name>ABCClass</Name>
+      <EnumType>ABSABCClassification</EnumType>
+      <Label>@ABS:ABCClass</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldEnum">
+      <Name>XYZClass</Name>
+      <EnumType>ABSXYZClassification</EnumType>
+      <Label>@ABS:XYZClass</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldInt">
+      <Name>PriorityScore</Name>
+      <Label>@ABS:PriorityScore</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldEnum">
+      <Name>CompoundedRisk</Name>
+      <EnumType>NoYes</EnumType>
+      <Label>@ABS:CompoundedRisk</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldString">
+      <Name>DetailNote</Name>
+      <ExtendedDataType>Description</ExtendedDataType>
+      <Label>@ABS:DetailNote</Label>
+    </AxTableField>
+  </Fields>
+  <FieldGroups>
+    <AxTableFieldGroup>
+      <Name>AutoReport</Name>
+      <Fields>
+        <AxTableFieldGroupField><DataField>CheckCode</DataField></AxTableFieldGroupField>
+        <AxTableFieldGroupField><DataField>ItemId</DataField></AxTableFieldGroupField>
+        <AxTableFieldGroupField><DataField>SiteId</DataField></AxTableFieldGroupField>
+        <AxTableFieldGroupField><DataField>ABCClass</DataField></AxTableFieldGroupField>
+        <AxTableFieldGroupField><DataField>XYZClass</DataField></AxTableFieldGroupField>
+        <AxTableFieldGroupField><DataField>PriorityScore</DataField></AxTableFieldGroupField>
+        <AxTableFieldGroupField><DataField>CompoundedRisk</DataField></AxTableFieldGroupField>
+        <AxTableFieldGroupField><DataField>DetailNote</DataField></AxTableFieldGroupField>
+      </Fields>
+    </AxTableFieldGroup>
+  </FieldGroups>
+  <Indexes />
+  <Mappings />
+  <Relations />
+  <StateMachines />
+</AxTable>

@@ -1,0 +1,2315 @@
+ABCClass=ABC class
+ ;Field label for the ABC classification value on item and exception records.
+ClassificationNone=Unclassified
+ ;Label for the None enum value on ABC and XYZ classification enums, shown when an item has no sales history and cannot be classified.
+ABCClassADeveloperDocumentation=High-value items contributing to the top 80% of cumulative sales revenue.
+ ;Developer documentation for ABC class A enum value.
+ABCClassA=A
+ ;Label for ABC classification value A (top 80% of sales revenue).
+ABCClassBDeveloperDocumentation=Medium-value items contributing between 80% and 95% of cumulative sales revenue.
+ ;Developer documentation for ABC class B enum value.
+ABCClassB=B
+ ;Label for ABC classification value B (80–95% of sales revenue).
+ABCClassCDeveloperDocumentation=Low-value items contributing the remaining 5% of cumulative sales revenue.
+ ;Developer documentation for ABC class C enum value.
+ABCClassC=C
+ ;Label for ABC classification value C (95–100% of sales revenue).
+ABCEngineNoSalesData=No sales data found for the specified site and date range. ABC classification was not updated.
+ ;Warning shown when the ABC engine finds no invoice transactions to process.
+ABCEngineValidateDateOrder=From date must be earlier than or equal to the to date.
+ ;Validation error when from date is after to date in ABC engine.
+ABCEngineValidateDateRange=From date and to date must both be specified.
+ ;Validation error when either date is missing in ABC engine.
+ABCEngineValidateSiteId=Site must be specified.
+ ;Validation error when no site is provided to ABC engine.
+ABSABCClassificationDeveloperDocumentation=Classifies items by cumulative sales value: A (top 80%), B (80–95%), C (remainder).
+ ;Developer documentation for ABSABCClassification enum.
+ABSABCClassification=ABC classification
+ ;Label for the ABSABCClassification enum.
+ABSABCXYZBatchJobDescription=ABC/XYZ Inventory Classification
+ ;Description shown in the batch job list for ABSABCXYZBatchJob.
+ABSABCXYZDeleteFailed=Failed to delete existing ABC/XYZ classification records. No data was changed.
+ ;Error shown when the delete-and-regenerate step fails to clear ABSItemABCXYZ.
+ABSABCXYZClassificationMaintain=Maintain ABC/XYZ inventory classification
+ ;Label for the ABSABCXYZClassificationMaintain security privilege.
+ABSABCXYZClassificationMaintainDescription=Allows the user to run the ABC/XYZ inventory classification batch job
+ ;Description for the ABSABCXYZClassificationMaintain security privilege.
+ABSInventoryClassificationMaintain=Maintain inventory classification
+ ;Label for the ABSInventoryClassificationMaintain security duty.
+ABSInventoryClassificationMenu=ABC/XYZ inventory classification
+ ;Label for the ABC/XYZ classification submenu under Inventory management > Periodic tasks.
+ABSPlanningOptimizationMenu=Inventory optimizer
+ ;Label for the ABS planning submenu under Master planning.
+ABSInventoryPlannerRole=Inventory planner
+ ;Label for the ABSInventoryPlanner security role.
+ABSItemABCXYZDeveloperDocumentation=Stores ABC and XYZ classification results for items by site, including sales statistics and demand variability metrics.
+ ;Developer documentation for ABSItemABCXYZ table.
+ABSItemABCXYZ=Item ABC/XYZ classification
+ ;Label for the ABSItemABCXYZ table.
+ABSItemABCXYZFormCaption=Item ABC/XYZ classification
+ ;Form caption for the ABSItemABCXYZ form.
+ABSMRPAssessmentReport=MRP assessment report
+ ;Label for the MRP Assessment SSRS report and its print menu item.
+ABSMRPAssessmentReportTmpDetailDeveloperDocumentation=Temporary report-detail table that stores item-level MRP assessment findings per run for report rendering.
+ ;Developer documentation for ABSMRPAssessmentReportTmpDetail table.
+ABSMRPAssessmentReportTmpResultDeveloperDocumentation=Temporary report-result table that stores run-level and check-level MRP assessment output for report rendering.
+ ;Developer documentation for ABSMRPAssessmentReportTmpResult table.
+ABSMRPAssessmentReportPrint=Print assessment
+ ;Label for the Print assessment button on the MRP Assessment form.
+ABSMRPAssessment=MRP assessment
+ ;Form caption for the ABSMRPAssessment list page.
+ABSMRPAssessmentTrendChartTitle=Issues found over time
+ ;Title of the assessment run trend line chart.
+ABSMRPAssessmentRunDetail=MRP assessment run detail
+ ;Form caption for the ABSMRPAssessmentRunDetail details form.
+AssessmentRunInfo=Assessment run
+ ;FastTab caption showing the assessment run header information.
+CheckResults=Check results
+ ;FastTab caption listing the assessment check results.
+ABSAssessmentSummaryTab=Summary
+ ;FastTab caption for the assessment summary chart page.
+ABSAssessmentSummaryChartTitle=Affected items by category
+ ;Title of the assessment summary column chart.
+ItemDetails=Item details
+ ;FastTab caption listing the item-level details for a selected check.
+ViewDetail=View detail
+ ;Button caption to drill down into an assessment run.
+ABSMRPExceptionBatchJobDescription=MRP Exception Detection
+ ;Description shown in the batch job list for ABSMRPExceptionBatchJob.
+ABSMRPExceptionDeveloperDocumentation=Stores MRP exceptions detected during planning runs, enriched with ABC/XYZ context for prioritisation.
+ ;Developer documentation for ABSMRPException table.
+ABSMRPException=MRP exception
+ ;Label for the ABSMRPException table.
+ABSMRPExceptionFormCaption=MRP exceptions
+ ;Form caption for the ABSMRPException form.
+ABSExceptionCountLabel=Exception count
+ ;Field label for the per-row exception counter used to total exceptions by type.
+ABSMRPExceptionSummaryTab=Summary
+ ;Tab caption for the exception summary donut page.
+ABSMRPExceptionChartTitle=Open exceptions by type
+ ;Title of the exception summary donut chart.
+ABSMRPExceptionOverviewTab=Exception overview
+ ;Tab caption for the overview grid on the ABSMRPException form.
+ABSMRPExceptionResolutionTab=Resolution
+ ;Tab caption for the resolution grid on the ABSMRPException form.
+ABSMRPExceptionGroupClassification=Classification
+ ;Group caption on the ABSMRPException details tab.
+ABSMRPExceptionGroupDetails=Exception details
+ ;Group caption on the ABSMRPException details tab.
+ABSMRPExceptionGroupResolution=Resolution
+ ;Group caption on the ABSMRPException details tab.
+ABSMRPExceptionSeverityDeveloperDocumentation=Severity level of the MRP exception.
+ ;Developer documentation for ABSMRPExceptionSeverity enum.
+ABSMRPExceptionSeverity=Severity
+ ;Label for the ABSMRPExceptionSeverity enum.
+ABSMRPExceptionStatusDeveloperDocumentation=Current workflow status of the MRP exception.
+ ;Developer documentation for ABSMRPExceptionStatus enum.
+ABSMRPExceptionStatus=Exception status
+ ;Label for the ABSMRPExceptionStatus enum.
+ABSMRPExceptionTypeDeveloperDocumentation=Type of MRP exception detected during the planning run.
+ ;Developer documentation for ABSMRPExceptionType enum.
+ABSMRPExceptionType=Exception type
+ ;Label for the ABSMRPExceptionType enum.
+ABSXYZClassificationDeveloperDocumentation=Classifies items by demand variability using coefficient of variation: X (CV < 0.5), Y (0.5 ≤ CV < 1.0), Z (CV ≥ 1.0).
+ ;Developer documentation for ABSXYZClassification enum.
+ABSXYZClassification=XYZ classification
+ ;Label for the ABSXYZClassification enum.
+BatchValidateDateOrder=From date must be earlier than or equal to the to date.
+ ;Validation error when from date is after to date in the batch job dialog.
+BatchValidateDateRange=From date and to date must both be specified.
+ ;Validation error when either date is missing in the batch job dialog.
+BatchValidateSiteId=Site must be specified.
+ ;Validation error when no site is selected in the batch job dialog.
+CalculatedDate=Calculated date
+ ;Field label for the date the ABC/XYZ classification was last calculated.
+Classification=Classification
+ ;Field group label for ABC/XYZ classification fields on ABSItemABCXYZ.
+CreatedDate=Created date
+ ;Field label for the date the MRP exception record was created.
+CumulativePct=Cumulative %
+ ;Field label for the running cumulative sales percentage used in ABC ranking.
+DeleteAndRegenerate=Delete and regenerate
+ ;Batch dialog checkbox: when selected, all existing classification records for the site are deleted before the run so results are fully regenerated from scratch.
+DemandCV=Demand CV
+ ;Field label for the coefficient of variation of monthly demand.
+DemandMean=Mean monthly demand
+ ;Field label for the average monthly demand quantity.
+DemandStatistics=Demand statistics
+ ;Field group label for demand variability fields on ABSItemABCXYZ.
+DemandStdDev=Demand std. deviation
+ ;Field label for the standard deviation of monthly demand.
+ExceptionDays=Exception days
+ ;Field label for the number of days associated with the MRP exception.
+ExceptionNotOpen=Exception must be in Open status before it can be confirmed or dismissed
+ ;Validation message shown when attempting to confirm or dismiss an exception that is not Open.
+ExceptionDetails=Exception details
+ ;Field group label for exception detail fields on ABSMRPException.
+ExceptionQty=Exception quantity
+ ;Field label for the quantity associated with the MRP exception.
+ExceptionTypeCapacityOverloadDeveloperDocumentation=A single planned order quantity exceeds a configurable number of months of average demand (a lot-sizing / overstock risk). Enum name kept for history; surfaced to users as "Oversized order".
+ ;Developer documentation for CapacityOverload exception type.
+ExceptionTypeCapacityOverload=Oversized order
+ ;Label for MRP exception type: oversized planned order.
+ExceptionTypeExcessInventoryDeveloperDocumentation=Projected on-hand inventory significantly exceeds forecast demand.
+ ;Developer documentation for ExcessInventory exception type.
+ExceptionTypeExcessInventory=Excess inventory
+ ;Label for MRP exception type: excess inventory.
+ExceptionTypeLeadTimeViolationDeveloperDocumentation=An order cannot be placed in time to meet the requirement date given the supplier lead time.
+ ;Developer documentation for LeadTimeViolation exception type.
+ExceptionTypeLeadTimeViolation=Lead time violation
+ ;Label for MRP exception type: lead time violation.
+ExceptionTypeOverdueOrderDeveloperDocumentation=A planned or open order has passed its required date without being fulfilled.
+ ;Developer documentation for OverdueOrder exception type.
+ExceptionTypeOverdueOrder=Overdue order
+ ;Label for MRP exception type: overdue order.
+ExceptionTypeSafetyStockBreachDeveloperDocumentation=Projected on-hand inventory falls below the defined safety stock level.
+ ;Developer documentation for SafetyStockBreach exception type.
+ExceptionTypeSafetyStockBreach=Safety stock breach
+ ;Label for MRP exception type: safety stock breach.
+ExceptionType=Exception type
+ ;Field label for the MRP exception type field.
+FromDate=From date
+ ;Dialog field label for the analysis period start date.
+MRPEngineNoPlanVersion=No active plan version found. Run master planning first.
+ ;Error shown when no active ReqPlanVersion exists for the specified plan ID.
+MRPEngineValidatePlanId=Plan must be specified.
+ ;Validation error when no plan ID is provided to MRP exception engine.
+MRPEngineValidateSiteId=Site must be specified.
+ ;Validation error when no site is provided to MRP exception engine.
+MRPPlanId=Plan
+ ;Dialog field label for the MRP plan selection.
+MRPSuggestedCancelPO=Cancel or postpone planned replenishment orders to reduce excess stock.
+ ;Suggested action for ExcessInventory exception type.
+MRPSuggestedExpeditePO=Expedite or reschedule planned order to fulfil overdue requirement.
+ ;Suggested action for OverdueOrder exception type.
+MRPSuggestedPlaceOrder=Place purchase order immediately or negotiate earlier delivery.
+ ;Suggested action for LeadTimeViolation exception type.
+MRPSuggestedRaisePO=Raise emergency purchase order to replenish safety stock.
+ ;Suggested action for SafetyStockBreach exception type.
+MRPSuggestedReviewStock=Review on-hand stock level and cancel or defer open replenishment orders to bring days of supply within the target range.
+ ;Suggested action for ExcessInventory exception flagged by the range-of-coverage threshold.
+MRPSuggestedSplitOrder=Split planned order into smaller batches to reduce single-order supply beyond the configured months of average demand.
+ ;Suggested action for CapacityOverload exception type.
+PriorityScore=Priority score
+ ;Field label for the calculated priority score of the MRP exception.
+RangeOfCoverage=Range of coverage (days)
+ ;Field label for the number of days of on-hand stock relative to average monthly demand.
+ReqPORecId=Requirement record
+ ;Field label for the record reference to the source planned order.
+RequirementDate=Requirement date
+ ;Field label for the date by which the requirement must be met.
+Resolution=Resolution
+ ;Field group label for resolution fields on ABSMRPException.
+ResolvedBy=Resolved by
+ ;Field label for the user who resolved the MRP exception.
+ResolvedDate=Resolved date
+ ;Field label for the date the MRP exception was resolved.
+SalesAmt12M=12-month sales amount
+ ;Field label for the total sales revenue over the 12-month analysis window.
+SalesAmtPct=Sales amount %
+ ;Field label for this item's share of total site sales revenue.
+Severity=Severity
+ ;Field label for the severity of the MRP exception.
+SeverityHighDeveloperDocumentation=Critical exception requiring immediate attention.
+ ;Developer documentation for High severity enum value.
+SeverityHigh=High
+ ;Label for exception severity: high.
+SeverityLowDeveloperDocumentation=Informational exception that can be reviewed at the next planning cycle.
+ ;Developer documentation for Low severity enum value.
+SeverityLow=Low
+ ;Label for exception severity: low.
+SeverityMediumDeveloperDocumentation=Exception requiring review and action within the current planning period.
+ ;Developer documentation for Medium severity enum value.
+SeverityMedium=Medium
+ ;Label for exception severity: medium.
+Site=Site
+ ;Dialog field label for the inventory site selection.
+StatusConfirmedDeveloperDocumentation=Exception has been reviewed and the associated order or action has been confirmed.
+ ;Developer documentation for Confirmed status enum value.
+StatusConfirmed=Confirmed
+ ;Label for exception status: confirmed.
+StatusDismissedDeveloperDocumentation=Exception has been reviewed and dismissed as not requiring action.
+ ;Developer documentation for Dismissed status enum value.
+StatusDismissed=Dismissed
+ ;Label for exception status: dismissed.
+StatusOpenDeveloperDocumentation=Exception is open and has not yet been reviewed or actioned.
+ ;Developer documentation for Open status enum value.
+StatusOpen=Open
+ ;Label for exception status: open.
+Status=Status
+ ;Field label for the current status of the MRP exception.
+SuggestedAction=Suggested action
+ ;Field label for the free-text suggested action for the MRP exception.
+ToDate=To date
+ ;Dialog field label for the analysis period end date.
+XYZClass=XYZ class
+ ;Field label for the XYZ classification value on item and exception records.
+XYZClassXDeveloperDocumentation=Stable demand items with a coefficient of variation below 0.5.
+ ;Developer documentation for XYZ class X enum value.
+XYZClassX=X
+ ;Label for XYZ classification value X (CV < 0.5, stable demand).
+XYZClassYDeveloperDocumentation=Variable demand items with a coefficient of variation between 0.5 and 1.0.
+ ;Developer documentation for XYZ class Y enum value.
+XYZClassY=Y
+ ;Label for XYZ classification value Y (0.5 ≤ CV < 1.0, variable demand).
+XYZClassZDeveloperDocumentation=Highly variable demand items with a coefficient of variation of 1.0 or above.
+ ;Developer documentation for XYZ class Z enum value.
+XYZClassZ=Z
+ ;Label for XYZ classification value Z (CV ≥ 1.0, highly variable demand).
+XYZEngineInsufficientPeriods=At least 3 complete monthly periods are required for XYZ classification. Widen the date range and try again.
+ ;Warning shown when the analysis window is too short for reliable XYZ calculation.
+XYZEngineValidateDateOrder=From date must be earlier than or equal to the to date.
+ ;Validation error when from date is after to date in XYZ engine.
+XYZEngineValidateDateRange=From date and to date must both be specified.
+ ;Validation error when either date is missing in XYZ engine.
+XYZEngineValidateSiteId=Site must be specified.
+ ;Validation error when no site is provided to XYZ engine.
+ZeroPeriods=Zero demand periods
+ ;Field label for the number of months in the analysis window with zero demand.
+ConfirmException=Confirm
+ ;Action button label to confirm an Open MRP exception, indicating the planner has reviewed and accepted the situation.
+DismissException=Dismiss
+ ;Action button label to dismiss an Open MRP exception, indicating the planner has reviewed and no action is required.
+ABSSortGroup=Sort
+ ;Action pane group caption for user-selectable sorting on the Item ABC/XYZ form.
+ABSSortDefault=Default order
+ ;Button caption to restore the default ABC -> XYZ -> Sales order.
+ABSSortSalesAmount=Sort by sales amount
+ ;Button caption to sort rows by 12-month sales amount in descending order.
+ABSSortCriticality=Sort by criticality
+ ;Button caption to sort rows by criticality proxy (range of coverage and demand variability).
+ExceptionManagement=Exception management
+ ;Button group label on the MRP exception form action pane.
+FilterAll=All
+ ;Filter button label used to clear an active ABC or XYZ class filter and show all items.
+MatrixCellAX=AX – High value, stable demand
+ ;Matrix cell label for items that are both ABC class A and XYZ class X.
+MatrixCellAY=AY – High value, variable demand
+ ;Matrix cell label for items that are both ABC class A and XYZ class Y.
+MatrixCellAZ=AZ – High value, irregular demand
+ ;Matrix cell label for items that are both ABC class A and XYZ class Z.
+MatrixCellBX=BX – Medium value, stable demand
+ ;Matrix cell label for items that are both ABC class B and XYZ class X.
+MatrixCellBY=BY – Medium value, variable demand
+ ;Matrix cell label for items that are both ABC class B and XYZ class Y.
+MatrixCellBZ=BZ – Medium value, irregular demand
+ ;Matrix cell label for items that are both ABC class B and XYZ class Z.
+MatrixCellCX=CX – Low value, stable demand
+ ;Matrix cell label for items that are both ABC class C and XYZ class X.
+MatrixCellCY=CY – Low value, variable demand
+ ;Matrix cell label for items that are both ABC class C and XYZ class Y.
+MatrixCellCZ=CZ – Low value, irregular demand
+ ;Matrix cell label for items that are both ABC class C and XYZ class Z.
+MatrixClearFilter=All items
+ ;Button label to clear the matrix cell filter and show all items in the grid.
+MatrixFormCaption=ABC/XYZ classification matrix
+ ;Form caption for the ABSABCXYZMatrix form.
+ABSSummaryInquiryCaption=ABC/XYZ matrix summary
+ ;Caption for the ABSABCXYZSummaryInquiry form and its menu item.
+ABSRefresh=Refresh
+ ;Label for the Refresh button on the ABSABCXYZSummaryInquiry form.
+ABSSummaryTabX=X — Stable demand
+ ;Tab page caption for the X (stable demand) XYZ class on the ABSABCXYZSummaryInquiry detail form.
+ABSSummaryTabY=Y — Variable demand
+ ;Tab page caption for the Y (variable demand) XYZ class on the ABSABCXYZSummaryInquiry detail form.
+ABSSummaryTabZ=Z — Sporadic demand
+ ;Tab page caption for the Z (sporadic demand) XYZ class on the ABSABCXYZSummaryInquiry detail form.
+MatrixPrereqNoABCXYZ=No ABC/XYZ classification records found. Please run the 'ABC/XYZ Inventory Classification' batch job first.
+ ;Error shown when the ABC/XYZ matrix report is run but ABSItemABCXYZ has no records for the selected site.
+MatrixPrereqNoStockMonitor=No stock level advisor records found. Please run the 'Stock Level Advisor' batch job first.
+ ;Error shown when the ABC/XYZ matrix report is run but ABSStockLevelMonitor has no records for the selected site.
+MatrixItemCount=Items
+ ;Column header for the item count column in the matrix grid.
+MatrixSalesAmt=Sales amount
+ ;Column header for the sales amount column in the matrix grid.
+MatrixItemCountX=X items
+ ;Column header for the X class item count column in the ABC/XYZ matrix report.
+MatrixItemCountY=Y items
+ ;Column header for the Y class item count column in the ABC/XYZ matrix report.
+MatrixItemCountZ=Z items
+ ;Column header for the Z class item count column in the ABC/XYZ matrix report.
+MatrixSalesAmtX=X consumption
+ ;Column header for 12-month sales amount of X class items in the ABC/XYZ matrix report.
+MatrixSalesAmtY=Y consumption
+ ;Column header for 12-month sales amount of Y class items in the ABC/XYZ matrix report.
+MatrixSalesAmtZ=Z consumption
+ ;Column header for 12-month sales amount of Z class items in the ABC/XYZ matrix report.
+MatrixOnHandAmtX=X on-hand value
+ ;Column header for on-hand inventory value of X class items in the ABC/XYZ matrix report.
+MatrixOnHandAmtY=Y on-hand value
+ ;Column header for on-hand inventory value of Y class items in the ABC/XYZ matrix report.
+MatrixOnHandAmtZ=Z on-hand value
+ ;Column header for on-hand inventory value of Z class items in the ABC/XYZ matrix report.
+MatrixGrandTotal=Total
+ ;Grand total row caption in the ABC/XYZ matrix report.
+MatrixView=Classification matrix
+ ;Group caption for the ABC x XYZ item-count matrix on the item classification form.
+RunClassification=Run classification
+ ;Action button and button group label to launch the ABC/XYZ classification batch job from within the classification results form.
+RunExceptionDetection=Detect exceptions
+ ;Action button and button group label to launch the MRP exception detection batch job from within the exceptions form.
+ExceptionSummary=Open exception summary
+ ;Group caption for the count panel showing open MRP exceptions by type and by severity on the exception form.
+ABSStockLevelMonitor=Stock level advisor
+ ;Label for the ABSStockLevelMonitor table and form.
+ABSStockLevelChartTitle=Items by stock status
+ ;Title of the stock level status donut chart.
+ABSLeadTimeChartTitle=Open quantity by lead-time status
+ ;Title of the lead-time monitor column chart.
+ABSBacklogChartTitle=Backlog value by status
+ ;Title of the backlog monitor column chart.
+ABSParetoChartTitle=Value contribution and cumulative % (Pareto)
+ ;Title of the ABC/XYZ Pareto chart.
+ABSParetoItemPct=% of items (ranked by value)
+ ;Pareto chart x-axis: percentile of items ranked by usage value descending.
+ABSParetoCumulativeValuePct=Cumulative % of usage value
+ ;Pareto chart y-axis: cumulative percentage of usage value.
+ABSParetoRef80=80% (A cut)
+ ;Pareto reference line at 80% cumulative value.
+ABSParetoRef95=95% (B cut)
+ ;Pareto reference line at 95% cumulative value.
+ABSParetoXAxisTitle=% of items (ranked by value)
+ ;Pareto chart x-axis title.
+ABSParetoYAxisTitle=Cumulative % of usage value
+ ;Pareto chart y-axis title.
+ABSItemABCXYZParetoDataDeveloperDocumentation=In-memory percentile series backing the ABC/XYZ Pareto chart (x = % of items ranked by value, y = cumulative % of usage value).
+ ;Developer documentation for ABSItemABCXYZParetoData table.
+ABSWorkspaceSegment=Segment
+ ;Label for the ABC/XYZ segment (e.g. AX) column.
+ABSAnalyticsSegmentValueChartTitle=Inventory value by ABC/XYZ segment
+ ;Title of the workspace analytics segment value chart.
+ABSAnalyticsExceptionTypeChartTitle=Open MRP exceptions by type
+ ;Title of the workspace analytics exception chart.
+ABSExceptionTypeChartDataDeveloperDocumentation=In-memory series backing the workspace analytics exception chart (open exception count grouped by type).
+ ;Developer documentation for ABSExceptionTypeChartData table.
+ABSStockLevelMonitorDeveloperDocumentation=Snapshot of on-hand stock levels versus safety stock per item and site, enriched with ABC/XYZ classification and days-of-stock coverage.
+ ;Developer documentation for ABSStockLevelMonitor table.
+ABSStockLevelMonitorBatchJobDescription=Stock Level Advisor
+ ;Description shown in the batch job list for the stock level advisor run.
+ABSStockStatus=Stock status
+ ;Label for the ABSStockStatus enum.
+ABSStockStatusDeveloperDocumentation=Indicates whether on-hand stock is below safety stock, within normal range, or in excess.
+ ;Developer documentation for ABSStockStatus enum.
+DaysOfStock=Days of stock
+ ;Field label for the number of days of on-hand inventory relative to average daily demand.
+OnHandQty=On-hand quantity
+ ;Field label for the current physical on-hand inventory quantity.
+ABSInventoryOptimizerWorkspace=Inventory health dashboard
+ ;Caption for the ABSInventoryOptimizerWorkspace workspace form.
+ABSInventoryOptimizerMenuItem=Inventory health dashboard
+ ;Menu item label for the Inventory Optimizer workspace menu entry.
+ABSWorkspaceMyWork=My work
+ ;Caption for the My work tab on the Inventory Optimizer workspace.
+ABSWorkspaceAnalytics=Analytics
+ ;Caption for the Analytics tab on the Inventory Optimizer workspace.
+ABSWorkspaceTilesCaption=ABC/XYZ matrix
+ ;Section caption for the tile grid section on the Inventory Optimizer workspace.
+ABSWorkspaceRelatedLinksCaption=Related information
+ ;Section caption for the related links section on the Inventory Optimizer workspace.
+ABSWorkspaceSummaryCaption=ABC/XYZ summary
+ ;Section caption for the card list section on the Inventory Optimizer workspace.
+ABSWorkspaceCardDataDeveloperDocumentation=In-memory workspace card dataset holding aggregated ABC/XYZ counts and value metrics for summary visualization.
+ ;Developer documentation for ABSWorkspaceCardData table.
+ABSUIColorsDeveloperDocumentation=Shared ABS grid row-colour palette helper providing the canonical status/severity tints used by form displayOption overrides.
+ ;Developer documentation for the ABSUIColors helper class.
+ABSWorkspaceItemCount=Item count
+ ;Column label for the item count in the workspace summary card.
+ABSWorkspaceNoHistoryCount=No-history items
+ ;Count of items in a segment that have no demand history (C/Z completeness sweep defaults).
+ABSWorkspaceItemCountWithNoHistory=%1 (%2 no history)
+ ;Item count card value when some items have no demand history. %1 = total, %2 = no-history count.
+ABSWorkspaceHeadlineInventValue=Total inventory value
+ ;Headline cue: total inventory value across all classified items.
+ABSWorkspaceHeadlineClassified=Classified items
+ ;Headline cue: total number of classified items.
+ABSWorkspaceHeadlinePctA=% usage value in A class
+ ;Headline cue: share of 12-month usage value held by A-class items.
+ABSWorkspaceHeadlineAttention=Items needing attention
+ ;Headline cue: count of open critical/high MRP exceptions.
+ABSWorkspaceHeadlineEOValue=Excess/obsolete value at risk
+ ;Headline cue: on-hand value in the Dormant + Dead E&O buckets, with its % of total inventory. Drills to the Excess & obsolete cockpit.
+ABSWorkspaceHeadlineTurnover=Inventory turnover
+ ;Headline cue: 12-month usage value divided by on-hand value.
+ABSWorkspaceHeadlineCaption=Headline KPIs
+ ;Section caption for the workspace headline KPI cue strip.
+ABSWorkspaceSupplyHealthCaption=Supply health
+ ;Caption for the supply-health KPI strip embedded in the workspace (ABS model).
+ABSWorkspaceSupplyHealthStockout=Stocked out / below safety
+ ;Supply-health tile: count stocked out / count below safety stock. Drills to the stock level advisor.
+ABSWorkspaceSupplyHealthLeadTime=Lead-time risk
+ ;Supply-health tile: count of overdue/critical lead-time monitor rows. Drills to the lead time advisor.
+ABSWorkspaceSupplyHealthBacklog=Backlog overdue
+ ;Supply-health tile: count of overdue sales backlog lines. Drills to the backlog advisor.
+ABSWorkspaceTotalConsumption=12-month usage value
+ ;Column label for the total 12-month sales consumption in the workspace summary card.
+ABSWorkspaceTotalInventValue=Inventory value
+ ;Column label for the total inventory value in the workspace summary card.
+RunABCXYZClassification=Run ABC/XYZ inventory classification
+ ;Periodic task menu label for the ABC/XYZ inventory classification batch job.
+RunMRPExceptionDetection=Run MRP exception detection
+ ;Periodic task menu label for the MRP exception detection batch job.
+RunStockLevelMonitor=Run stock level advisor
+ ;Action button label to launch the stock level advisor batch job from the form.
+SafetyStockQty=Safety stock quantity
+ ;Field label for the minimum safety stock level defined in item coverage parameters.
+StockLevelGroup=Stock level
+ ;Field group label for stock level fields on ABSStockLevelMonitor.
+StockLevelMonitorFormCaption=Stock level advisor
+ ;Form caption for the ABSStockLevelMonitor form.
+ABSABCXYZMatrixTmpDeveloperDocumentation=Temporary table used by the ABC/XYZ classification matrix form to hold aggregated item counts and sales amounts per ABC/XYZ class combination.
+ ;Developer documentation for ABSABCXYZMatrixTmp table.
+StockStatus=Stock status
+ ;Field label for the calculated stock status on ABSStockLevelMonitor.
+StockStatusBelowSafety=Below safety stock
+ ;Label for stock status: on-hand quantity is below the defined safety stock level.
+StockStatusBelowSafetyDeveloperDocumentation=On-hand quantity is below the minimum safety stock level defined in item coverage parameters.
+ ;Developer documentation for BelowSafety stock status enum value.
+StockStatusExcess=Excess
+ ;Label for stock status: on-hand quantity covers more than 90 days of average demand.
+StockStatusExcessDeveloperDocumentation=On-hand quantity covers more than 90 days of average demand, indicating potential overstock.
+ ;Developer documentation for Excess stock status enum value.
+StockStatusOK=OK
+ ;Label for stock status: on-hand quantity is above safety stock and within normal coverage range.
+StockStatusOKDeveloperDocumentation=On-hand quantity is above safety stock and covers 90 days or fewer of average demand.
+ ;Developer documentation for OK stock status enum value.
+StockStatusNoDemand=No demand
+ ;Label for stock status: item has stock but no recorded sales history, so days of stock cannot be calculated (shown as 0).
+StockStatusNoDemandDeveloperDocumentation=Item has on-hand stock but no demand history in ABSItemABCXYZ, so days of stock cannot be computed and is displayed as 0.
+ ;Developer documentation for NoDemand stock status enum value.
+ABSBacklogMonitor=Backlog advisor
+ ;Label for the ABSBacklogMonitor table, form and menu item.
+ABSBacklogMonitorDeveloperDocumentation=Snapshot of open sales order backlog per line, enriched with ABC/XYZ classification and overdue status
+ ;Developer documentation for the ABSBacklogMonitor table.
+ABSBacklogMonitorBatchJobDescription=Backlog Advisor
+ ;Description shown in the batch job list for ABSBacklogMonitorController.
+ABSBacklogStatus=Backlog status
+ ;Label for the ABSBacklogStatus enum.
+ABSBacklogStatusDeveloperDocumentation=Classifies an open sales order line as On time, At risk (due within 7 days), or Overdue (confirmed ship date has passed)
+ ;Developer documentation for the ABSBacklogStatus enum.
+ABSBacklogStatusOnTime=On time
+ ;Label for the OnTime enum value on ABSBacklogStatus.
+ABSBacklogStatusOnTimeDeveloperDocumentation=Confirmed ship date is more than 7 days from today
+ ;Developer documentation for ABSBacklogStatus::OnTime.
+ABSBacklogStatusAtRisk=At risk
+ ;Label for the AtRisk enum value on ABSBacklogStatus.
+ABSBacklogStatusAtRiskDeveloperDocumentation=Confirmed ship date falls within the next 7 days
+ ;Developer documentation for ABSBacklogStatus::AtRisk.
+ABSBacklogStatusOverdue=Overdue
+ ;Label for the Overdue enum value on ABSBacklogStatus.
+ABSBacklogStatusOverdueDeveloperDocumentation=Confirmed ship date has already passed
+ ;Developer documentation for ABSBacklogStatus::Overdue.
+BacklogStatus=Backlog status
+ ;Field label for the backlog status on the ABSBacklogMonitor table.
+DaysOverdue=Days overdue
+ ;Field label for the number of calendar days a sales order line is past its confirmed ship date.
+RemainQty=Remaining quantity
+ ;Field label for the undelivered sales quantity on an open order line.
+RemainingValue=Remaining value
+ ;Field label for the estimated monetary value of the undelivered quantity on an open order line.
+RunBacklogMonitor=Run backlog advisor
+ ;Button and menu item label for running the Backlog Advisor batch job.
+ABSShipDateConfirmed=Confirmed ship date
+ ;Field label for the confirmed shipping date on a backlog advisor record.
+ABSShipDateRequested=Requested ship date
+ ;Field label for the requested shipping date on a backlog advisor record.
+ABSKanbanMonitor=Kanban advisor
+ ;Label for the ABSKanbanMonitor table, form and menu item.
+ABSKanbanMonitorDeveloperDocumentation=Snapshot of open production Kanban jobs enriched with ABC/XYZ classification and overdue status
+ ;Developer documentation for the ABSKanbanMonitor table.
+ABSKanbanMonitorBatchJobDescription=Kanban Advisor
+ ;Description shown in the batch job list for ABSKanbanMonitorController.
+ABSKanbanMonitorStatus=Kanban advisor status
+ ;Label for the ABSKanbanMonitorStatus enum.
+ABSKanbanMonitorStatusDeveloperDocumentation=Classification of a Kanban job's timeliness: Planned, AtRisk, InProgress, or Overdue
+ ;Developer documentation for the ABSKanbanMonitorStatus enum.
+KanbanMonitorStatusPlanned=Planned
+ ;Enum value label: job is planned and due date is more than one day away.
+KanbanMonitorStatusPlannedDeveloperDocumentation=Kanban job is not yet started and the due date is more than one day away
+ ;Developer documentation for the Planned enum value.
+KanbanMonitorStatusAtRisk=At risk
+ ;Enum value label: job not started, due within 1 day.
+KanbanMonitorStatusAtRiskDeveloperDocumentation=Kanban job is not yet started and the due date is within the next day
+ ;Developer documentation for the AtRisk enum value.
+KanbanMonitorStatusInProgress=In progress
+ ;Enum value label: job has been started and is not yet overdue.
+KanbanMonitorStatusInProgressDeveloperDocumentation=Kanban job has been started and the due date has not yet passed
+ ;Developer documentation for the InProgress enum value.
+KanbanMonitorStatusOverdue=Overdue
+ ;Enum value label: job due date has passed and the job is not complete.
+KanbanMonitorStatusOverdueDeveloperDocumentation=Kanban job due date has passed and the job is not yet completed
+ ;Developer documentation for the Overdue enum value.
+KanbanMonitorStatus=Advisor status
+ ;Field label for the MonitorStatus field on the ABSKanbanMonitor table.
+KanbanJobRecId=Kanban job record ID
+ ;Field label for the KanbanJobRecId field on the ABSKanbanMonitor table.
+KanbanRuleId=Kanban rule
+ ;Field label for the KanbanRuleId field on the ABSKanbanMonitor table.
+KanbanJobId=Job ID
+ ;Field label for the JobId field on the ABSKanbanMonitor table.
+KanbanJobStatus=Job status
+ ;Field label for the raw job status integer on the ABSKanbanMonitor table.
+KanbanDueDateTime=Due date/time
+ ;Field label for the DueDateTime field on the ABSKanbanMonitor table.
+KanbanExpectedDateTime=Expected date/time
+ ;Field label for the ExpectedDateTime field on the ABSKanbanMonitor table.
+KanbanActualStartDateTime=Actual start
+ ;Field label for the ActualStartDateTime field on the ABSKanbanMonitor table.
+KanbanActualEndDateTime=Actual end
+ ;Field label for the ActualEndDateTime field on the ABSKanbanMonitor table.
+KanbanQuantityOrdered=Quantity ordered
+ ;Field label for the QuantityOrdered field on the ABSKanbanMonitor table.
+KanbanQuantityReceived=Quantity received
+ ;Field label for the QuantityReceived field on the ABSKanbanMonitor table.
+KanbanQuantityScrapped=Quantity scrapped
+ ;Field label for the QuantityScrapped field on the ABSKanbanMonitor table.
+KanbanLeadTimeDays=Lead time (days)
+ ;Field label for the LeadTimeDays field on the ABSKanbanMonitor table.
+RunKanbanMonitor=Run kanban advisor
+ ;Button and menu item label for running the Kanban Advisor batch job.
+ABSBOMAnalysis=BOM component analysis
+ ;Label for the ABSBOMAnalysis table, form and menu item.
+ABSBOMAnalysisDeveloperDocumentation=Snapshot of BOM component health across order-driven and item-driven views, enriched with on-hand, shortage, cost and ABC/XYZ classification data.
+ ;Developer documentation for the ABSBOMAnalysis table.
+ABSBOMAnalysisRun=Run BOM component analysis
+ ;Button and menu item label for running the BOM Component Analysis batch job.
+ABSBOMAnalysisStatus=Analysis status
+ ;Label for the ABSBOMAnalysisStatus enum and the AnalysisStatus field.
+ABSBOMAnalysisStatusDeveloperDocumentation=Classifies a BOM component as Healthy, AtRisk, Shortage, or Critical based on on-hand quantity and ABC class.
+ ;Developer documentation for the ABSBOMAnalysisStatus enum.
+BOMAnalysisStatusHealthy=Healthy
+ ;Enum value label: on-hand is sufficient and no shortage exists.
+BOMAnalysisStatusHealthyDeveloperDocumentation=No shortage exists and the component is not flagged as at risk.
+ ;Developer documentation for the Healthy enum value.
+BOMAnalysisStatusAtRisk=At risk
+ ;Enum value label: A-class component with on-hand below 120% of requirement.
+BOMAnalysisStatusAtRiskDeveloperDocumentation=No current shortage but the component is A-class with on-hand buffer below 20% above the requirement.
+ ;Developer documentation for the AtRisk enum value.
+BOMAnalysisStatusShortage=Shortage
+ ;Enum value label: a shortage exists on a non-A-class component.
+BOMAnalysisStatusShortageDeveloperDocumentation=Short quantity exists and the component is not A-class.
+ ;Developer documentation for the Shortage enum value.
+BOMAnalysisStatusCritical=Critical
+ ;Enum value label: A-class component with a shortage.
+BOMAnalysisStatusCriticalDeveloperDocumentation=Short quantity exists and the component is A-class — immediate action required.
+ ;Developer documentation for the Critical enum value.
+ABSBOMViewType=View type
+ ;Label for the ABSBOMViewType enum and the ViewType field.
+ABSBOMViewTypeDeveloperDocumentation=Indicates whether a BOM analysis row was produced from an open production order or an active BOM version.
+ ;Developer documentation for the ABSBOMViewType enum.
+BOMViewTypeOrderDriven=Order-driven
+ ;Enum value label: analysis row was derived from an open production order.
+BOMViewTypeOrderDrivenDeveloperDocumentation=Component row sourced from open production order component (ProdBOM).
+ ;Developer documentation for the OrderDriven enum value.
+BOMViewTypeItemDriven=Item-driven
+ ;Enum value label: analysis row was derived from an active BOM version.
+BOMViewTypeItemDrivenDeveloperDocumentation=Component row sourced from an active BOM version (BOMVersion + BOM).
+ ;Developer documentation for the ItemDriven enum value.
+ABSParentItemId=Parent item
+ ;Field label for the parent/finished item in the BOM analysis.
+ABSComponentItemId=Component item
+ ;Field label for the component being analysed in the BOM analysis.
+ABSBOMLevel=BOM level
+ ;Field label for the level at which the component appears in the BOM structure.
+ABSBOMId=BOM ID
+ ;Field label for the BOM version used for the explosion.
+ABSRequiredQty=Required quantity
+ ;Field label for the quantity of this component required by the order or BOM.
+ABSOnHandQty=On-hand quantity
+ ;Field label for the available physical on-hand quantity at the site.
+ABSShortageQty=Shortage quantity
+ ;Field label for the quantity by which on-hand falls short of requirement.
+ABSCostPerUnit=Cost per unit
+ ;Field label for the standard cost per unit of the component.
+ABSTotalCostRequired=Total cost required
+ ;Field label for the total standard cost of the required component quantity.
+ABSShortfallCost=Shortfall cost
+ ;Field label for the standard cost value of the shortage quantity.
+ABSPurchLeadTimeDays=Purchase lead time (days)
+ ;Field label for the component's purchase lead time in calendar days.
+ABSIncludeOrderDriven=Include order-driven
+ ;Dialog checkbox label: when selected, open production order components are included in the analysis.
+ABSIncludeItemDriven=Include item-driven
+ ;Dialog checkbox label: when selected, active BOM version components are included in the analysis.
+ABSMaxBOMLevel=Max BOM level
+ ;Dialog field label for the maximum BOM explosion depth.
+ABSBOMAnalysisMaxLevelError=Max BOM level must be at least 1.
+ ;Validation error when max BOM level is set to zero or below in the batch dialog.
+
+ABSLeadTimeMonitor=Lead time advisor
+ ;Form and table label for the replenishment lead time advisor.
+ABSLeadTimeMonitorDeveloperDocumentation=Replenishment lead time advisor snapshot table. One row per open purchase order line, enriched with lead time metrics, vendor history, and ABC/XYZ classification.
+ ;Developer documentation for the ABSLeadTimeMonitor table.
+ABSLeadTimeMonitorStatus=Lead time advisor status
+ ;Enum label for ABSLeadTimeMonitorStatus.
+ABSLeadTimeMonitorStatusDeveloperDocumentation=Status values for open purchase order lines in the replenishment lead time advisor.
+ ;Developer documentation for the ABSLeadTimeMonitorStatus enum.
+ABSLeadTimeMonitorStatusOnTime=On time
+ ;Enum value: purchase order line is on track for on-time delivery.
+ABSLeadTimeMonitorStatusOnTimeDeveloperDocumentation=Purchase order line is on track for on-time delivery.
+ ;Developer documentation for the OnTime enum value.
+ABSLeadTimeMonitorStatusAtRisk=At risk
+ ;Enum value: purchase order line is at risk of late delivery.
+ABSLeadTimeMonitorStatusAtRiskDeveloperDocumentation=Purchase order line is at risk of late delivery — due soon or vendor lead time exceeds plan.
+ ;Developer documentation for the AtRisk enum value.
+ABSLeadTimeMonitorStatusOverdue=Overdue
+ ;Enum value: purchase order line is past its promised delivery date.
+ABSLeadTimeMonitorStatusOverdueDeveloperDocumentation=Purchase order line is past its promised or confirmed delivery date and has not been fully received.
+ ;Developer documentation for the Overdue enum value.
+ABSLeadTimeMonitorStatusCritical=Critical
+ ;Enum value: purchase order line is overdue and the item is ABC class A.
+ABSLeadTimeMonitorStatusCriticalDeveloperDocumentation=Purchase order line is overdue and the item is ABC class A — highest priority escalation required.
+ ;Developer documentation for the Critical enum value.
+ABSLeadTimeMonitorBatchJobDescription=Replenishment Lead Time Advisor
+ ;Batch job caption for the lead time advisor controller.
+ABSRunLeadTimeMonitor=Run lead time advisor
+ ;Action menu item label and button text for running the lead time advisor batch job.
+ABSLeadTimeMonitorViewLabel=View replenishment lead time advisor
+ ;Security privilege label for view access.
+ABSLeadTimeMonitorMaintainLabel=Maintain replenishment lead time advisor
+ ;Security privilege label for maintain (run) access.
+ABSLeadTimeMonitorViewDescription=Grants read access to the replenishment lead time advisor inquiry form
+ ;Security privilege description for view access.
+ABSLeadTimeMonitorMaintainDescription=Grants access to run the replenishment lead time advisor batch job
+ ;Security privilege description for maintain access.
+ABSVendAccount=Vendor account
+ ;Field label for the vendor account on the lead time advisor row.
+ABSOrderDate=Order date
+ ;Field label for the purchase order creation date.
+ABSPromisedDate=Promised date
+ ;Field label for the originally requested delivery date on the PO line.
+ABSConfirmedDate=Confirmed date
+ ;Field label for the vendor-confirmed delivery date (blank if not yet confirmed).
+ABSEffectiveDate=Effective date
+ ;Field label for the effective delivery date used for status logic (confirmed date if set, else promised date).
+ABSQtyOrdered=Quantity ordered
+ ;Field label for the original ordered quantity on the PO line.
+ABSQtyReceived=Quantity received
+ ;Field label for the quantity already received against the PO line.
+ABSQtyRemaining=Quantity remaining
+ ;Field label for the quantity still outstanding on the PO line.
+ABSPlannedLeadTimeDays=Planned lead time (days)
+ ;Field label for the item's configured purchase lead time from item coverage settings.
+ABSExpectedLeadTimeDays=Expected lead time (days)
+ ;Field label for the expected lead time calculated from effective date minus order date.
+ABSLeadTimeVarianceDays=Lead time variance (days)
+ ;Field label for the difference between expected and planned lead time (positive = longer than plan).
+ABSHistAvgLeadTimeDays=Historical avg. lead time (days)
+ ;Field label for the average actual lead time over the lookback window for the same item and vendor.
+ABSHistOrderCount=Historical order count
+ ;Field label for the number of closed PO lines used to compute the historical average.
+ABSMonitorStatus=Advisor status
+ ;Field label for the computed advisor status on the lead time advisor row.
+ABSLookbackMonths=Lookback months
+ ;Contract parameter label for the number of months to look back for historical lead time data.
+ABSAtRiskThresholdDays=At-risk threshold (days)
+ ;Contract parameter label for the number of days to due date below which a line is classified as At risk.
+ABSLeadTimeMonitorLookbackError=Lookback months must be at least 1.
+ ;Validation error when lookback months is set to zero or below.
+ABSLeadTimeMonitorAtRiskError=At-risk threshold days must be 0 or greater.
+ ;Validation error when at-risk threshold days is set to a negative value.
+
+ABSMRPExceptionMaintainLabel=MRP exception detection maintain
+ ;Privilege label for MRP exception detection and view access
+ABSMRPExceptionMaintainDescription=Allows running MRP exception detection and viewing MRP exceptions
+ ;Privilege description - no period per BP rule
+ABSStockLevelMonitorMaintainLabel=Stock level advisor maintain
+ ;Privilege label for stock level advisor access
+ABSStockLevelMonitorMaintainDescription=Allows running the stock level advisor batch job and viewing stock level advisor results
+ ;Privilege description - no period per BP rule
+ABSBacklogMonitorMaintainLabel=Backlog advisor maintain
+ ;Privilege label for backlog advisor access
+ABSBacklogMonitorMaintainDescription=Allows running the backlog advisor batch job and viewing backlog advisor results
+ ;Privilege description - no period per BP rule
+ABSKanbanMonitorMaintainLabel=Kanban advisor maintain
+ ;Privilege label for Kanban advisor access
+ABSKanbanMonitorMaintainDescription=Allows running the Kanban advisor batch job and viewing Kanban advisor results
+ ;Privilege description - no period per BP rule
+ABSBOMAnalysisMaintainLabel=BOM analysis maintain
+ ;Privilege label for BOM analysis access
+ABSBOMAnalysisMaintainDescription=Allows running BOM analysis and viewing BOM analysis results
+ ;Privilege description - no period per BP rule
+ABSInventoryOptimizerWorkspaceViewLabel=Inventory optimizer workspace view
+ ;Privilege label for workspace view access
+ABSInventoryOptimizerWorkspaceViewDescription=Allows access to the Inventory Optimizer workspace
+ ;Privilege description - no period per BP rule
+
+ABSInventoryOptimizerWorkspaceViewDuty=View inventory optimizer workspace
+ ;Duty label - no period per BP rule
+ABSMRPExceptionMaintainDuty=Maintain MRP exceptions
+ ;Duty label - no period per BP rule
+ABSStockLevelMonitorMaintainDuty=Maintain stock level advisor
+ ;Duty label - no period per BP rule
+ABSBacklogMonitorMaintainDuty=Maintain backlog advisor
+ ;Duty label - no period per BP rule
+ABSKanbanMonitorMaintainDuty=Maintain Kanban advisor
+ ;Duty label - no period per BP rule
+ABSBOMAnalysisMaintainDuty=Maintain BOM analysis
+ ;Duty label - no period per BP rule
+ABSLeadTimeMonitorMaintainDuty=Maintain replenishment lead time advisor
+ ;Duty label - no period per BP rule
+
+ABSMaterialDocumentAnalysis=Material document analysis
+ ;Form title and menu item label for the material document analysis exception list.
+ABSMaterialDocumentAnalysisDeveloperDocumentation=Exception detail table for material document analysis. One row per flagged transaction across inventory adjustments, production issues, purchase receipts, sales deliveries, and transfer orders.
+ ;Developer documentation for ABSMaterialDocumentAnalysis table.
+ABSMaterialDocumentSummary=Material document summary
+ ;Form title and menu item label for the material document analysis item summary.
+ABSMaterialDocumentSummaryDeveloperDocumentation=Item-level aggregation of material document exceptions. One row per (ItemId, SiteId, DocumentType, ExceptionType) combination over the analysis window.
+ ;Developer documentation for ABSMaterialDocumentSummary table.
+ABSRunMaterialDocumentAnalysis=Run material document analysis
+ ;Button text and action menu item label for triggering the material document analysis batch job.
+ABSViewDocuments=View documents
+ ;Button to drill from the material document summary into the line-level document detail.
+ABSMaterialDocumentType=Document type
+ ;Field label for the ABSMaterialDocumentType enum column.
+ABSMaterialDocumentTypeDeveloperDocumentation=Document type categories covered by material document analysis.
+ ;Developer documentation for ABSMaterialDocumentType enum.
+ABSMaterialDocumentExceptionType=Exception type
+ ;Field label for the ABSMaterialDocumentExceptionType enum column.
+ABSMaterialDocumentExceptionTypeDeveloperDocumentation=Specific anomaly types detected by material document analysis.
+ ;Developer documentation for ABSMaterialDocumentExceptionType enum.
+ABSDocTypeInventoryAdjustment=Inventory adjustment
+ ;Enum value label for InventoryAdjustment document type.
+ABSDocTypeCountingJournal=Counting journal
+ ;Enum value label for CountingJournal document type.
+ABSDocTypeProductionIssue=Production issue
+ ;Enum value label for ProductionIssue document type.
+ABSDocTypePurchaseReceipt=Purchase receipt
+ ;Enum value label for PurchaseReceipt document type.
+ABSDocTypeSalesDelivery=Sales delivery
+ ;Enum value label for SalesDelivery document type.
+ABSDocTypeTransferOrder=Transfer order
+ ;Enum value label for TransferOrder document type.
+ABSExcLargeAdjustment=Large adjustment
+ ;Enum value label for LargeAdjustment exception type.
+ABSExcWriteOff=Write-off
+ ;Enum value label for WriteOff exception type.
+ABSExcCountingVariance=Counting variance
+ ;Enum value label for CountingVariance exception type.
+ABSExcProductionOverIssue=Production over-issue
+ ;Enum value label for ProductionOverIssue exception type.
+ABSExcProductionUnderIssue=Production under-issue
+ ;Enum value label for ProductionUnderIssue exception type.
+ABSExcReceiptShortage=Receipt shortage
+ ;Enum value label for ReceiptShortage exception type.
+ABSExcReceiptOverage=Receipt overage
+ ;Enum value label for ReceiptOverage exception type.
+ABSExcShortDelivery=Short delivery
+ ;Enum value label for ShortDelivery exception type.
+ABSExcTransferLoss=Transfer loss
+ ;Enum value label for TransferLoss exception type.
+ABSMDATransactionDate=Transaction date
+ ;Field label for the transaction date on the material document analysis record.
+ABSMDADocumentNum=Document no.
+ ;Field label for the document number (journal ID, packing slip ID, or transfer order ID).
+ABSMDAReferenceNum=Reference no.
+ ;Field label for the reference number (production order, PO, SO, or transfer order).
+ABSMDAActualQty=Actual qty
+ ;Field label for the actual transacted quantity.
+ABSMDAStandardQty=Standard qty
+ ;Field label for the expected or standard quantity.
+ABSMDAVarianceQty=Variance qty
+ ;Field label for the quantity variance (actual minus standard).
+ABSMDAVariancePct=Variance %
+ ;Field label for the percentage variance relative to standard quantity.
+ABSMDATransactionValue=Transaction value
+ ;Field label for the cost value of the transaction in company currency.
+ABSMDAExceptionCount=Exception count
+ ;Field label for the number of flagged transactions in the summary.
+ABSMDATotalVarianceQty=Total variance qty
+ ;Field label for the sum of variance quantities across all exceptions in the summary.
+ABSMDATotalVarianceValue=Total variance value
+ ;Field label for the total cost value of all exceptions in the summary.
+ABSMDAWorstVariancePct=Worst variance %
+ ;Field label for the maximum absolute variance percentage across all exceptions.
+ABSMDALatestExceptionDate=Latest exception date
+ ;Field label for the most recent transaction date among the exceptions in the summary.
+ABSMDAFromDate=From date
+ ;Contract parameter label for the start of the analysis date range.
+ABSMDAToDate=To date
+ ;Contract parameter label for the end of the analysis date range.
+ABSMDAVarianceThresholdPct=Variance threshold %
+ ;Contract parameter label for the minimum percentage variance to flag production, receipt, delivery, and transfer exceptions.
+ABSMDAAdjustmentThresholdAmt=Adjustment threshold amount
+ ;Contract parameter label for the minimum cost amount to flag an inventory adjustment.
+ABSMDAIncludeAdjustments=Include inventory adjustments
+ ;Contract parameter label for toggling inclusion of adjustment and counting journal analysis.
+ABSMDAIncludeProduction=Include production issues
+ ;Contract parameter label for toggling inclusion of production issue variance analysis.
+ABSMDAIncludePurchaseReceipts=Include purchase receipts
+ ;Contract parameter label for toggling inclusion of purchase receipt variance analysis.
+ABSMDAIncludeSalesDeliveries=Include sales deliveries
+ ;Contract parameter label for toggling inclusion of sales delivery short-delivery analysis.
+ABSMDAIncludeTransfers=Include transfer orders
+ ;Contract parameter label for toggling inclusion of transfer order in-transit loss analysis.
+ABSMaterialDocumentAnalysisBatchJobDescription=Material Document Analysis
+ ;Batch job description displayed in the batch jobs list.
+ABSMaterialDocumentAnalysisViewLabel=View material document analysis
+ ;Privilege label for view-only access to material document analysis forms.
+ABSMaterialDocumentAnalysisMaintainLabel=Maintain material document analysis
+ ;Privilege label for full access including running the material document analysis batch job.
+ABSMaterialDocumentAnalysisViewDescription=Grants read access to the material document analysis and summary forms
+ ;Privilege description - no period per BP rule.
+ABSMaterialDocumentAnalysisMaintainDescription=Grants access to run the material document analysis batch job and view results
+ ;Privilege description - no period per BP rule.
+ABSMaterialDocumentAnalysisMaintainDuty=Maintain material document analysis
+ ;Duty label - no period per BP rule.
+ABSMDADateRangeError=From date must be on or before To date.
+ ;Validation error when the from date is after the to date.
+ABSMDAThresholdError=Variance threshold percentage must be 0 or greater.
+ ;Validation error when variance threshold is set to a negative value.
+ABSWarehouseId=Warehouse
+ ;Field label for the warehouse / storage location field on analysis records.
+ABSSafetyStockSimulator=Safety stock & reorder point simulator
+ ;Table/form label for the safety stock simulator.
+ABSSafetyStockSimulatorDeveloperDocumentation=Stores safety stock and reorder point simulation results per item and site
+ ;Developer documentation for ABSSafetyStockSimulator table - no period per BP rule.
+ABSSafetyStockSimulatorCaption=Safety stock & reorder point simulator
+ ;Controller caption for the safety stock simulator batch job.
+ABSSafetyStockSimulatorFormCaption=Safety stock & reorder point simulator
+ ;Form caption for the safety stock simulator inquiry form.
+ABSSafetyStockStatus=Safety stock status
+ ;Enum label for ABSSafetyStockStatus.
+ABSSafetyStockStatusAdequate=Adequate
+ ;Enum member - safety stock is within tolerance of recommended level.
+ABSSafetyStockStatusUnderstocked=Understocked
+ ;Enum member - safety stock is below the recommended level.
+ABSSafetyStockStatusOverstocked=Overstocked
+ ;Enum member - safety stock exceeds the recommended level.
+ABSSafetyStockStatusDeveloperDocumentation=Safety stock status relative to the statistically recommended level
+ ;Developer documentation for ABSSafetyStockStatus enum - no period per BP rule.
+ABSSafetyStockMethod=Calculation method
+ ;Enum label for ABSSafetyStockMethod.
+ABSSafetyStockMethodSimplified=Simplified (demand only)
+ ;Enum member - safety stock calculated from demand uncertainty only.
+ABSSafetyStockMethodExtended=Extended (demand + lead-time)
+ ;Enum member - safety stock calculated combining demand and lead-time uncertainty.
+ABSSafetyStockMethodDeveloperDocumentation=Safety stock calculation method used in the simulation
+ ;Developer documentation for ABSSafetyStockMethod enum - no period per BP rule.
+ABSSafetyStockLeadTimeSource=Lead time source
+ ;Enum label for ABSSafetyStockLeadTimeSource.
+ABSSafetyStockLeadTimeSourceOverride=Contract override
+ ;Enum member - lead time was set by the contract parameter.
+ABSSafetyStockLeadTimeSourceHistoricalAverage=Historical average
+ ;Enum member - lead time derived from historical average in the lead time advisor.
+ABSSafetyStockLeadTimeSourceItemCoverage=Item coverage
+ ;Enum member - lead time taken from ReqItemTable authorization time fence.
+ABSSafetyStockLeadTimeSourceDefault=System default (14 days)
+ ;Enum member - fallback default lead time of 14 days.
+ABSSafetyStockLeadTimeSourceDeveloperDocumentation=Source used to resolve the lead time for this item's safety stock calculation
+ ;Developer documentation for ABSSafetyStockLeadTimeSource enum - no period per BP rule.
+ABSSafetyStockAvgDailyDemand=Avg daily demand
+ ;Field label for average daily demand quantity derived from monthly demand mean.
+ABSSafetyStockDemandStdDevDaily=Daily demand std dev
+ ;Field label for daily demand standard deviation derived from monthly demand std dev.
+ABSSafetyStockDemandCV=Demand CV
+ ;Field label for the coefficient of variation of demand (from ABC/XYZ engine).
+ABSSafetyStockLeadTimeDays=Lead time (days)
+ ;Field label for the resolved lead time in days used in the safety stock calculation.
+ABSSafetyStockLeadTimeSourceField=Lead time source
+ ;Field label for the enum indicating which source provided the lead time value.
+ABSSafetyStockServiceLevelPct=Service level %
+ ;Field label for the service level percentage used in the safety stock calculation.
+ABSSafetyStockZScore=Z-score
+ ;Field label for the Z-score corresponding to the service level percentage.
+ABSSafetyStockCalculationMethod=Calculation method
+ ;Field label for the safety stock calculation method (Simplified or Extended).
+ABSSafetyStockRecommendedSafetyStock=Recommended safety stock
+ ;Field label for the statistically recommended safety stock quantity.
+ABSSafetyStockRecommendedROP=Recommended reorder point
+ ;Field label for the recommended reorder point quantity.
+ABSSafetyStockCurrentSafetyStock=Current safety stock
+ ;Field label for the current D365 safety stock from item coverage (MinInventOnhand).
+ABSSafetyStockSafetyStockGap=Safety stock gap
+ ;Field label for the difference between recommended and current safety stock.
+ABSSafetyStockSafetyStockStatus=Safety stock status
+ ;Field label for the gap classification: Adequate, Understocked, or Overstocked.
+ABSSafetyStockContractSiteId=Site
+ ;Contract parameter label for the site filter.
+ABSSafetyStockContractServiceLevelX=Service level - X items (%)
+ ;Contract parameter label for service level applied to XYZ class X items.
+ABSSafetyStockContractServiceLevelY=Service level - Y items (%)
+ ;Contract parameter label for service level applied to XYZ class Y items.
+ABSSafetyStockContractServiceLevelZ=Service level - Z items (%)
+ ;Contract parameter label for service level applied to XYZ class Z items.
+ABSSafetyStockContractLeadTimeDaysOverride=Lead time override (days, 0 = auto)
+ ;Contract parameter label for the optional lead time override.
+ABSSafetyStockContractCalculationMethod=Calculation method
+ ;Contract parameter label for selecting the safety stock calculation method.
+ABSSafetyStockContractLeadTimeStdDevDays=Lead time std dev (days)
+ ;Contract parameter label for lead time standard deviation used in Extended method.
+ABSSafetyStockContractTolerancePct=Tolerance band (%)
+ ;Contract parameter label for the tolerance percentage for gap status classification.
+ABSSafetyStockContractDeleteAndRegenerate=Delete and regenerate
+ ;Contract parameter label for the delete and regenerate option.
+ABSSafetyStockSimulatorViewLabel=View safety stock & reorder point simulator
+ ;Privilege label for read-only access to the safety stock simulator form - no period per BP rule.
+ABSSafetyStockSimulatorViewDescription=Grants read access to the safety stock and reorder point simulator form
+ ;Privilege description - no period per BP rule.
+ABSSafetyStockSimulatorMaintainLabel=Maintain safety stock & reorder point simulator
+ ;Privilege label for full access including running the batch job - no period per BP rule.
+ABSSafetyStockSimulatorMaintainDescription=Grants access to run the safety stock simulator batch job and view results
+ ;Privilege description - no period per BP rule.
+ABSSafetyStockDutyLabel=Maintain safety stock & reorder point simulator
+ ;Duty label - no period per BP rule.
+ABSRunSafetyStockSimulator=Run safety stock & reorder point simulator
+ ;Button and menu item label for the run action.
+ABSSafetyStockSkippedNoDemand=Item %1 at site %2 has no demand history and was skipped.
+ ;Warning shown when an item is skipped because DemandMean and DemandStdDev are both zero.
+ABSSafetyStockValidateServiceLevelX=Service level for X items must be between 80.0 and 99.9.
+ ;Validation warning when service level X is out of range.
+ABSSafetyStockValidateServiceLevelY=Service level for Y items must be between 80.0 and 99.9.
+ ;Validation warning when service level Y is out of range.
+ABSSafetyStockValidateServiceLevelZ=Service level for Z items must be between 80.0 and 99.9.
+ ;Validation warning when service level Z is out of range.
+ABSSafetyStockValidateTolerancePct=Tolerance band must be between 0 and 50.
+ ;Validation warning when tolerance percentage is out of range.
+ABSSafetyStockValidateLeadTimeStdDev=Lead time standard deviation must be greater than 0 when using the Extended method.
+ ;Validation warning for the Extended method with zero or negative lead time std dev.
+ABSSafetyStockValidateLeadTimeOverride=Lead time override must be 0 (auto) or a positive number of days.
+ ;Validation warning when lead time override is negative.
+ABSSafetyStockApproved=Approved
+ ;Whether the planner has approved this recommendation for application to D365 coverage
+ABSSafetyStockAppliedDate=Applied date
+ ;Date the recommendation was written to ReqItemTable
+ABSSafetyStockAppliedBy=Applied by
+ ;User who applied the recommendation
+ABSSafetyStockApproveUnderstocked=Approve all understocked
+ ;Approve all understocked items for application to item coverage
+ABSSafetyStockApproveSelected=Approve selected
+ ;Approve the currently selected item recommendation
+ABSSafetyStockApplyApproved=Apply approved
+ ;Write all approved recommendations to item coverage (ReqItemTable.MinInventOnhand)
+ABSSafetyStockApplyGroup=Apply to D365
+ ;Action pane group caption for applying safety stock recommendations
+ABSSafetyStockSimulateGroup=Simulate
+ ;Action pane group caption for running the safety stock simulation
+ABSSafetyStockApproveGroup=Approve
+ ;Action pane group caption for approving safety stock recommendations before they are applied
+ABSSafetyStockActionsTab=Safety stock
+ ;Action pane ribbon tab caption for the safety stock simulator form
+ABSActionsTab=Actions
+ ;Generic action pane ribbon tab caption used by all Inventory Optimizer forms
+ABSSafetyStockApplyConfirm=This will overwrite the minimum inventory level in item coverage for all approved items. Continue?
+ ;Confirmation prompt shown before applying recommendations to D365
+ABSSafetyStockApplyResult=Applied %1 safety stock recommendation(s) to item coverage
+ ;Info message shown after apply completed successfully
+ABSSafetyStockSimulateRow=Simulate row
+ ;Action pane button: recompute the recommendation for the selected row only
+ABSSafetyStockApplySelected=Apply selected
+ ;Action pane button: apply the recommended safety stock for the selected row only
+ABSSafetyStockApplyRowConfirm=Apply recommended safety stock for item %1 at site %2 to item coverage. Continue?
+ ;Confirmation prompt before applying a single selected row
+ABSSafetyStockRowSimulated=Recomputed recommendation for item %1 at site %2
+ ;Info message shown after per-row simulate completed
+ABSSafetyStockRowApplied=Applied recommended safety stock for item %1 at site %2
+ ;Info message shown after per-row apply completed
+ABSSafetyStockApplyPrivilegeLabel=Apply safety stock recommendations to item coverage
+ ;Security privilege label for applying approved safety stock values to ReqItemTable - no period per BP rule
+ABSSafetyStockApplyPrivilegeDescription=Grants permission to write approved safety stock recommendations to item coverage (ReqItemTable.MinInventOnhand)
+ ;Security privilege description - no period per BP rule
+ABSLotSizeSimulator=Lot size simulator
+ ;Table and form label for the lot size simulator.
+ABSLotSizeSimulatorDeveloperDocumentation=Stores EOQ-based lot size simulation results per item and site
+ ;Developer documentation for ABSLotSizeSimulator table - no period per BP rule.
+ABSLotSizeSimulatorCaption=Lot size simulator
+ ;Controller caption for the lot size simulator batch job.
+ABSLotSizeSimulatorFormCaption=Lot size simulator
+ ;Form caption for the lot size simulator inquiry form.
+ABSLotSizeStatus=Lot size status
+ ;Enum label for ABSLotSizeStatus.
+ABSLotSizeStatusOptimal=Optimal
+ ;Enum member - current lot size is within the tolerance band of EOQ.
+ABSLotSizeStatusUndersized=Undersized
+ ;Enum member - lot size is below EOQ; ordering too frequently.
+ABSLotSizeStatusOversized=Oversized
+ ;Enum member - lot size is above EOQ; holding excess inventory.
+ABSLotSizeStatusNotApplicable=Not applicable
+ ;Enum member - zero demand or zero unit cost; EOQ cannot be calculated.
+ABSLotSizeStatusDeveloperDocumentation=Classification of the current lot size relative to the EOQ
+ ;Developer documentation for ABSLotSizeStatus enum - no period per BP rule.
+ABSLotSizeCurrentSource=Current lot size source
+ ;Enum label for ABSLotSizeCurrentSource.
+ABSLotSizeCurrentSourceOrderQty=Fixed order quantity
+ ;Enum member - lot size resolved from ReqItemTable.OrderQty.
+ABSLotSizeCurrentSourcePeriodDays=Period coverage
+ ;Enum member - lot size resolved from ReqItemTable.Period multiplied by average daily demand.
+ABSLotSizeCurrentSourceNotConfigured=Not configured
+ ;Enum member - no lot size could be resolved from item coverage settings.
+ABSLotSizeCurrentSourceDeveloperDocumentation=Indicates which field in item coverage provided the current lot size
+ ;Developer documentation for ABSLotSizeCurrentSource enum - no period per BP rule.
+ABSLotSizeAnnualDemandQty=Annual demand
+ ;Field label for annual demand quantity (DemandMean x 12).
+ABSLotSizeUnitCost=Unit cost
+ ;Field label for active standard cost per unit from InventItemPrice.
+ABSLotSizeOrderingCostPerOrder=Ordering cost per order
+ ;Field label for the ordering cost used in the EOQ calculation.
+ABSLotSizeHoldingCostRatePct=Holding cost rate %
+ ;Field label for the annual holding cost rate percentage.
+ABSLotSizeHoldingCostPerUnit=Holding cost per unit
+ ;Field label for the computed annual holding cost per unit (unit cost x rate).
+ABSLotSizeEOQ=Economic order qty (EOQ)
+ ;Field label for the computed Economic Order Quantity.
+ABSLotSizeEconomicOrderPeriodDays=Economic order period (days)
+ ;Field label for the number of days of demand covered by one EOQ-sized order.
+ABSLotSizeCurrentLotSize=Current lot size
+ ;Field label for the current lot size resolved from ReqItemTable.
+ABSLotSizeCurrentLotSizeSource=Current lot size source
+ ;Field label for the enum indicating how the current lot size was resolved.
+ABSLotSizeTotalCostAtEOQ=Annual cost at EOQ
+ ;Field label for the minimum achievable total annual inventory cost at the EOQ.
+ABSLotSizeTotalCostAtCurrent=Annual cost at current lot size
+ ;Field label for the total annual inventory cost at the current lot size.
+ABSLotSizeAnnualCostSaving=Annual cost saving potential
+ ;Field label for the annual cost saving if the lot size were adjusted to the EOQ.
+ABSLotSizeSavingPct=Saving %
+ ;Field label for the annual cost saving as a percentage of current total cost.
+ABSLotSizeStatusField=Lot size status
+ ;Field label for the lot size status classification.
+ABSLotSizeContractSiteId=Site
+ ;Contract parameter label for the site filter.
+ABSLotSizeContractOrderingCostPerOrder=Ordering cost per order
+ ;Contract parameter label for the ordering cost (S) in the EOQ formula.
+ABSLotSizeContractHoldingCostRatePct=Annual holding cost rate (%)
+ ;Contract parameter label for the holding cost rate used in the EOQ formula.
+ABSLotSizeContractTolerancePct=Tolerance band (%)
+ ;Contract parameter label for the acceptable deviation from EOQ before flagging.
+ABSLotSizeContractDeleteAndRegenerate=Delete and regenerate
+ ;Contract parameter label for the delete and regenerate option.
+ABSLotSizeSimulatorViewLabel=View lot size simulator
+ ;Privilege label for read-only access to the lot size simulator form - no period per BP rule.
+ABSLotSizeSimulatorViewDescription=Grants read access to the lot size simulator form
+ ;Privilege description - no period per BP rule.
+ABSLotSizeSimulatorMaintainLabel=Maintain lot size simulator
+ ;Privilege label for full access including running the lot size simulator batch job - no period per BP rule.
+ABSLotSizeSimulatorMaintainDescription=Grants access to run the lot size simulator batch job and view results
+ ;Privilege description - no period per BP rule.
+ABSLotSizeDutyLabel=Maintain lot size simulator
+ ;Duty label - no period per BP rule.
+ABSRunLotSizeSimulator=Run lot size simulator
+ ;Button and menu item label for the run action.
+ABSLotSizeApproved=Approved
+ ;Whether the planner has approved this recommendation for application to D365 item purchase setup
+ABSLotSizeAppliedDate=Applied date
+ ;Date the recommendation was written to InventItemPurchSetup
+ABSLotSizeAppliedBy=Applied by
+ ;User who applied the recommendation
+ABSLotSizeSimulateRow=Simulate row
+ ;Action pane button: recompute the recommendation for the selected row only
+ABSLotSizeApproveOutOfTolerance=Approve out-of-tolerance
+ ;Approve all Undersized and Oversized recommendations in one action
+ABSLotSizeApproveSelected=Approve selected
+ ;Approve the currently selected item recommendation
+ABSLotSizeApplyApproved=Apply approved
+ ;Write all approved recommendations to item purchase setup (InventItemPurchSetup.StandardQty)
+ABSLotSizeApplySelected=Apply selected
+ ;Action pane button: apply the recommended lot size for the selected row only
+ABSLotSizeSimulateGroup=Simulate
+ ;Action pane group caption for running the lot size simulation
+ABSLotSizeApproveGroup=Approve
+ ;Action pane group caption for approving lot size recommendations before they are applied
+ABSLotSizeApplyGroup=Apply to D365
+ ;Action pane group caption for applying lot size recommendations
+ABSLotSizeActionsTab=Lot size
+ ;Action pane ribbon tab caption for the lot size simulator form
+ABSLotSizeApplyConfirm=This will overwrite the standard order quantity in item purchase setup for all approved items. Continue?
+ ;Confirmation prompt shown before applying recommendations to D365
+ABSLotSizeApplyResult=Applied %1 lot size recommendation(s) to item purchase setup
+ ;Info message shown after apply completed successfully
+ABSLotSizeApplyRowConfirm=Apply recommended lot size (EOQ) for item %1 at site %2 to item purchase setup. Continue?
+ ;Confirmation prompt before applying a single selected row
+ABSLotSizeRowSimulated=Recomputed recommendation for item %1 at site %2
+ ;Info message shown after per-row simulate completed
+ABSLotSizeRowApplied=Applied recommended lot size for item %1 at site %2
+ ;Info message shown after per-row apply completed
+ABSLotSizeSkippedNoDemand=Skipped item %1 at site %2 - no demand data found
+ ;Warning shown when runForRow finds no ABSItemABCXYZ record
+ABSLotSizeApplySkippedNoPurchSetup=Skipped item %1 - no item purchase setup record found
+ ;Warning shown when the apply engine cannot find an InventItemPurchSetup row
+ABSLotSizeApplyPrivilegeLabel=Apply lot size recommendations to item purchase setup
+ ;Security privilege label for applying approved lot size values to InventItemPurchSetup - no period per BP rule
+ABSLotSizeApplyPrivilegeDescription=Grants permission to write approved lot size (EOQ) recommendations to item purchase setup (InventItemPurchSetup.StandardQty)
+ ;Security privilege description - no period per BP rule
+ABSLotSizeValidateOrderingCost=Ordering cost per order must be greater than zero.
+ ;Validation warning when ordering cost is zero or negative.
+ABSLotSizeValidateHoldingCostRate=Annual holding cost rate must be between 0.1 and 100 percent.
+ ;Validation warning when holding cost rate is out of range.
+ABSLotSizeValidateTolerancePct=Tolerance band must be between 0 and 100 percent.
+ ;Validation warning when tolerance percentage is out of range.
+ABSStockDevelopment=Stock development
+ ;Table and form label for the stock development snapshot.
+ABSStockDevelopmentChartTitle=Stock development trend
+ ;Title of the stock development line chart.
+ABSStockDevelopmentChartPeriod=Period
+ ;X-axis caption (period date) on the stock development chart.
+ABSStockDevelopmentFormCaption=Stock development
+ ;Form caption for the stock development inquiry form - no period per BP rule.
+ABSStockDevelopmentCaption=Stock development
+ ;Batch job caption for the stock development controller - no period per BP rule.
+ABSStockDevelopmentDeveloperDocumentation=Period-by-period on-hand quantity snapshot per item and site, classified against safety stock and reorder point thresholds
+ ;Developer documentation for ABSStockDevelopment table - no period per BP rule.
+ABSStockDevelopmentPeriodDate=Period date
+ ;Field label for the period-end date of the on-hand snapshot.
+ABSStockDevelopmentOnHandQty=On-hand quantity
+ ;Field label for the computed on-hand quantity at the period-end date.
+ABSStockDevelopmentSafetyStock=Safety stock
+ ;Field label for the safety stock threshold copied from ABSSafetyStockSimulator at run time.
+ABSStockDevelopmentReorderPoint=Reorder point
+ ;Field label for the reorder point threshold copied from ABSSafetyStockSimulator at run time.
+ABSStockDevelopmentStatus=Status
+ ;Field label for the on-hand status classification.
+ABSStockDevelopmentTrend=Trend
+ ;Field label for the on-hand trend direction vs the previous period.
+ABSStockDevelopmentPeriodType=Period type
+ ;Field label for the period granularity (monthly or weekly).
+ABSStockDevelopmentPeriodTypeMonthly=Monthly
+ ;Enum label for monthly period type.
+ABSStockDevelopmentPeriodTypeWeekly=Weekly
+ ;Enum label for weekly period type.
+ABSStockDevelopmentPeriodTypeDeveloperDocumentation=Controls whether snapshots are computed at monthly or weekly intervals
+ ;Developer documentation for ABSStockDevelopmentPeriodType enum - no period per BP rule.
+ABSStockDevelopmentStatusNoThreshold=No threshold
+ ;Enum label - no safety stock or ROP thresholds available for this item.
+ABSStockDevelopmentStatusCritical=Critical
+ ;Enum label - on-hand at or below zero.
+ABSStockDevelopmentStatusWarning=Warning
+ ;Enum label - on-hand above zero but at or below safety stock.
+ABSStockDevelopmentStatusHealthy=Healthy
+ ;Enum label - on-hand above safety stock and within 2x reorder point.
+ABSStockDevelopmentStatusExcess=Excess
+ ;Enum label - on-hand above 2x reorder point.
+ABSStockDevelopmentStatusDeveloperDocumentation=Classifies on-hand relative to safety stock and reorder point thresholds
+ ;Developer documentation for ABSStockDevelopmentStatus enum - no period per BP rule.
+ABSStockDevelopmentTrendStable=Stable
+ ;Enum label - on-hand unchanged vs the previous period.
+ABSStockDevelopmentTrendImproving=Improving
+ ;Enum label - on-hand higher than the previous period.
+ABSStockDevelopmentTrendDeclining=Declining
+ ;Enum label - on-hand lower than the previous period.
+ABSStockDevelopmentTrendDeveloperDocumentation=Indicates whether on-hand is improving, declining or stable compared to the previous period
+ ;Developer documentation for ABSStockDevelopmentTrend enum - no period per BP rule.
+ABSRunStockDevelopment=Run stock development
+ ;Button and menu item label for the run action.
+ABSStockDevelopmentContractSiteId=Site
+ ;Contract parameter label for the site filter.
+ABSStockDevelopmentContractFromDate=From date
+ ;Contract parameter label for the start of the analysis period.
+ABSStockDevelopmentContractToDate=To date
+ ;Contract parameter label for the end of the analysis period.
+ABSStockDevelopmentContractPeriodType=Period type
+ ;Contract parameter label for the period granularity selection.
+ABSStockDevelopmentContractDeleteAndRegenerate=Delete and regenerate
+ ;Contract parameter label for the delete and regenerate option.
+ABSStockDevelopmentViewLabel=View stock development
+ ;Privilege label for read-only access to the stock development form - no period per BP rule.
+ABSStockDevelopmentViewDescription=Grants read access to the stock development form
+ ;Privilege description - no period per BP rule.
+ABSStockDevelopmentMaintainLabel=Maintain stock development
+ ;Privilege label for full access including running the stock development batch job - no period per BP rule.
+ABSStockDevelopmentMaintainDescription=Grants access to run the stock development batch job and view results
+ ;Privilege description - no period per BP rule.
+ABSStockDevelopmentValidateFromDate=From date must be earlier than to date.
+ ;Validation warning when the from date is not before the to date.
+ABSMRPAssessmentCategoryDeveloperDocumentation=Assessment category for grouping MRP health checks.
+ ;Developer documentation for ABSMRPAssessmentCategory enum.
+ABSMRPAssessmentCategory=Assessment category
+ ;Label for the ABSMRPAssessmentCategory enum.
+AssessmentCategoryPlanConfig=Plan configuration
+ ;Label for assessment category: plan configuration checks.
+AssessmentCategoryDataQuality=Data quality
+ ;Label for assessment category: data quality checks.
+AssessmentCategorySafetyStock=Safety stock
+ ;Label for assessment category: safety stock checks.
+AssessmentCategoryCoverage=Item coverage
+ ;Label for assessment category: item coverage checks.
+AssessmentCategoryPerformance=Performance risk
+ ;Label for assessment category: MRP performance risk checks.
+AssessmentCategoryFirmingWindow=Firming window
+ ;Label for assessment category: firming window checks.
+AssessmentCategoryBOMRoute=BOM and route quality
+ ;Label for assessment category: BOM and route quality checks.
+AssessmentCategoryPlannerBehaviour=Planner behaviour
+ ;Label for assessment category: planner behaviour checks.
+AssessmentCategoryPOHealth=Planning Optimization health
+ ;Label for assessment category: Planning Optimization health checks.
+ABSMRPAssessmentSeverityDeveloperDocumentation=Severity level of an MRP Assessment check result.
+ ;Developer documentation for ABSMRPAssessmentSeverity enum.
+ABSMRPAssessmentSeverity=Assessment severity
+ ;Label for the ABSMRPAssessmentSeverity enum.
+AssessmentSeverityNoIssue=No issue
+ ;Label for assessment severity: no issue found.
+AssessmentSeverityLow=Low
+ ;Label for assessment severity: low.
+AssessmentSeverityMedium=Medium
+ ;Label for assessment severity: medium.
+AssessmentSeverityHigh=High
+ ;Label for assessment severity: high.
+AssessmentSeverityCritical=Critical
+ ;Label for assessment severity: critical - MRP output cannot be trusted.
+ABSMRPAssessmentStatusDeveloperDocumentation=Status of an MRP Assessment run.
+ ;Developer documentation for ABSMRPAssessmentStatus enum.
+ABSMRPAssessmentStatus=Assessment status
+ ;Label for the ABSMRPAssessmentStatus enum.
+AssessmentStatusInProgress=In progress
+ ;Label for assessment status: in progress.
+AssessmentStatusCompleted=Completed
+ ;Label for assessment status: completed.
+AssessmentStatusFailed=Failed
+ ;Label for assessment status: failed.
+ABSMRPAssessmentSeverityTrendDeveloperDocumentation=Trend of an assessment check result compared to the previous run.
+ ;Developer documentation for ABSMRPAssessmentSeverityTrend enum.
+ABSMRPAssessmentSeverityTrend=Severity trend
+ ;Label for the ABSMRPAssessmentSeverityTrend enum.
+TrendUnchanged=Unchanged
+ ;Label for trend: unchanged - no issue in either run.
+TrendNew=New
+ ;Label for trend: new - check fired for the first time.
+TrendImproving=Improving
+ ;Label for trend: improving - affected count decreased.
+TrendStable=Stable
+ ;Label for trend: stable - affected count unchanged.
+TrendWorsening=Worsening
+ ;Label for trend: worsening - affected count increased.
+TrendResolved=Resolved
+ ;Label for trend: resolved - issue no longer detected.
+ABSMRPPlanningEngineDeveloperDocumentation=Planning engine active at the time of the MRP Assessment run.
+ ;Developer documentation for ABSMRPPlanningEngine enum.
+ABSMRPPlanningEngine=Planning engine
+ ;Label for the ABSMRPPlanningEngine enum.
+PlanningEngineLegacyMRP=Legacy MRP
+ ;Label for planning engine: legacy built-in MRP.
+PlanningEnginePlanningOptimization=Planning Optimization
+ ;Label for planning engine: Planning Optimization add-in.
+ABSMRPCheckApplicabilityDeveloperDocumentation=Indicates which planning engine a check applies to.
+ ;Developer documentation for ABSMRPCheckApplicability enum.
+ABSMRPCheckApplicability=Check applicability
+ ;Label for the ABSMRPCheckApplicability enum.
+CheckApplicabilityBoth=Both engines
+ ;Label for check applicability: applies to both Legacy MRP and Planning Optimization.
+CheckApplicabilityLegacyOnly=Legacy MRP only
+ ;Label for check applicability: only applies to Legacy MRP.
+CheckApplicabilityPOOnly=Planning Optimization only
+ ;Label for check applicability: only applies to Planning Optimization.
+ABSMRPAssessmentRunDeveloperDocumentation=Header record for each MRP Assessment run, storing the overall result and metadata.
+ ;Developer documentation for ABSMRPAssessmentRun table.
+ABSMRPAssessmentRun=MRP assessment run
+ ;Label for the ABSMRPAssessmentRun table.
+ABSMRPAssessmentResultDeveloperDocumentation=One result row per check per MRP Assessment run, storing the check outcome and recommendation.
+ ;Developer documentation for ABSMRPAssessmentResult table.
+ABSMRPAssessmentResult=MRP assessment result
+ ;Label for the ABSMRPAssessmentResult table.
+ABSMRPAssessmentDetailDeveloperDocumentation=Per-item detail rows for MRP Assessment checks that produce item-level findings.
+ ;Developer documentation for ABSMRPAssessmentDetail table.
+ABSMRPAssessmentDetail=MRP assessment detail
+ ;Label for the ABSMRPAssessmentDetail table.
+ABSMRPAssessmentCheckConfigDeveloperDocumentation=Per-check configuration for MRP Assessment: enable/disable and severity override.
+ ;Developer documentation for ABSMRPAssessmentCheckConfig table.
+ABSMRPAssessmentCheckConfig=MRP assessment check configuration
+ ;Label for the ABSMRPAssessmentCheckConfig table.
+MRPAssessmentCheckConfig=MRP check configuration
+ ;Form title for the ABSMRPAssessmentCheckConfig form.
+AssessmentRunId=Assessment run ID
+ ;EDT label for ABSMRPAssessmentRunId.
+CheckCode=Check code
+ ;EDT label for ABSMRPCheckCode.
+CheckDescription=Check description
+ ;EDT label for ABSMRPCheckDescription.
+AffectedObjects=Affected objects
+ ;EDT label for ABSMRPAffectedObjects.
+AssessmentDate=Assessment date
+ ;Field label for the date the assessment was run.
+AssessmentTime=Assessment time
+ ;Field label for the UTC timestamp of the assessment run.
+OverallSeverity=Overall severity
+ ;Field label for the highest severity across all checks in the run.
+TotalChecks=Total checks
+ ;Field label for the total number of checks executed.
+IssuesFound=Issues found
+ ;Field label for the number of checks that detected an issue.
+PlanningEngine=Planning engine
+ ;Field label for the planning engine active at the time of the run.
+AffectedCount=Affected count
+ ;Field label for the number of records affected by the check.
+Recommendation=Recommendation
+ ;Field label for the recommended action to resolve the check finding.
+SeverityTrend=Severity trend
+ ;Field label for the trend of check severity vs the previous run.
+Suppressed=Suppressed
+ ;Field label for whether a check is suppressed in the assessment.
+NotApplicable=Not applicable
+ ;Field label for whether a check does not apply to the active planning engine.
+CompoundedRisk=Compounded risk
+ ;Field label for whether an item also has an open related MRP exception.
+DetailNote=Detail note
+ ;Field label for a check-specific note on an assessment detail row.
+SuppressReason=Suppress reason
+ ;Field label for the reason a check was suppressed.
+SuppressedBy=Suppressed by
+ ;Field label for the user who suppressed the check.
+SuppressedDate=Suppressed date
+ ;Field label for the date the check was suppressed.
+DefaultSeverityOverride=Severity override
+ ;Field label for the override severity for a check.
+ApplicableEngine=Applicable engine
+ ;Field label for which planning engine a check applies to.
+Enabled=Enabled
+ ;Field label for whether a check is enabled in the assessment configuration.
+IncludeItemChecks=Include item-level detail
+ ;SysOperation parameter label for whether to write per-item detail rows.
+DeletePreviousRunsDays=Delete runs older than (days)
+ ;SysOperation parameter label for the number of days to retain completed assessment runs.
+MRPAssessmentCaption=Run MRP assessment
+ ;Batch job caption for ABSMRPAssessmentController.
+RunMRPAssessment=Run MRP assessment
+ ;Menu item label for the ABSMRPAssessmentRun action menu item.
+MRPAssessmentResults=MRP assessment
+ ;Menu item label for the ABSMRPAssessment display menu item.
+
+ABSItemABCXYZEntityLabel=Item ABC/XYZ classification
+ ;Data entity label for ABSItemABCXYZEntity - used as the Dataverse virtual table display name
+ABSItemABCXYZEntityDescription=Exposes item inventory classification results (ABC/XYZ) and demand statistics for Dataverse virtual entity and OData access
+ ;Developer documentation for ABSItemABCXYZEntity
+ABSItemABCXYZEntityViewLabel=View item ABC/XYZ classification data
+ ;Security privilege label for ABSItemABCXYZEntityView
+ABSItemABCXYZEntityViewDescription=Provides read access to the ABSItemABCXYZEntity data entity via OData and Dataverse virtual tables
+ ;Security privilege description for ABSItemABCXYZEntityView
+ABSMRPExceptionEntityLabel=MRP exception
+ ;Data entity label for ABSMRPExceptionEntity - used as the Dataverse virtual table display name
+ABSMRPExceptionEntityDescription=Exposes MRP planning exceptions with ABC/XYZ classification context for Dataverse virtual entity and OData access
+ ;Developer documentation for ABSMRPExceptionEntity
+ABSMRPExceptionEntityViewLabel=View MRP exceptions
+ ;Security privilege label for ABSMRPExceptionEntityView
+ABSMRPExceptionEntityViewDescription=Provides read access to the ABSMRPExceptionEntity data entity via OData and Dataverse virtual tables
+ ;Security privilege description for ABSMRPExceptionEntityView
+ABSMRPExceptionEntityRecIdLabel=Exception ID
+ ;Field label for the RecId-based surrogate key on ABSMRPExceptionEntity
+
+ABSMRPAssessmentRunEntityLabel=MRP assessment run
+ ;Data entity label for ABSMRPAssessmentRunEntity
+ABSMRPAssessmentRunEntityDescription=Exposes MRP health assessment run records for Dataverse virtual entity and OData access
+ ;Developer documentation for ABSMRPAssessmentRunEntity
+ABSMRPAssessmentRunEntityViewLabel=View MRP assessment runs
+ ;Security privilege label for ABSMRPAssessmentRunEntityView
+ABSMRPAssessmentRunEntityViewDescription=Provides read access to the ABSMRPAssessmentRunEntity data entity via OData and Dataverse virtual tables
+ ;Security privilege description for ABSMRPAssessmentRunEntityView
+ABSMRPAssessmentResultEntityLabel=MRP assessment result
+ ;Data entity label for ABSMRPAssessmentResultEntity
+ABSMRPAssessmentResultEntityDescription=Exposes MRP health assessment check results for Dataverse virtual entity and OData access
+ ;Developer documentation for ABSMRPAssessmentResultEntity
+ABSMRPAssessmentResultEntityViewLabel=View MRP assessment results
+ ;Security privilege label for ABSMRPAssessmentResultEntityView
+ABSMRPAssessmentResultEntityViewDescription=Provides read access to the ABSMRPAssessmentResultEntity data entity via OData and Dataverse virtual tables
+ ;Security privilege description for ABSMRPAssessmentResultEntityView
+ABSMRPAssessmentDetailEntityLabel=MRP assessment detail
+ ;Data entity label for ABSMRPAssessmentDetailEntity
+ABSMRPAssessmentDetailEntityDescription=Exposes MRP health assessment detail lines (per item/site) for Dataverse virtual entity and OData access
+ ;Developer documentation for ABSMRPAssessmentDetailEntity
+ABSMRPAssessmentDetailEntityViewLabel=View MRP assessment details
+ ;Security privilege label for ABSMRPAssessmentDetailEntityView
+ABSMRPAssessmentDetailEntityViewDescription=Provides read access to the ABSMRPAssessmentDetailEntity data entity via OData and Dataverse virtual tables
+ ;Security privilege description for ABSMRPAssessmentDetailEntityView
+ABSBacklogMonitorEntityLabel=Backlog monitor
+ ;Data entity label for ABSBacklogMonitorEntity
+ABSBacklogMonitorEntityDescription=Exposes sales order backlog monitoring records for Dataverse virtual entity and OData access
+ ;Developer documentation for ABSBacklogMonitorEntity
+ABSBacklogMonitorEntityViewLabel=View backlog monitor
+ ;Security privilege label for ABSBacklogMonitorEntityView
+ABSBacklogMonitorEntityViewDescription=Provides read access to the ABSBacklogMonitorEntity data entity via OData and Dataverse virtual tables
+ ;Security privilege description for ABSBacklogMonitorEntityView
+ABSStockLevelMonitorEntityLabel=Stock level monitor
+ ;Data entity label for ABSStockLevelMonitorEntity
+ABSStockLevelMonitorEntityDescription=Exposes inventory stock level monitoring records for Dataverse virtual entity and OData access
+ ;Developer documentation for ABSStockLevelMonitorEntity
+ABSStockLevelMonitorEntityViewLabel=View stock level monitor
+ ;Security privilege label for ABSStockLevelMonitorEntityView
+ABSStockLevelMonitorEntityViewDescription=Provides read access to the ABSStockLevelMonitorEntity data entity via OData and Dataverse virtual tables
+ ;Security privilege description for ABSStockLevelMonitorEntityView
+ABSLeadTimeMonitorEntityLabel=Lead time monitor
+ ;Data entity label for ABSLeadTimeMonitorEntity
+ABSLeadTimeMonitorEntityDescription=Exposes purchase order lead time monitoring records for Dataverse virtual entity and OData access
+ ;Developer documentation for ABSLeadTimeMonitorEntity
+ABSLeadTimeMonitorEntityViewLabel=View lead time monitor
+ ;Security privilege label for ABSLeadTimeMonitorEntityView
+ABSLeadTimeMonitorEntityViewDescription=Provides read access to the ABSLeadTimeMonitorEntity data entity via OData and Dataverse virtual tables
+ ;Security privilege description for ABSLeadTimeMonitorEntityView
+ABSSafetyStockSimulatorEntityLabel=Safety stock simulator
+ ;Data entity label for ABSSafetyStockSimulatorEntity
+ABSSafetyStockSimulatorEntityDescription=Exposes safety stock and reorder point simulation results for Dataverse virtual entity and OData access
+ ;Developer documentation for ABSSafetyStockSimulatorEntity
+ABSSafetyStockSimulatorEntityViewLabel=View safety stock simulator
+ ;Security privilege label for ABSSafetyStockSimulatorEntityView
+ABSSafetyStockSimulatorEntityViewDescription=Provides read access to the ABSSafetyStockSimulatorEntity data entity via OData and Dataverse virtual tables
+ ;Security privilege description for ABSSafetyStockSimulatorEntityView
+ABSLotSizeSimulatorEntityLabel=Lot size simulator
+ ;Data entity label for ABSLotSizeSimulatorEntity
+ABSLotSizeSimulatorEntityDescription=Exposes EOQ lot size simulation and cost savings results for Dataverse virtual entity and OData access
+ ;Developer documentation for ABSLotSizeSimulatorEntity
+ABSLotSizeSimulatorEntityViewLabel=View lot size simulator
+ ;Security privilege label for ABSLotSizeSimulatorEntityView
+ABSLotSizeSimulatorEntityViewDescription=Provides read access to the ABSLotSizeSimulatorEntity data entity via OData and Dataverse virtual tables
+ ;Security privilege description for ABSLotSizeSimulatorEntityView
+ABSBOMAnalysisEntityLabel=BOM analysis
+ ;Data entity label for ABSBOMAnalysisEntity
+ABSBOMAnalysisEntityDescription=Exposes bill of materials shortage and cost analysis records for Dataverse virtual entity and OData access
+ ;Developer documentation for ABSBOMAnalysisEntity
+ABSBOMAnalysisEntityViewLabel=View BOM analysis
+ ;Security privilege label for ABSBOMAnalysisEntityView
+ABSBOMAnalysisEntityViewDescription=Provides read access to the ABSBOMAnalysisEntity data entity via OData and Dataverse virtual tables
+ ;Security privilege description for ABSBOMAnalysisEntityView
+ABSKanbanMonitorEntityLabel=Kanban monitor
+ ;Data entity label for ABSKanbanMonitorEntity
+ABSKanbanMonitorEntityDescription=Exposes Kanban job monitoring records for Dataverse virtual entity and OData access
+ ;Developer documentation for ABSKanbanMonitorEntity
+ABSKanbanMonitorEntityViewLabel=View Kanban monitor
+ ;Security privilege label for ABSKanbanMonitorEntityView
+ABSKanbanMonitorEntityViewDescription=Provides read access to the ABSKanbanMonitorEntity data entity via OData and Dataverse virtual tables
+ ;Security privilege description for ABSKanbanMonitorEntityView
+ABSStockDevelopmentEntityLabel=Stock development
+ ;Data entity label for ABSStockDevelopmentEntity
+ABSStockDevelopmentEntityDescription=Exposes periodic inventory stock development and trend records for Dataverse virtual entity and OData access
+ ;Developer documentation for ABSStockDevelopmentEntity
+ABSStockDevelopmentEntityViewLabel=View stock development
+ ;Security privilege label for ABSStockDevelopmentEntityView
+ABSStockDevelopmentEntityViewDescription=Provides read access to the ABSStockDevelopmentEntity data entity via OData and Dataverse virtual tables
+ ;Security privilege description for ABSStockDevelopmentEntityView
+ABSMaterialDocumentAnalysisEntityLabel=Material document analysis
+ ;Data entity label for ABSMaterialDocumentAnalysisEntity
+ABSMaterialDocumentAnalysisEntityDescription=Exposes material document variance and exception analysis records for Dataverse virtual entity and OData access
+ ;Developer documentation for ABSMaterialDocumentAnalysisEntity
+ABSMaterialDocumentAnalysisEntityViewLabel=View material document analysis
+ ;Security privilege label for ABSMaterialDocumentAnalysisEntityView
+ABSMaterialDocumentAnalysisEntityViewDescription=Provides read access to the ABSMaterialDocumentAnalysisEntity data entity via OData and Dataverse virtual tables
+ ;Security privilege description for ABSMaterialDocumentAnalysisEntityView
+ABSMaterialDocumentSummaryEntityLabel=Material document summary
+ ;Data entity label for ABSMaterialDocumentSummaryEntity
+ABSMaterialDocumentSummaryEntityDescription=Exposes material document exception summary per item/site for Dataverse virtual entity and OData access
+ ;Developer documentation for ABSMaterialDocumentSummaryEntity
+ABSMaterialDocumentSummaryEntityViewLabel=View material document summary
+ ;Security privilege label for ABSMaterialDocumentSummaryEntityView
+ABSMaterialDocumentSummaryEntityViewDescription=Provides read access to the ABSMaterialDocumentSummaryEntity data entity via OData and Dataverse virtual tables
+ ;Security privilege description for ABSMaterialDocumentSummaryEntityView
+ForgeStockPremiumLicense=ForgeStock Premium
+ ;License code label for the ForgeStock Premium paid tier, covering all advanced planning and optimization features.
+ABSSafetyStockCfgKey=Safety stock recommender
+ ;Configuration key label for the safety stock recommender feature (ForgeStock Premium).
+ABSBacklogMonitorCfgKey=Backlog monitor
+ ;Configuration key label for the backlog monitor feature (ForgeStock Premium).
+ABSBOMAnalysisCfgKey=BOM analysis
+ ;Configuration key label for the BOM analysis feature (ForgeStock Premium).
+ABSKanbanMonitorCfgKey=Kanban monitor
+ ;Configuration key label for the Kanban monitor feature (ForgeStock Premium).
+ABSLeadTimeMonitorCfgKey=Lead time monitor
+ ;Configuration key label for the lead time monitor feature (ForgeStock Premium).
+ABSLotSizeSimulatorCfgKey=Lot size simulator
+ ;Configuration key label for the lot size simulator feature (ForgeStock Premium).
+ABSMaterialDocumentAnalysisCfgKey=Material document analysis
+ ;Configuration key label for the material document analysis feature (ForgeStock Premium).
+ABSStockDevelopmentCfgKey=Stock development
+ ;Configuration key label for the stock development feature (ForgeStock Premium).
+ABSStockLevelMonitorCfgKey=Stock level monitor
+ ;Configuration key label for the stock level monitor feature (ForgeStock Premium).
+
+ItemId=Item number
+ ;Generic label for the item number column used in graphical-simulator parameter editors.
+SiteId=Site
+ ;Generic label for the site column used in graphical-simulator parameter editors.
+RunGuid=Run ID
+ ;Field label for the unique simulator run identifier shared by every row produced in one simulation.
+BucketIndex=Bucket index
+ ;Field label for the zero-based time bucket index in a simulator series.
+BucketDate=Bucket date
+ ;Field label for the calendar date of a simulator time bucket.
+DemandQty=Demand quantity
+ ;Field label for the demand quantity consumed in a single bucket.
+OrderQty=Order quantity
+ ;Field label for the order quantity placed in a single bucket.
+ReceiptQty=Receipt quantity
+ ;Field label for the receipt quantity arriving in a single bucket.
+ArrivalQty=Arrival quantity
+ ;Field label for the order arrival quantity received in a single bucket (safety stock simulator).
+StockQty=Stock quantity
+ ;Field label for the projected on-hand stock at the end of a bucket.
+OrderingCost=Ordering cost
+ ;Field label for the bucket-level ordering cost in the lot-size series.
+HoldingCost=Holding cost
+ ;Field label for the bucket-level holding cost in the lot-size series.
+StockoutCost=Stockout cost
+ ;Field label for the bucket-level stockout cost in the lot-size series.
+CumulativeCost=Cumulative cost
+ ;Field label for the running total of all cost components in the lot-size series.
+StockoutFlag=Stockout
+ ;Field label flagging a bucket where projected stock dropped below zero.
+AvgStock=Average stock
+ ;Field label for the average stock level over the simulation horizon (safety stock summary).
+StockoutPct=Stockout %
+ ;Field label for the percentage of buckets that experienced a stockout (safety stock summary).
+Selected=Selected
+ ;Generic label for a check-box column indicating user selection in a picker grid.
+ABSSafetyStock=Safety stock
+ ;Generic label for the safety stock column shown in projection charts and series tables.
+ABSReorderPoint=Reorder point
+ ;Generic label for the reorder point column shown in projection charts and series tables.
+ABSChartOnHand=On-hand
+ ;Read-only label shown on graphical simulators displaying the current physical on-hand quantity.
+ABSChartSafetyStock=Safety stock
+ ;Read-only label shown on graphical simulators displaying the current item-coverage safety stock.
+ABSChartMaxStock=Max stock
+ ;Read-only label shown on the lot-size graphical simulator displaying the current maximum stock setting.
+ABSChartFixedLotSize=Fixed lot size
+ ;Read-only label shown on the lot-size graphical simulator displaying the current standard order quantity.
+ABSChartLeadTimeDays=Lead time (days)
+ ;Read-only label shown on graphical simulators displaying the procurement lead time in days.
+ABSChartGranularityDaily=Daily
+ ;Enum value label for daily bucketing in chart simulator granularity selectors.
+ABSChartGranularityWeek=Weekly
+ ;Enum value label for weekly bucketing in chart simulator granularity selectors.
+ABSChartGranularityMonth=Monthly
+ ;Enum value label for monthly bucketing in chart simulator granularity selectors.
+ABSChartGranularityPlanningHorizon=Planning horizon
+ ;Enum value label for using the full planning horizon as the chart bucket size.
+ABSLotSizeChartSeries=Lot size chart series
+ ;Table label for the temporary table that holds one row per simulated bucket in the lot size graphical simulator.
+ABSLotSizeProcedureChoice=Lot sizing procedure choice
+ ;Table label for the in-memory picker table that lets the user tick which lot-sizing procedures to simulate.
+ABSLotSizeProcedureCode=Code
+ ;Field label for the short two-letter code of a lot-sizing procedure in the picker grid.
+ABSLotSizeProcedureDescription=Description
+ ;Field label for the descriptive name of a lot-sizing procedure in the picker grid.
+ABSLotSizeProcedure=Lot sizing procedure
+ ;Enum label for the lot-sizing procedure (EX, EO, HB, FX, WI, GR, MB, WB).
+ABSLotSizeProcedureDeveloperDocumentation=Identifies a lot-sizing procedure used by the graphical lot-size simulator (exact lot for lot, economic order quantity, period order quantity, fixed lot size, Wagner-Whitin, Groff, monthly bucket, weekly bucket).
+ ;Developer documentation for the ABSLotSizeProcedure enum.
+ABSLotSizeProcedureEX=EX - Exact lot for lot
+ ;Enum value label for the exact lot for lot procedure.
+ABSLotSizeProcedureEO=EO - Economic order quantity (Wilson)
+ ;Enum value label for the Wilson economic order quantity procedure.
+ABSLotSizeProcedureHB=HB - Period order quantity
+ ;Enum value label for the period order quantity (Harris-Benton) procedure.
+ABSLotSizeProcedureFX=FX - Fixed lot size
+ ;Enum value label for the fixed lot size procedure.
+ABSLotSizeProcedureWI=WI - Wagner-Whitin
+ ;Enum value label for the Wagner-Whitin dynamic lot size procedure.
+ABSLotSizeProcedureGR=GR - Groff's marginal cost
+ ;Enum value label for Groff's marginal cost balancing procedure.
+ABSLotSizeProcedureMB=MB - Monthly bucket
+ ;Enum value label for the monthly bucket (period) procedure.
+ABSLotSizeProcedureWB=WB - Weekly bucket
+ ;Enum value label for the weekly bucket (period) procedure.
+ABSLotSizeChartGranularity=Granularity
+ ;Enum label for chart bucket granularity (Daily / Weekly).
+ABSLotSizeChartGranularityDeveloperDocumentation=Time-bucket granularity used by the lot size graphical simulator when projecting demand and replenishment over the horizon.
+ ;Developer documentation for the ABSLotSizeChartGranularity enum.
+ABSLotSizeChartDisplay=Display
+ ;Button label for running the lot size graphical simulation and rendering the charts.
+ABSLotSizeChartSimulateGroup=Simulate
+ ;Action pane button group caption that contains the Display button on the lot size graphical simulator.
+ABSLotSizeChartProceduresGroup=Procedures
+ ;Action pane button group caption for the select-all / clear-all procedure picker buttons on the lot size graphical simulator.
+ABSLotSizeChartSelectAll=Select all
+ ;Button label that ticks every lot-sizing procedure in the picker grid.
+ABSLotSizeChartClearAll=Clear all
+ ;Button label that unticks every lot-sizing procedure in the picker grid.
+ABSLotSizeChartActionsTab=Actions
+ ;Action pane tab caption on the lot size graphical simulator.
+ABSLotSizeChartParametersGroup=Parameters
+ ;Group caption for the parameter editor block (item, site, ordering cost, holding rate) on the lot size graphical simulator.
+ABSLotSizeChartCalculatedGroup=Calculated values
+ ;Group caption for the read-only calculated/resolved values block on the lot size graphical simulator.
+ABSLotSizeChartOptionsGroup=Options
+ ;Group caption for the options block (granularity, horizon, procedure picker grid) on the lot size graphical simulator.
+ABSLotSizeChartCostGroup=Cost projection
+ ;Group caption for the cost projection chart panel on the lot size graphical simulator.
+ABSLotSizeChartStockGroup=Stock projection
+ ;Group caption for the stock projection chart panel on the lot size graphical simulator.
+ABSLotSizeChartHorizonBuckets=Horizon (buckets)
+ ;Field label for the number of time buckets to simulate over.
+ABSLotSizeChartEmpty=Click Display to run a simulation.
+ ;Placeholder message shown in chart panels before the first simulation runs.
+ABSLotSizeChartNoResult=No data was produced by the simulation.
+ ;Placeholder message shown when the simulation produced no rows (typically because all selected procedures returned zero demand).
+ABSLotSizeChartNoAbcxyz=No ABC/XYZ classification is available for %1 / %2. Run ABC/XYZ classification first.
+ ;Warning shown when no ABCXYZ stats exist for the requested item and site.
+ABSLotSizeChartContractItemIdRequired=Item number is required.
+ ;Validation warning shown when the contract is missing an item id.
+ABSLotSizeChartContractSiteIdRequired=Site is required.
+ ;Validation warning shown when the contract is missing a site id.
+ABSLotSizeChartContractProcedureRequired=Select at least one lot-sizing procedure.
+ ;Validation warning shown when no procedures are ticked in the picker.
+ABSLotSizeChartContractHorizonRequired=Horizon (buckets) must be greater than zero.
+ ;Validation warning shown when the horizon is missing or non-positive.
+ABSLotSizeChartContractOrderingCostRequired=Ordering cost per order must be greater than zero.
+ ;Validation warning shown when the ordering cost parameter is missing or non-positive.
+ABSLotSizeChartContractHoldingCostRequired=Holding cost rate must be greater than zero.
+ ;Validation warning shown when the holding cost rate parameter is missing or non-positive.
+ABSLotSizeGraphicalSimulator=Lot size graphical simulator
+ ;Form caption and menu item label for the lot size graphical simulator.
+ABSLotSizeGraphicalSimulatorViewLabel=Lot size graphical simulator view
+ ;Security privilege label granting read access to the lot size graphical simulator.
+ABSLotSizeGraphicalSimulatorViewDescription=Read access to the lot size graphical simulator form.
+ ;Security privilege description granting read access to the lot size graphical simulator.
+ABSLotSizeShowGroup=Show
+ ;Action pane button group caption on the tabular lot size simulator for navigation buttons that open related forms.
+ABSLotSizeGraphicalSimulation=Graphical simulation
+ ;Button label on the tabular lot size simulator that opens the graphical simulator for the selected row.
+ABSSafetyStockChartSeries=Safety stock chart series
+ ;Table label for the temporary table that holds one row per simulated bucket per scenario in the safety stock graphical simulator.
+ABSSafetyStockChartSummary=Safety stock chart summary
+ ;Table label for the temporary table that holds one summary row per scenario for the safety stock graphical simulator trade-off chart.
+ABSSafetyStockScenarioChoice=Safety stock scenario choice
+ ;Table label for the in-memory picker table that lets the user tick which safety stock scenarios to simulate.
+ABSSafetyStockScenarioCode=Code
+ ;Field label for the short scenario code in the picker grid (S90, S95, EXT, LTLO, ...).
+ABSSafetyStockScenarioDescription=Description
+ ;Field label for the descriptive name of a safety stock scenario in the picker grid.
+ABSSafetyStockScenario=Scenario
+ ;Enum label for the safety stock scenario.
+ABSSafetyStockScenarioDeveloperDocumentation=Identifies a safety stock scenario used by the graphical safety stock simulator (service-level curves S90-S995, and modifiers EXT, LTLO, LTHI).
+ ;Developer documentation for the ABSSafetyStockScenario enum.
+ABSSafetyStockScenarioS90=S90 - 90% service level
+ ;Enum value label for the 90% service level scenario.
+ABSSafetyStockScenarioS95=S95 - 95% service level
+ ;Enum value label for the 95% service level scenario.
+ABSSafetyStockScenarioS97=S97 - 97% service level
+ ;Enum value label for the 97% service level scenario.
+ABSSafetyStockScenarioS99=S99 - 99% service level
+ ;Enum value label for the 99% service level scenario.
+ABSSafetyStockScenarioS995=S995 - 99.5% service level
+ ;Enum value label for the 99.5% service level scenario.
+ABSSafetyStockScenarioEXT=EXT - Extended formula (uses sigma_L)
+ ;Enum value label for the extended formula modifier that activates lead-time variability in the safety stock calculation.
+ABSSafetyStockScenarioLTLO=LTLO - Low lead-time variability
+ ;Enum value label for the low lead-time variability modifier (sigma_L = 1 day).
+ABSSafetyStockScenarioLTHI=LTHI - High lead-time variability
+ ;Enum value label for the high lead-time variability modifier (sigma_L = 4 days).
+ABSSafetyStockChartGranularity=Granularity
+ ;Enum label for chart bucket granularity (Daily / Weekly) on the safety stock graphical simulator.
+ABSSafetyStockChartGranularityDeveloperDocumentation=Time-bucket granularity used by the safety stock graphical simulator when projecting demand and replenishment over the horizon.
+ ;Developer documentation for the ABSSafetyStockChartGranularity enum.
+ABSSafetyStockChartDisplay=Display
+ ;Button label for running the safety stock graphical simulation and rendering the charts.
+ABSSafetyStockChartSimulateGroup=Simulate
+ ;Action pane button group caption that contains the Display button on the safety stock graphical simulator.
+ABSSafetyStockChartScenariosGroup=Scenarios
+ ;Action pane button group caption for the select-all / clear-all scenario picker buttons on the safety stock graphical simulator.
+ABSSafetyStockChartSelectAll=Select all
+ ;Button label that ticks every scenario in the picker grid.
+ABSSafetyStockChartClearAll=Clear all
+ ;Button label that unticks every scenario in the picker grid.
+ABSSafetyStockChartActionsTab=Actions
+ ;Action pane tab caption on the safety stock graphical simulator.
+ABSSafetyStockChartParametersGroup=Parameters
+ ;Group caption for the parameter editor block on the safety stock graphical simulator.
+ABSSafetyStockChartCalculatedGroup=Calculated values
+ ;Group caption for the read-only calculated/resolved values block on the safety stock graphical simulator.
+ABSSafetyStockChartServiceLevelsGroup=Service levels
+ ;Group caption for the S90/S95/S97/S99/S995 service-level checkboxes that pick which curves to compare on the safety stock graphical simulator.
+ABSSafetyStockChartOptionsGroup=Options
+ ;Group caption for the options block (granularity, horizon, scenario picker grid) on the safety stock graphical simulator.
+ABSSafetyStockChartModifiersGroup=Calculation modifiers
+ ;Group caption for the EXT / LTLO / LTHI calculation-modifier checkboxes that reshape every selected service-level scenario on the safety stock graphical simulator.
+ABSSafetyStockChartProjectionGroup=Stock projection by service level
+ ;Group caption for the stock projection chart panel on the safety stock graphical simulator.
+ABSSafetyStockChartTradeoffGroup=Service-level trade-off
+ ;Group caption for the recommended SS / ROP vs stockout-% bar chart on the safety stock graphical simulator.
+ABSSafetyStockChartHorizonBuckets=Horizon (buckets)
+ ;Field label for the number of time buckets to simulate over.
+ABSSafetyStockChartLeadTimeStdDev=Lead time std dev (days)
+ ;Field label for the lead-time standard deviation parameter used by the extended safety stock formula.
+ABSSafetyStockChartActiveSigmaL=Active sigma L (days)
+ ;Read-only label showing which lead-time standard deviation value is currently active (LTLO override, LTHI override, or the user-entered value).
+ABSSafetyStockChartCurrentSS=Current safety stock
+ ;Read-only label showing the current item-coverage safety stock for the selected item / site.
+ABSSafetyStockChartEmpty=Click Display to run a simulation.
+ ;Placeholder message shown in chart panels before the first simulation runs.
+ABSSafetyStockChartNoResult=No data was produced by the simulation.
+ ;Placeholder message shown when the simulation produced no rows.
+ABSSafetyStockChartNoAbcxyz=No ABC/XYZ classification is available for %1 / %2. Run ABC/XYZ classification first.
+ ;Warning shown when no ABCXYZ stats exist for the requested item and site.
+ABSSafetyStockChartNoDemand=No demand statistics are available for %1 / %2.
+ ;Warning shown when demand statistics (mean / std dev) are zero or missing for the requested item and site.
+ABSSafetyStockChartContractItemIdRequired=Item number is required.
+ ;Validation warning shown when the contract is missing an item id.
+ABSSafetyStockChartContractSiteIdRequired=Site is required.
+ ;Validation warning shown when the contract is missing a site id.
+ABSSafetyStockChartContractServiceLevelRequired=Select at least one service level scenario (S90, S95, S97, S99 or S995).
+ ;Validation warning shown when no service-level scenarios are ticked in the picker.
+ABSSafetyStockChartContractHorizonRequired=Horizon (buckets) must be greater than zero.
+ ;Validation warning shown when the horizon is missing or non-positive.
+ABSSafetyStockGraphicalSimulator=Safety stock graphical simulator
+ ;Form caption and menu item label for the safety stock graphical simulator.
+ABSSafetyStockGraphicalSimulatorViewLabel=Safety stock graphical simulator view
+ ;Security privilege label granting read access to the safety stock graphical simulator.
+ABSSafetyStockGraphicalSimulatorViewDescription=Read access to the safety stock graphical simulator form.
+ ;Security privilege description granting read access to the safety stock graphical simulator.
+ABSSafetyStockShowGroup=Show
+ ;Action pane button group caption on the tabular safety stock simulator for navigation buttons that open related forms.
+ABSSafetyStockGraphicalSimulation=Graphical simulation
+ ;Button label on the tabular safety stock simulator that opens the graphical simulator for the selected row.
+ViewItemCoverage=View item coverage
+ ;Button label on the tabular safety stock simulator that opens the D365 Item coverage form filtered to the selected item.
+SelectItemRowFirst=Select an item row first.
+ ;Warning message shown when user clicks View item coverage without selecting a row.
+ABSSafetyStockDetailsPanel=Safety stock details
+ ;Caption of the detail panel beside the safety stock simulator grid, showing the selected row's full values.
+ABSLotSizeDetailsPanel=Lot size details
+ ;Caption of the detail panel beside the lot size simulator grid, showing the selected row's full values.
+ABSOverviewTab=Overview
+ ;Caption of the first tab (grid of all simulated rows) on the safety stock and lot size simulator forms.
+ABSDetailsTab=Details
+ ;Caption of the details tab (selected row's full values) on the safety stock and lot size simulator forms.
+ABSSafetyStockGroupDemand=Demand profile
+ ;Caption of the demand statistics group on the safety stock simulator details tab.
+ABSSafetyStockGroupLeadService=Lead time and service level
+ ;Caption of the lead time and service level group on the safety stock simulator details tab.
+ABSSafetyStockGroupOutputs=Recommendation
+ ;Caption of the recommendation outputs group on the safety stock simulator details tab.
+ABSSafetyStockGroupAudit=Status and audit
+ ;Caption of the status and audit group on the safety stock simulator details tab.
+ABSLotSizeGroupCostInputs=Cost inputs
+ ;Caption of the cost inputs group on the lot size simulator details tab.
+ABSLotSizeGroupEOQ=EOQ drivers
+ ;Caption of the EOQ drivers group on the lot size simulator details tab.
+ABSLotSizeGroupOutputs=Cost outcomes
+ ;Caption of the cost outcomes group on the lot size simulator details tab.
+ABSLotSizeGroupAudit=Status and audit
+ ;Caption of the status and audit group on the lot size simulator details tab.
+ABSLotSizeSelectedProcedure=Selected procedure
+ ;Label for the SelectedProcedure field on ABSLotSizeSimulator — the lot-sizing procedure chosen by the planner from the graphical simulator.
+ABSLotSizeSelectedLotSize=Selected lot size
+ ;Label for the SelectedLotSize field on ABSLotSizeSimulator — the representative order quantity for the chosen procedure.
+ABSLotSizeSelectProcedureGroup=Select procedure
+ ;Caption of the Select procedure button group on the ABSLotSizeGraphicalSimulator ActionPane.
+ABSLotSizeSelectProcedureCombo=Select procedure
+ ;Label for the procedure combo box in the graphical simulator ActionPane.
+ABSLotSizeUseProcedure=Use this procedure
+ ;Text of the Use this procedure button on the graphical lot-size simulator.
+ABSDisplaySimulationFirst=Run the simulation (Display) before selecting a procedure.
+ ;Warning shown when the planner clicks Use this procedure before clicking Display.
+ABSProcedureNotSimulated=Procedure %1 was not included in the simulation. Tick it and click Display again.
+ ;Warning shown when the planner selects a procedure that was not ticked in the simulation.
+ABSCannotDetermineRepresentativeLotSize=Cannot determine a representative lot size for this procedure. Check demand and cost parameters.
+ ;Warning shown when the representative lot size calculation returns zero.
+ABSSimulatorRowNotFound=Simulator row for item %1, site %2 not found.
+ ;Error shown when the simulator row cannot be found during procedure write-back.
+ABSProcedureSelected=Procedure %1 selected. Recommended lot size: %2. Approve and Apply on the simulator to commit.
+ ;Infolog confirmation shown after the planner successfully writes a procedure selection back to the simulator.
+ABSSafetyStockSelectedScenario=Selected scenario
+ ;Label for the SelectedScenario field on ABSSafetyStockSimulator — the service-level scenario chosen by the planner from the graphical simulator.
+ABSSafetyStockSelectedSafetyStock=Selected safety stock
+ ;Label for the SelectedSafetyStock field on ABSSafetyStockSimulator — the recommended SS for the chosen scenario.
+ABSSafetyStockSelectScenarioGroup=Primary scenario for safety stock update
+ ;Caption of the scenario button group on the ABSSafetyStockGraphicalSimulator ActionPane. This scenario is used by Use this scenario to update actual safety stock.
+ABSSafetyStockSelectScenarioCombo=Primary scenario (used to update actual safety stock)
+ ;Label for the scenario combo box in the graphical safety stock simulator ActionPane.
+ABSSafetyStockUseScenario=Use this scenario
+ ;Text of the Use this scenario button on the graphical safety stock simulator.
+ABSScenarioNotSimulated=Scenario %1 was not included in the simulation. Tick it and click Display again.
+ ;Warning shown when the planner selects a scenario that was not ticked (or selects a modifier scenario).
+ABSCannotDetermineRecommendedSafetyStock=Cannot determine a recommended safety stock for this scenario. Check demand and lead time parameters.
+ ;Warning shown when the recommended SS lookup returns zero for the selected scenario.
+ABSScenarioSelected=Scenario %1 selected. Recommended safety stock: %2. Approve and Apply on the simulator to commit.
+ ;Infolog confirmation shown after the planner successfully writes a scenario selection back to the simulator.
+General=General
+ ;Caption for the General tab page on the MRP assessment run detail form.
+PlanId=Plan
+ ;Field label for the master plan identifier on the MRP assessment report.
+Category=Category
+ ;Field label for the check category on the MRP assessment report.
+ABSWorkspaceTileAX=AX – High value, steady demand
+ ;Caption for the AX cell tile on the inventory optimizer workspace.
+ABSWorkspaceTileAY=AY – High value, variable demand
+ ;Caption for the AY cell tile on the inventory optimizer workspace.
+ABSWorkspaceTileAZ=AZ – High value, sporadic demand
+ ;Caption for the AZ cell tile on the inventory optimizer workspace.
+ABSWorkspaceTileBX=BX – Mid value, steady demand
+ ;Caption for the BX cell tile on the inventory optimizer workspace.
+ABSWorkspaceTileBY=BY – Mid value, variable demand
+ ;Caption for the BY cell tile on the inventory optimizer workspace.
+ABSWorkspaceTileBZ=BZ – Mid value, sporadic demand
+ ;Caption for the BZ cell tile on the inventory optimizer workspace.
+ABSWorkspaceTileCX=CX – Low value, steady demand
+ ;Caption for the CX cell tile on the inventory optimizer workspace.
+ABSWorkspaceTileCY=CY – Low value, variable demand
+ ;Caption for the CY cell tile on the inventory optimizer workspace.
+ABSWorkspaceTileCZ=CZ – Low value, sporadic demand
+ ;Caption for the CZ cell tile on the inventory optimizer workspace.
+ABSWorkspaceCardColumnsCaption=Classification cards
+ ;Caption for the ABC/XYZ classification card list tab page on the workspace.
+StockStatusStockedOut=Stocked out
+ ;Label for the StockedOut value on the ABSStockStatus enum (zero or negative on-hand).
+StockStatusStockedOutDeveloperDocumentation=Item has zero or negative on-hand at the site and is therefore stocked out.
+ ;Developer documentation for the StockedOut value on ABSStockStatus.
+ABSLotSizeRecommendedOrderQty=Recommended order qty
+ ;Feasible order quantity after applying order multiple and min/max constraints to the raw EOQ.
+ABSLotSizeOrderMultiple=Order multiple
+ ;Purchase order multiple resolved from item purchase setup; recommended qty is rounded to this.
+ABSLotSizeMinOrderQty=Minimum order qty
+ ;Minimum purchase order quantity from item purchase setup; recommended qty is clamped up to this.
+ABSLotSizeMaxOrderQty=Maximum order qty
+ ;Maximum purchase order quantity from item purchase setup; recommended qty is clamped down to this (0 = no max).
+ABSDaysOfStockForecast=Days of stock (forecast)
+ ;Forward-looking days of stock = on-hand / average daily planned demand from ReqTrans over the planning horizon.
+ABSHistoryMonthsAvailable=History months available
+ ;Number of months in the analysis window that have non-zero demand; low values (<3) mean the classification is based on thin history.
+ABSMonitorRunHistory=Monitor run history
+ ;Label for the ABSMonitorRunHistory table.
+ABSMonitorRunHistoryDeveloperDocumentation=Stores one summary row per monitor run (type, site, counts) so run-over-run trends survive even though detail snapshots keep only the latest run.
+ ;Developer documentation for the ABSMonitorRunHistory table.
+ABSMonitorRunDateTime=Run date/time
+ ;Timestamp the monitor run completed.
+ABSMonitorItemsProcessed=Items processed
+ ;Number of item/site rows evaluated in the monitor run.
+ABSMonitorIssuesFound=Issues found
+ ;Number of rows the monitor run flagged as an exception.
+ABSMonitorNote=Note
+ ;Optional free-text note describing the monitor run.
+ABSMonitorType=Monitor type
+ ;Label for the ABSMonitorType enum (which monitor produced the run-history row).
+ABSMonitorTypeDeveloperDocumentation=Identifies which inventory-optimizer monitor produced a run-history summary row.
+ ;Developer documentation for the ABSMonitorType enum.
+ABSMonitorTypeStockLevel=Stock level
+ ;ABSMonitorType value StockLevel.
+ABSMonitorTypeLeadTime=Lead time
+ ;ABSMonitorType value LeadTime.
+ABSMonitorTypeBacklog=Backlog
+ ;ABSMonitorType value Backlog.
+ABSMonitorTypeKanban=Kanban
+ ;ABSMonitorType value Kanban.
+ABSMonitorTypeBOM=BOM analysis
+ ;ABSMonitorType value BOM.
+ABSMonitorTypeSafetyStock=Safety stock
+ ;ABSMonitorType value SafetyStock.
+ABSMonitorTypeLotSize=Lot size
+ ;ABSMonitorType value LotSize.
+ABSMonitorTypeMaterialDocument=Material document
+ ;ABSMonitorType value MaterialDocument.
+ABSMonitorTypeStockDevelopment=Stock development
+ ;ABSMonitorType value StockDevelopment.
+ABSOptimizeAll=Optimize all (inventory optimizer)
+ ;Caption and menu label for the master batch job that runs the full engine chain.
+ABSOptimizeAllSiteId=Site
+ ;Site parameter for the Optimize all batch job (blank = all sites).
+ABSOptimizeAllFromDate=From date
+ ;Analysis window start date for classification, stock development and material document steps.
+ABSOptimizeAllToDate=To date
+ ;Analysis window end date for classification, stock development and material document steps.
+ABSOptimizeAllPlanId=Master plan
+ ;Master plan for the MRP exception step (blank skips it; run exception detection separately for all plans).
+ABSOptimizeAllRetentionDays=History retention (days)
+ ;Run-history rows older than this are deleted after the chain finishes (0 = keep all).
+ABSOptimizeAllStarting=Optimize all: starting the inventory optimizer engine chain.
+ ;Infolog shown when the Optimize all batch job begins.
+ABSOptimizeAllStepFailed=Optimize all: step %1 failed and was skipped; subsequent steps continued.
+ ;Warning shown when one step of the chain throws an error.
+ABSOptimizeAllCompleted=Optimize all: all steps completed successfully.
+ ;Infolog shown when the chain finishes with no failed steps.
+ABSOptimizeAllCompletedWithErrors=Optimize all: finished with %1 failed step(s). Review the messages above.
+ABSOptimizeAllClassificationCaveat=Optimize all: ABC/XYZ classification failed, so the stock level, safety stock, lot size, stock development and MRP exception steps ran against the previous classification. Re-run after fixing classification before acting on their output.
+ ;Warning shown when the chain finishes but one or more steps failed.
+ABSOptimizeAllMaintainLabel=Maintain optimize all orchestration
+ ;Security privilege label for Optimize all batch execution.
+ABSOptimizeAllMaintainDescription=Grants access to run the optimize all orchestration batch job
+ ;Security privilege description for Optimize all.
+ABSOptimizeAllMaintainDuty=Maintain optimize all orchestration
+ ;Security duty label that grants Optimize all execution access.
+ABSTiedUpCapital=Tied-up capital
+ ;On-hand quantity valued at the active standard unit cost (OnHandQty x unit cost), shown on the stock level monitor.
+ABSSafetyStockBaseline=Safety stock baseline
+ ;Label for the ABSSafetyStockBaseline table.
+ABSSafetyStockBaselineDeveloperDocumentation=Records the safety stock applied and the fill-rate target at the moment of application, plus the later measured actual fill rate, for closed-loop validation.
+ ;Developer documentation for the ABSSafetyStockBaseline table.
+ABSBaselineAppliedDate=Date applied
+ ;Date the safety stock recommendation was applied.
+ABSBaselineAppliedBy=Applied by
+ ;User who applied the safety stock recommendation.
+ABSBaselineAppliedSafetyStock=Applied safety stock
+ ;Safety stock quantity written to item coverage when the recommendation was applied.
+ABSBaselineFillRateTarget=Fill-rate target
+ ;Target service level (fill rate %) that drove the applied recommendation.
+ABSBaselineActualFillRate=Actual fill rate
+ ;Measured line fill rate over the recent window.
+ABSBaselineFillRateVariance=Fill-rate variance
+ ;Actual fill rate minus target (percentage points); positive means above target.
+ABSBaselineLastEvaluatedDate=Last evaluated
+ ;Date the actual fill rate was last measured.
+ABSBaselineReviewStatus=Review status
+ ;Label for the ABSBaselineReviewStatus enum.
+ABSBaselineReviewStatusDeveloperDocumentation=Outcome of comparing actual fill rate against the target for an applied safety stock baseline.
+ ;Developer documentation for the ABSBaselineReviewStatus enum.
+ABSBaselineNotEvaluated=Not evaluated
+ ;ABSBaselineReviewStatus value NotEvaluated.
+ABSBaselineOnTarget=On target
+ ;ABSBaselineReviewStatus value OnTarget.
+ABSBaselineAboveTarget=Above target (review to reduce)
+ ;ABSBaselineReviewStatus value AboveTarget; service is comfortably above target so safety stock may be reducible.
+ABSBaselineBelowTarget=Below target (review to increase)
+ ;ABSBaselineReviewStatus value BelowTarget; service is under target so safety stock may be too low.
+ABSSafetyStockValidation=Validate safety stock (closed loop)
+ ;Caption and menu label for the closed-loop safety stock validation batch job.
+ABSSafetyStockValidationSiteId=Site
+ ;Site parameter for the validation job (blank = all sites).
+ABSSafetyStockValidationWindowDays=Measurement window (days)
+ ;Number of past days over which the actual fill rate is measured.
+ABSSafetyStockValidationToleranceAbovePct=Above-target tolerance (pp)
+ABSSafetyStockValidationMinEvaluationDays=Minimum baseline age to evaluate (days)
+ ;Percentage points above target before an item is flagged as Above target (possibly reducible).
+ABSSafetyStockValidationCompleted=Safety stock validation completed: %1 baseline(s) evaluated, %2 flagged for review.
+ ;Infolog shown when the closed-loop validation job finishes.
+ABSSelectExceptionToConfirm=Select an exception to confirm.
+ ;Warning shown when the Confirm button is clicked with no exception selected.
+ABSExceptionConfirmed=Exception for item %1 confirmed.
+ ;Infolog confirmation shown after an exception is confirmed.
+ABSSelectExceptionToDismiss=Select an exception to dismiss.
+ ;Warning shown when the Dismiss button is clicked with no exception selected.
+ABSExceptionDismissed=Exception for item %1 dismissed.
+ ;Infolog confirmation shown after an exception is dismissed.
+ABSExceptionsConfirmed=%1 exception(s) confirmed.
+ ;Infolog confirmation shown after confirming one or more selected exceptions.
+ABSExceptionsDismissed=%1 exception(s) dismissed.
+ ;Infolog confirmation shown after dismissing one or more selected exceptions.
+ABSExceptionsSkippedNotOpen=%1 selected row(s) were not Open and were skipped.
+ ;Warning shown when some selected exceptions could not be actioned because they are not Open.
+ABSViewRequirement=View requirement
+ ;Button label opening the planned order behind the selected exception.
+ABSNoRequirementToView=This exception type has no associated planned order to view.
+ ;Warning shown when View requirement is clicked on an exception with no planned order (e.g. safety stock breach).
+ABSRequirementNotFound=The planned order behind this exception no longer exists. Re-run detection to refresh.
+ ;Warning shown when the stored planned order can no longer be found.
+ABSABCXYZCompleted=ABC/XYZ classification completed for %1.
+ ;Infolog confirmation shown after ABC/XYZ classification finishes.
+ABSAllSites=all sites
+ ;Substituted into the ABC/XYZ completion message when no specific site is selected.
+ABSMRPAssessmentStartingPlan=MRP assessment starting — plan: %1
+ ;Infolog message shown when an MRP assessment begins for a single plan.
+ABSMRPAssessmentStartingAllPlans=MRP assessment starting — all plans (%1 found)
+ ;Infolog message shown when an MRP assessment begins across all plans.
+ABSMRPAssessmentProcessingPlan=Processing plan %1 / %2: %3
+ ;Infolog progress message shown while processing each plan in an all-plans assessment.
+ABSMRPExceptionDetectionCompleted=MRP exception detection completed for %1 plan(s) and %2 site(s).
+ ;Infolog confirmation shown after MRP exception detection finishes.
+ABSMRPExceptionPolicyDeveloperDocumentation=Single source of truth for MRP exception detection thresholds, read from Inventory and warehouse management parameters with documented defaults.
+ ;Developer documentation for the ABSMRPExceptionPolicy helper class.
+ABSMRPExceptionThresholdsCaption=MRP exception thresholds
+ ;Caption for the MRP exception threshold parameters tab on the Inventory optimizer parameters.
+ABSMRPOverdueHighDays=Overdue order: High severity after (days)
+ ;Parameter label: days overdue at or above which an overdue order is High severity (default 7).
+ABSMRPOverdueHighDaysHelp=Number of days an order must be overdue to be flagged High severity. Leave 0 to use the default of 7 days.
+ ;Help text for the overdue High-severity threshold parameter.
+ABSMRPOverdueMediumDays=Overdue order: Medium severity after (days)
+ ;Parameter label: days overdue at or above which an overdue order is Medium severity (default 3).
+ABSMRPOverdueMediumDaysHelp=Number of days an order must be overdue to be flagged Medium severity. Leave 0 to use the default of 3 days.
+ ;Help text for the overdue Medium-severity threshold parameter.
+ABSMRPOversizedOrderMonths=Oversized order: months of demand
+ ;Parameter label: months of average demand above which a single planned order is flagged oversized (default 3).
+ABSMRPOversizedOrderMonthsHelp=A single planned order covering more than this many months of average demand is flagged as an oversized order. Leave 0 to use the default of 3 months.
+ ;Help text for the oversized-order threshold parameter.
+ABSCheckPC001Title=Time fence override — master plan fences override coverage group fences
+ ;MRP assessment check title text.
+ABSCheckPC001Reco=Review whether plan-level time fence overrides are intentional. If not, set them to 0 to let coverage groups control each item's planning horizon.
+ ;MRP assessment check recommendation text.
+ABSCheckPC002Title=Negative days too low — coverage groups with NegativeDays < 7 risk duplicate planned orders
+ ;MRP assessment check title text.
+ABSCheckPC002Reco=Set NegativeDays to at least 7 (or the maximum vendor lead time) for each coverage group to prevent MRP from creating duplicate planned orders for late receipts.
+ ;MRP assessment check recommendation text.
+ABSCheckPC003Title=Static = Dynamic plan — concurrent net-change MRP may double plan data
+ ;MRP assessment check title text.
+ABSCheckPC003Reco=Configure separate static and dynamic master plans to prevent plan data collision during concurrent MRP runs.
+ ;MRP assessment check recommendation text.
+ABSCheckPC005Title=No active master plan — CurrentPlanId is blank in MRP parameters
+ ;MRP assessment check title text.
+ABSCheckPC005Reco=Set the current plan in Master planning parameters. Without a current plan, D365 cannot perform net-change MRP runs.
+ ;MRP assessment check recommendation text.
+ABSCheckDQ001Title=Inactive plan version data — ReqPO rows reference a plan version that is no longer active
+ ;MRP assessment check title text.
+ABSCheckDQ001Reco=Run the 'Delete MRP data' periodic task to remove stale plan version data. This will improve MRP performance.
+ ;MRP assessment check recommendation text.
+ABSCheckDQ002Title=Orphaned MRP plan data — ReqPO rows with no matching ReqPlanVersion header
+ ;MRP assessment check title text.
+ABSCheckDQ002Reco=Run the MRP data cleanup batch job. Orphaned plan data indicates a partially failed regeneration run.
+ ;MRP assessment check recommendation text.
+ABSCheckDQ004Detail=BOM %1 has no active lines
+ ;MRP assessment check detail text.
+ABSCheckDQ004Title=BOM version without BOM lines — MRP will create planned production orders with zero components
+ ;MRP assessment check title text.
+ABSCheckDQ004Reco=Add active BOM lines to the affected BOM versions, or deactivate them if the item is no longer manufactured.
+ ;MRP assessment check recommendation text.
+ABSCheckDQ005Detail=Inventory unit is blank on released product
+ ;MRP assessment check detail text.
+ABSCheckDQ005Title=Released product with missing unit of measure — causes MRP calculation errors
+ ;MRP assessment check title text.
+ABSCheckDQ005Reco=Assign a valid unit of measure to the affected items in Released products.
+ ;MRP assessment check recommendation text.
+ABSCheckDQ006Detail=BOM unit %1 differs from inventory unit %2
+ ;MRP assessment check detail text.
+ABSCheckDQ006Title=BOM line unit of measure mismatch — a BOM line references a UOM that does not exist
+ ;MRP assessment check title text.
+ABSCheckDQ006Reco=Correct the unit of measure on the affected BOM lines.
+ ;MRP assessment check recommendation text.
+ABSCheckDQ007Detail=Item has Purchase order type but has an active BOM
+ ;MRP assessment check detail text.
+ABSCheckDQ007Title=Default order type vs BOM inconsistency — items with Purchase order type have active BOMs
+ ;MRP assessment check title text.
+ABSCheckDQ007Reco=Review items that have both a Purchase default order type and an active BOM. Align the supply type with the intended replenishment method.
+ ;MRP assessment check recommendation text.
+ABSCheckDQ008Title=Route references non-existent item — a route operation references an item that does not exist
+ ;MRP assessment check title text.
+ABSCheckDQ008Reco=Clean up route operations that reference deleted items, or recreate the missing item records.
+ ;MRP assessment check recommendation text.
+ABSCheckDQ009Detail=StandardQty %1 is low versus safety stock %2
+ ;MRP assessment check detail text.
+ABSCheckDQ009Title=Order quantity setting too low — supply recommendations are likely split into many small orders
+ ;MRP assessment check title text.
+ABSCheckDQ009Reco=Review purchasing StandardQty against safety stock targets. Increase lot sizing where repeated small replenishment orders are not operationally efficient.
+ ;MRP assessment check recommendation text.
+ABSCheckSS001Detail=A-class item with zero safety stock
+ ;MRP assessment check detail text.
+ABSCheckSS001Title=A-class item with zero safety stock — high-value items are unprotected against demand variability
+ ;MRP assessment check title text.
+ABSCheckSS001Reco=Set a minimum safety stock for A-class items based on demand standard deviation and desired service level.
+ ;MRP assessment check recommendation text.
+ABSCheckSS002Detail=Safety stock %1, on-hand below threshold
+ ;MRP assessment check detail text.
+ABSCheckSS002Title=Safety stock exceeds on-hand — MRP will immediately generate replenishment orders
+ ;MRP assessment check title text.
+ABSCheckSS002Reco=Review items where on-hand is below safety stock. Consider whether the safety stock level is realistic given current supply lead times.
+ ;MRP assessment check recommendation text.
+ABSCheckSS003Detail=Z-class item has safety stock defined
+ ;MRP assessment check detail text.
+ABSCheckSS003Title=Z-class item with safety stock — highly variable demand means safety stock is frequently consumed
+ ;MRP assessment check title text.
+ABSCheckSS003Reco=Consider increasing safety stock for Z-class items or switching to a demand-driven replenishment policy such as kanban or min/max.
+ ;MRP assessment check recommendation text.
+ABSCheckSS004Detail=Safety stock defined but no coverage group assigned
+ ;MRP assessment check detail text.
+ABSCheckSS004Title=Safety stock with no coverage group — MRP may not honour safety stock without a coverage group
+ ;MRP assessment check title text.
+ABSCheckSS004Reco=Assign a coverage group to items with safety stock defined. Without a coverage group the default order settings govern MRP behaviour.
+ ;MRP assessment check recommendation text.
+ABSCheckCV001Detail=Coverage group %1 uses Manual coverage
+ ;MRP assessment check detail text.
+ABSCheckCV001Title=A-class item on Manual coverage — high-value items require manual purchase order creation
+ ;MRP assessment check title text.
+ABSCheckCV001Reco=Switch A-class items to automated coverage (Min/Max or Period) to ensure replenishment is not missed.
+ ;MRP assessment check recommendation text.
+ABSCheckCV002Detail=Coverage group %1: lead time is 0
+ ;MRP assessment check detail text.
+ABSCheckCV002Title=Item coverage with zero lead time — MRP plans unrealistic same-day delivery
+ ;MRP assessment check title text.
+ABSCheckCV002Reco=Set the purchase lead time on item coverage for all items with automated coverage. Use ReqItemTable.LeadTimePurchase.
+ ;MRP assessment check recommendation text.
+ABSCheckCV003Detail=A-class item has no coverage group
+ ;MRP assessment check detail text.
+ABSCheckCV003Title=A-class item with no coverage group — high-value item may be excluded from MRP
+ ;MRP assessment check title text.
+ABSCheckCV003Reco=Assign a coverage group to all A-class items. Without a coverage group, the item uses default order settings and may not be planned correctly.
+ ;MRP assessment check recommendation text.
+ABSCheckCV004Title=Period coverage with no period length — MRP creates one planned order per demand line
+ ;MRP assessment check title text.
+ABSCheckCV004Reco=Set a period length (CovTimeFence) on coverage groups that use Period coverage to consolidate planned orders.
+ ;MRP assessment check recommendation text.
+ABSCheckPR001Title=Finite capacity enabled on main plan — significantly increases MRP runtime
+ ;MRP assessment check title text.
+ABSCheckPR001Reco=Disable finite capacity on the main MRP plan unless resource capacity is a hard constraint. Use a separate finite-capacity plan for scheduling.
+ ;MRP assessment check recommendation text.
+ABSCheckPR002Title=Large inactive plan data volume — %1 orphaned ReqPO rows
+ ;MRP assessment check title text.
+ABSCheckPR002Reco=Schedule the 'Delete MRP data' periodic task to run nightly. Remove stale plan versions to improve MRP startup time.
+ ;MRP assessment check recommendation text.
+ABSCheckPR003Detail=BOM depth %1 levels
+ ;MRP assessment check detail text.
+ABSCheckPR003Title=High BOM depth — %1 items with BOM depth > 5 levels
+ ;MRP assessment check title text.
+ABSCheckPR003Reco=Review deep BOMs for opportunities to flatten the structure using phantom items or purchased sub-assemblies.
+ ;MRP assessment check recommendation text.
+ABSCheckFW001Detail=Lead time %1 days, firm fence %2 days
+ ;MRP assessment check detail text.
+ABSCheckFW001Title=Firming fence < lead time — planned orders become actionable inside the delivery window
+ ;MRP assessment check title text.
+ABSCheckFW001Reco=Set the auto-firm time fence to be at least equal to the purchase lead time so buyers have time to firm and act on planned orders.
+ ;MRP assessment check recommendation text.
+ABSCheckFW002Detail=Stale planned order req date: %1
+ ;MRP assessment check detail text.
+ABSCheckFW002Title=Stale planned orders — planned purchase orders past their required date
+ ;MRP assessment check title text.
+ABSCheckFW002Reco=Planners are ignoring MRP output. Review stale planned orders, firm or delete them, and investigate the root cause of delivery delays.
+ ;MRP assessment check recommendation text.
+ABSCheckFW003Detail=On-hand: %1
+ ;MRP assessment check detail text.
+ABSCheckFW003Title=Negative on-hand with no open inbound supply — unresolved inventory shortage
+ ;MRP assessment check title text.
+ABSCheckFW003Reco=Create emergency purchase orders or production orders for items with negative on-hand and no confirmed inbound supply.
+ ;MRP assessment check recommendation text.
+ABSCheckBR001Detail=%1 active BOM versions for same item/site
+ ;MRP assessment check detail text.
+ABSCheckBR001Title=Multiple active BOM versions for same item+site — MRP silently picks the lowest-ranked version
+ ;MRP assessment check title text.
+ABSCheckBR001Reco=Deactivate superseded BOM versions. Only one BOM version should be active per item/site combination at any time.
+ ;MRP assessment check recommendation text.
+ABSCheckBR002Detail=BOM version from %1 — no active version today
+ ;MRP assessment check detail text.
+ABSCheckBR002Title=Future-dated BOM versions only — no BOM is active today; MRP creates production orders with no component explosion
+ ;MRP assessment check title text.
+ABSCheckBR002Reco=Activate an existing BOM version effective today, or create a new BOM version that starts from today.
+ ;MRP assessment check recommendation text.
+ABSCheckBR003Detail=Coverage lead time %1 days vs purchase setup lead time %2 days
+ ;MRP assessment check detail text.
+ABSCheckBR003Title=Vendor lead time vs coverage lead time drift — MRP planned dates diverge from actual vendor delivery time
+ ;MRP assessment check title text.
+ABSCheckBR003Reco=Synchronise ReqItemTable.LeadTimePurchase with the approved vendor's lead time in trade agreements. A delta > 5 days creates unrealistic planned delivery dates.
+ ;MRP assessment check recommendation text.
+ABSCheckPB001Detail=Zero demand periods: %1
+ ;MRP assessment check detail text.
+ABSCheckPB001Title=Dead stock with open supply — items with 3+ zero-demand periods still have open planned orders
+ ;MRP assessment check title text.
+ABSCheckPB001Reco=Review and cancel open supply for dead-stock items to prevent further capital investment. Investigate whether the items should be discontinued.
+ ;MRP assessment check recommendation text.
+ABSCheckPB002Detail=C-class item with safety stock %1 and lead time %2 days
+ ;MRP assessment check detail text.
+ABSCheckPB002Title=Coverage policy drift — lower-priority items still use aggressive coverage settings
+ ;MRP assessment check title text.
+ABSCheckPB002Reco=Review C-class items with automated coverage, safety stock, or long lead-time assumptions. Relax policies where service risk is low to reduce excess inventory.
+ ;MRP assessment check recommendation text.
+ABSCheckPB003Detail=No invoiced purchase line in the last 12 months while open planned purchase supply exists
+ ;MRP assessment check detail text.
+ABSCheckPB003Title=A-class item has open planned purchase supply but no recent invoiced PO history
+ ;MRP assessment check title text.
+ABSCheckPB003Reco=Review commercial readiness for A-class items with open planned purchase supply. Confirm active supplier terms and pricing before firming new purchase orders.
+ ;MRP assessment check recommendation text.
+ABSCheckPO001Title=Planning Optimization service integration is globally disabled (MpsIntegrationParameters.IsPlanningServiceEnabled = No). All companies in this environment are affected.
+ ;MRP assessment check title text.
+ABSCheckPO001Reco=Enable the Planning Optimization integration flag in Master planning > Setup > Planning Optimization parameters.
+ ;MRP assessment check recommendation text.
+ABSCheckPO002Title=This company is explicitly excluded from using Planning Optimization (ReqParameters.MustExcludeCompanyFromUsingPlanningService = Yes).
+ ;MRP assessment check title text.
+ABSCheckPO002Reco=Clear the company exclusion flag in Master planning parameters to allow Planning Optimization to run for this company.
+ ;MRP assessment check recommendation text.
+ABSCheckPO003Title=Planning Optimization is not available for the current company. Either the global integration flag is disabled or this company is excluded.
+ ;MRP assessment check title text.
+ABSCheckPO003Reco=Investigate PO-001 (global flag) and PO-002 (company exclusion) for specific root causes and resolve accordingly.
+ ;MRP assessment check recommendation text.
+ABSCheckPO004Title=%1 feature compatibility issue(s) found by Planning Optimization fit analysis. Incompatible features may cause Planning Optimization to fall back to classic MRP.
+ ;MRP assessment check title text.
+ABSCheckPO004Reco=Review and resolve fit analysis issues under Master planning > Setup > Planning Optimization > Fit analysis.
+ ;MRP assessment check recommendation text.
+ABSCheckPO005Title=Planning Optimization fit analysis runtime is unavailable.
+ ;MRP assessment check title text.
+ABSCheckPO005Reco=Verify Planning Optimization fit analysis prerequisites and service availability so diagnostics can run consistently.
+ ;MRP assessment check recommendation text.
+ABSCheckPO006Title=%1 fit analysis issue(s) detected by MpsFitAnalyzer::runAnalysis.
+ ;MRP assessment check title text.
+ABSCheckPO006Reco=Review fit analysis output and resolve incompatibilities before relying on Planning Optimization results.
+ ;MRP assessment check recommendation text.
+ABSEOAgingBucket=Aging bucket
+ ;Label for the E&O aging bucket enum and field.
+ABSEOAgingBucketDeveloperDocumentation=Movement-aging classification for the Excess and Obsolete cockpit.
+ ;Developer documentation for the ABSEOAgingBucket enum.
+ABSEOAgingBucketNone=Not classified
+ ;Aging bucket enum value.
+ABSEOAgingBucketActive=Active
+ ;Aging bucket enum value.
+ABSEOAgingBucketSlow=Slow moving
+ ;Aging bucket enum value.
+ABSEOAgingBucketVerySlow=Very slow moving
+ ;Aging bucket enum value.
+ABSEOAgingBucketDormant=Dormant
+ ;Aging bucket enum value.
+ABSEOAgingBucketDead=Dead stock
+ ;Aging bucket enum value.
+ABSEOAgingBucketNoHistory=No movement history
+ ;Aging bucket enum value for on-hand items with no issue history yet (e.g. recently received).
+ABSEORecommendation=Recommendation
+ ;Label for the E&O recommendation enum and field.
+ABSEORecommendationDeveloperDocumentation=Suggested disposition action for the Excess and Obsolete cockpit.
+ ;Developer documentation for the ABSEORecommendation enum.
+ABSEORecommendationNone=None
+ ;Recommendation enum value.
+ABSEORecommendationNoAction=No action
+ ;Recommendation enum value.
+ABSEORecommendationRunOut=Run out
+ ;Recommendation enum value.
+ABSEORecommendationReduceOrders=Reduce orders
+ ;Recommendation enum value.
+ABSEORecommendationTransfer=Transfer
+ ;Recommendation enum value.
+ABSEORecommendationDiscount=Discount
+ ;Recommendation enum value.
+ABSEORecommendationScrap=Scrap
+ ;Recommendation enum value.
+ABSExcessPolicyDeveloperDocumentation=Shared excess-stock days-of-supply thresholds by ABC class (Hoppe matrix).
+ ;Developer documentation for the ABSExcessPolicy helper class.
+ABSExcessObsolete=Excess and obsolete
+ ;Label for the ABSExcessObsolete table and form.
+ABSExcessObsoleteDeveloperDocumentation=Per item and site excess and obsolete view: aging bucket, provision value, coverage and disposition recommendation.
+ ;Developer documentation for the ABSExcessObsolete table.
+ABSEOLastIssueDate=Last issue date
+ ;Field label.
+ABSEOMonthsSinceLastIssue=Months since last issue
+ ;Field label.
+ABSEOOnHandQty=On-hand quantity
+ ;Field label.
+ABSEOOnHandValue=On-hand value
+ ;Field label.
+ABSEOMonthsOfCoverage=Months of coverage
+ ;Field label.
+ABSEOExcessFlag=Excess
+ ;Field label.
+ABSEOOpenSupplyFlag=Open supply
+ ;Field label.
+ABSEOProvisionPct=Provision %
+ ;Field label.
+ABSEOProvisionValue=Provision value
+ ;Field label.
+ABSEOHistoryMonthsAvailable=History months available
+ ;Field label.
+ABSEOFinancialsGroup=Financials
+ ;Field group label.
+ABSEORemainingValue=Remaining value
+ ;Chart field label for uncovered on-hand value.
+ABSEOChartDataDeveloperDocumentation=In-memory aging-bucket aggregate backing the E&O provision chart.
+ ;Developer documentation for the ABSEOChartData table.
+ABSExcessObsoleteEngineDeveloperDocumentation=Computes the excess and obsolete view per site.
+ ;Developer documentation for the ABSExcessObsoleteEngine class.
+ABSEOEngineValidateSite=Excess and obsolete analysis requires a site
+ ;Engine validation warning.
+ABSEODeleteFailed=Failed to clear existing excess and obsolete records.
+ ;Service delete error message.
+ABSEOCompleted=Excess and obsolete analysis completed for %1. Total provision value: %2.
+ ;Service completion message. %1 = site, %2 = total provision value.
+ABSEOCockpit=Excess and obsolete cockpit
+ ;Display menu item and form caption.
+ABSEORun=Run excess and obsolete analysis
+ ;Action menu item and run button.
+ABSEOBatchJobCaption=Excess and obsolete analysis
+ ;Batch job caption.
+ABSEOChartTitle=Provision value by aging bucket
+ ;E&O chart title.
+ABSEOViewClassification=Item ABC/XYZ
+ ;Button to open the ABC/XYZ classification for the selected item.
+ABSEOParmSite=Site
+ ;Contract parameter label.
+ABSEOParmAsOfDate=As of date
+ ;Contract parameter label.
+ABSEOParmProvisionSlow=Provision % slow moving
+ ;Contract parameter label.
+ABSEOParmProvisionVerySlow=Provision % very slow moving
+ ;Contract parameter label.
+ABSEOParmProvisionDormant=Provision % dormant
+ ;Contract parameter label.
+ABSEOParmProvisionDead=Provision % dead stock
+ ;Contract parameter label.
+ABSExcessObsoleteView=Excess and obsolete cockpit view
+ ;Security privilege label.
+ABSExcessObsoleteViewDescription=View the excess and obsolete cockpit
+ ;Security privilege description.
+ABSExcessObsoleteMaintain=Excess and obsolete analysis maintain
+ ;Security privilege label.
+ABSExcessObsoleteMaintainDescription=View the cockpit and run the excess and obsolete analysis
+ ;Security privilege description.
+ABSExcessObsoleteEntityViewLabel=Excess and obsolete entity view
+ ;Security privilege label.
+ABSExcessObsoleteEntityViewDescription=Read access to the excess and obsolete data entity
+ ;Security privilege description.
+ABSExcessObsoleteEntityLabel=Excess and obsolete
+ ;Data entity label.
+ABSExcessObsoleteEntityDescription=Excess and obsolete cockpit data entity
+ ;Data entity developer documentation.

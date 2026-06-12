@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>ABSExcessObsoleteEngine</Name>
+  <SourceCode>
+    <Declaration><![CDATA[
+/// <summary>
+/// Computes the Excess &amp; Obsolete view for one site: aging bucket, provision value,
+/// coverage/excess overlay and a disposition recommendation per item. Read-only on
+/// platform tables; upserts into ABSExcessObsolete.
+/// </summary>
+class ABSExcessObsoleteEngine
+{
+    InventSiteId    siteId;
+    TransDate       asOfDate;
+    real            provisionPctSlow;
+    real            provisionPctVerySlow;
+    real            provisionPctDormant;
+    real            provisionPctDead;
+}
+    ]]></Declaration>
+    <Methods>
+      <Method>
+        <Name>newParameters</Name>
+        <Source><![CDATA[
+public static ABSExcessObsoleteEngine newParameters(
+    InventSiteId    _siteId,
+    ABSExcessObsoleteContract _contract)
+{
+    ABSExcessObsoleteEngine engine = new ABSExcessObsoleteEngine();
+    engine.siteId               = _siteId;
+    engine.asOfDate             = _contract.parmAsOfDate();
+    engine.provisionPctSlow     = _contract.parmProvisionPctSlow();
+    engine.provisionPctVerySlow = _contract.parmProvisionPctVerySlow();
+    engine.provisionPctDormant  = _contract.parmProvisionPctDormant();
+    engine.provisionPctDead     = _contract.parmProvisionPctDead();
+    return engine;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>validate</Name>
+        <Source><![CDATA[
+public boolean validate()
+{
+    boolean ok = true;
+    if (!siteId)
+    {
+        warning("@ABS:ABSEOEngineValidateSite");
+        ok = false;
+    }
+    if (!asOfDate)
+    {
+        asOfDate = DateTimeUtil::getToday(DateTimeUtil::getUserPreferredTimeZone());
+    }
+    return ok;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>agingBucket</Name>
+        <Source><![CDATA[
+/// <summary>Maps movement history to an aging bucket. Never-issued items are judged by
+/// how long they have sat since receipt: recently received stock has simply not had a
+/// chance to move yet (NoHistory =&gt; no scrap), while never-issued stock sitting for
+/// years is genuinely Dormant/Dead.</summary>
+public ABSEOAgingBucket agingBucket(int _monthsSinceIssue, boolean _everIssued, int _monthsSinceReceipt, boolean _everReceived)
+{
+    if (!_everIssued)
+    {
+        // No receipt signal either, or received recently: too new to judge — don't condemn it.
+        if (!_everReceived)            { return ABSEOAgingBucket::NoHistory; }
+        if (_monthsSinceReceipt < 12)  { return ABSEOAgingBucket::NoHistory; }
+        if (_monthsSinceReceipt < 24)  { return ABSEOAgingBucket::Dormant; }
+        return ABSEOAgingBucket::Dead;
+    }
+    if (_monthsSinceIssue < 3)     { return ABSEOAgingBucket::Active; }
+    if (_monthsSinceIssue < 6)     { return ABSEOAgingBucket::Slow; }
+    if (_monthsSinceIssue < 12)    { return ABSEOAgingBucket::VerySlow; }
+    if (_monthsSinceIssue < 24)    { return ABSEOAgingBucket::Dormant; }
+    return ABSEOAgingBucket::Dead;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>provisionPct</Name>
+        <Source><![CDATA[
+/// <summary>Returns the provision percentage for a bucket from the contract parameters.</summary>
+public real provisionPct(ABSEOAgingBucket _bucket)
+{
+    switch (_bucket)
+    {
+        case ABSEOAgingBucket::Slow:     return provisionPctSlow;
+        case ABSEOAgingBucket::VerySlow: return provisionPctVerySlow;
+        case ABSEOAgingBucket::Dormant:  return provisionPctDormant;
+        case ABSEOAgingBucket::Dead:     return provisionPctDead;
+        default:                         return 0;
+    }
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>monthsOfCoverage</Name>
+        <Source><![CDATA[
+/// <summary>On-hand divided by mean monthly demand, capped at 999 (0 demand =&gt; 999).</summary>
+public real monthsOfCoverage(real _onHand, real _demandMean)
+{
+    if (_demandMean > 0)
+    {
+        return min(_onHand / _demandMean, 999);
+    }
+    return 999;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>recommendation</Name>
+        <Source><![CDATA[
+/// <summary>One disposition per row (cross-site Transfer refinement is out of scope v1).</summary>
+public ABSEORecommendation recommendation(ABSEOAgingBucket _bucket, boolean _excessFlag)
+{
+    switch (_bucket)
+    {
+        case ABSEOAgingBucket::Dead:     return ABSEORecommendation::Scrap;
+        case ABSEOAgingBucket::Dormant:  return ABSEORecommendation::Discount;
+        case ABSEOAgingBucket::VerySlow: return ABSEORecommendation::RunOut;
+        case ABSEOAgingBucket::Slow:     return ABSEORecommendation::RunOut;
+        case ABSEOAgingBucket::Active:
+            return _excessFlag ? ABSEORecommendation::ReduceOrders : ABSEORecommendation::NoAction;
+        default:
+            return ABSEORecommendation::NoAction;
+    }
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>hasOpenSupply</Name>
+        <Source><![CDATA[
+/// <summary>True when an open purchase order line still exists for a non-moving item
+/// at this site ("still buying what doesn't move"). Evaluated only for Dormant/Dead rows.</summary>
+public boolean hasOpenSupply(ItemId _itemId)
+{
+    PurchLine purchLine;
+    InventDim purchDim;
+
+    select firstonly RecId from purchLine
+        where purchLine.ItemId               == _itemId
+           && purchLine.PurchStatus           != PurchStatus::Received
+           && purchLine.PurchStatus           != PurchStatus::Canceled
+           && purchLine.RemainInventPhysical  >  0
+        join purchDim
+            where purchDim.inventDimId  == purchLine.InventDimId
+               && purchDim.InventSiteId == siteId;
+
+    return purchLine.RecId != 0;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>run</Name>
+        <Source><![CDATA[
+public void run()
+{
+    InventSum           inventSum;
+    InventDim           inventDim;
+    InventTrans         inventTrans;
+    InventDim           transDim;
+    ABSItemABCXYZ       abcxyz;
+    ABSExcessObsolete   eo;
+
+    real                onHandQty;
+    real                onHandValue;
+    TransDate           lastIssueDate;
+    boolean             everIssued;
+    int                 monthsSinceIssue;
+    TransDate           lastReceiptDate;
+    boolean             everReceived;
+    int                 monthsSinceReceipt;
+    ABSEOAgingBucket    bucket;
+    real                pct;
+    real                coverage;
+    boolean             excessFlag;
+    boolean             openSupply;
+
+    if (!this.validate()) { return; }
+
+    ttsbegin;
+
+    while select ItemId, sum(PhysicalInvent), sum(PostedValue), sum(PhysicalValue) from inventSum
+        group by inventSum.ItemId
+        where inventSum.ClosedQty == NoYes::No
+        join inventDim
+            where inventDim.inventDimId  == inventSum.InventDimId
+               && inventDim.InventSiteId == siteId
+    {
+        if (inventSum.PhysicalInvent <= 0) { continue; }
+
+        onHandQty   = inventSum.PhysicalInvent;
+        onHandValue = inventSum.PostedValue + inventSum.PhysicalValue;
+
+        // Last issue date at this site.
+        select maxof(DatePhysical) from inventTrans
+            where inventTrans.ItemId == inventSum.ItemId
+               && inventTrans.Qty    <  0
+               && (inventTrans.StatusIssue == StatusIssue::Sold
+                || inventTrans.StatusIssue == StatusIssue::Deducted)
+            join transDim
+                where transDim.inventDimId  == inventTrans.InventDimId
+                   && transDim.InventSiteId == siteId;
+
+        lastIssueDate = inventTrans.DatePhysical;
+        everIssued    = (lastIssueDate != dateNull());
+        monthsSinceIssue = everIssued
+            ? intvNo(asOfDate, lastIssueDate, intvScale::YearMonth)
+            : 0;
+
+        // Last receipt date at this site (used to judge never-issued items: a recently
+        // received item has simply not had time to move yet and must not be scrapped).
+        select maxof(DatePhysical) from inventTrans
+            where inventTrans.ItemId == inventSum.ItemId
+               && inventTrans.Qty    >  0
+               && (inventTrans.StatusReceipt == StatusReceipt::Received
+                || inventTrans.StatusReceipt == StatusReceipt::Purchased)
+            join transDim
+                where transDim.inventDimId  == inventTrans.InventDimId
+                   && transDim.InventSiteId == siteId;
+
+        lastReceiptDate = inventTrans.DatePhysical;
+        everReceived    = (lastReceiptDate != dateNull());
+        monthsSinceReceipt = everReceived
+            ? intvNo(asOfDate, lastReceiptDate, intvScale::YearMonth)
+            : 0;
+
+        // Classification context (may be absent).
+        select firstonly abcxyz
+            where abcxyz.ItemId == inventSum.ItemId
+               && abcxyz.SiteId == siteId;
+
+        bucket     = this.agingBucket(monthsSinceIssue, everIssued, monthsSinceReceipt, everReceived);
+        pct        = this.provisionPct(bucket);
+        coverage   = this.monthsOfCoverage(onHandQty, abcxyz.DemandMean);
+
+        excessFlag = (abcxyz.RecId
+            && abcxyz.DemandMean > 0
+            && ABSExcessPolicy::isExcess(abcxyz.ABCClass, coverage * 30.44));
+
+        openSupply = (bucket >= ABSEOAgingBucket::Dormant)
+            ? this.hasOpenSupply(inventSum.ItemId)
+            : false;
+
+        eo = ABSExcessObsolete::find(inventSum.ItemId, siteId, true);
+        if (!eo)
+        {
+            eo.clear();
+            eo.ItemId = inventSum.ItemId;
+            eo.SiteId = siteId;
+        }
+
+        eo.ABCClass               = abcxyz.ABCClass;
+        eo.XYZClass               = abcxyz.XYZClass;
+        eo.LastIssueDate          = lastIssueDate;
+        eo.MonthsSinceLastIssue   = everIssued ? monthsSinceIssue : 0;
+        eo.AgingBucket            = bucket;
+        eo.OnHandQty              = onHandQty;
+        eo.OnHandValue            = onHandValue;
+        eo.DemandMean             = abcxyz.DemandMean;
+        eo.MonthsOfCoverage       = coverage;
+        eo.ExcessFlag             = excessFlag ? NoYes::Yes : NoYes::No;
+        eo.OpenSupplyFlag         = openSupply ? NoYes::Yes : NoYes::No;
+        eo.ProvisionPct           = pct;
+        eo.ProvisionValue         = onHandValue * pct / 100;
+        eo.Recommendation         = this.recommendation(bucket, excessFlag);
+        eo.HistoryMonthsAvailable = abcxyz.HistoryMonthsAvailable;
+        eo.CalculatedDate         = asOfDate;
+
+        if (eo.RecId) { eo.update(); }
+        else          { eo.insert(); }
+    }
+
+    ttscommit;
+}
+        ]]></Source>
+      </Method>
+    </Methods>
+  </SourceCode>
+  <DeveloperDocumentation>@ABS:ABSExcessObsoleteEngineDeveloperDocumentation</DeveloperDocumentation>
+</AxClass>

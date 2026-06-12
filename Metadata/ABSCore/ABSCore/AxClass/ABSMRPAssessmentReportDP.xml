@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>ABSMRPAssessmentReportDP</Name>
+  <SourceCode>
+    <Declaration><![CDATA[
+[SRSReportParameterAttribute(classStr(ABSMRPAssessmentReportContract))]
+class ABSMRPAssessmentReportDP extends SRSReportDataProviderPreProcessTempDB
+{
+    ABSMRPAssessmentReportTmpResult tmpResult;
+    ABSMRPAssessmentReportTmpDetail tmpDetail;
+}
+    ]]></Declaration>
+    <Methods>
+      <Method>
+        <Name>getTmpResult</Name>
+        <Source><![CDATA[
+[SRSReportDataSetAttribute(tableStr(ABSMRPAssessmentReportTmpResult))]
+public ABSMRPAssessmentReportTmpResult getTmpResult()
+{
+    select * from tmpResult;
+    return tmpResult;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>getTmpDetail</Name>
+        <Source><![CDATA[
+[SRSReportDataSetAttribute(tableStr(ABSMRPAssessmentReportTmpDetail))]
+public ABSMRPAssessmentReportTmpDetail getTmpDetail()
+{
+    select * from tmpDetail;
+    return tmpDetail;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>processReport</Name>
+        <Source><![CDATA[
+public void processReport()
+{
+    ABSMRPAssessmentReportContract  contract = this.parmDataContract();
+    ABSMRPAssessmentRunId           runId    = contract.parmRunId();
+    ABSMRPAssessmentRun             run;
+    ABSMRPAssessmentResult          result;
+    ABSMRPAssessmentDetail          detail;
+
+    run = ABSMRPAssessmentRun::find(runId);
+    if (!run.RecId)
+    {
+        return;
+    }
+
+    while select result
+        order by result.Category asc, result.Severity desc
+        where result.RunId          == runId
+           && result.Suppressed     == NoYes::No
+           && result.NotApplicable  == NoYes::No
+    {
+        tmpResult.clear();
+        tmpResult.RunId             = run.RunId;
+        tmpResult.PlanId            = run.PlanId;
+        tmpResult.SiteId            = run.SiteId;
+        tmpResult.AssessmentDate    = run.AssessmentDate;
+        tmpResult.OverallSeverity   = run.OverallSeverity;
+        tmpResult.TotalChecks       = run.TotalChecks;
+        tmpResult.IssuesFound       = run.IssuesFound;
+        tmpResult.PlanningEngine    = run.PlanningEngine;
+        tmpResult.CheckCode         = result.CheckCode;
+        tmpResult.Category          = result.Category;
+        tmpResult.Severity          = result.Severity;
+        tmpResult.AffectedCount     = result.AffectedCount;
+        tmpResult.SeverityTrend     = result.SeverityTrend;
+        tmpResult.CheckDescription  = result.CheckDescription;
+        tmpResult.Recommendation    = result.Recommendation;
+        tmpResult.AffectedObjects   = result.AffectedObjects;
+        tmpResult.insert();
+
+        while select detail
+            order by detail.PriorityScore desc
+            where detail.RunId     == runId
+               && detail.CheckCode == result.CheckCode
+        {
+            tmpDetail.clear();
+            tmpDetail.RunId          = runId;
+            tmpDetail.CheckCode      = result.CheckCode;
+            tmpDetail.ItemId         = detail.ItemId;
+            tmpDetail.SiteId         = detail.SiteId;
+            tmpDetail.ABCClass       = detail.ABCClass;
+            tmpDetail.XYZClass       = detail.XYZClass;
+            tmpDetail.PriorityScore  = detail.PriorityScore;
+            tmpDetail.CompoundedRisk = detail.CompoundedRisk;
+            tmpDetail.DetailNote     = detail.DetailNote;
+            tmpDetail.insert();
+        }
+    }
+}
+        ]]></Source>
+      </Method>
+    </Methods>
+  </SourceCode>
+</AxClass>

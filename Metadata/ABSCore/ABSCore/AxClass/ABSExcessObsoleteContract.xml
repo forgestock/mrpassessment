@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>ABSExcessObsoleteContract</Name>
+  <SourceCode>
+    <Declaration><![CDATA[
+[DataContractAttribute]
+class ABSExcessObsoleteContract
+{
+    InventSiteId    siteId;
+    TransDate       asOfDate;
+    real            provisionPctSlow;
+    real            provisionPctVerySlow;
+    real            provisionPctDormant;
+    real            provisionPctDead;
+    boolean         deleteAndRegenerate;
+    boolean         initialised;
+}
+    ]]></Declaration>
+    <Methods>
+      <Method>
+        <Name>initDefaults</Name>
+        <Source><![CDATA[
+private void initDefaults()
+{
+    if (initialised) { return; }
+
+    asOfDate             = DateTimeUtil::getToday(DateTimeUtil::getUserPreferredTimeZone());
+    provisionPctSlow     = 10;
+    provisionPctVerySlow = 25;
+    provisionPctDormant  = 50;
+    provisionPctDead     = 100;
+    deleteAndRegenerate  = true;
+    initialised          = true;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>parmSiteId</Name>
+        <Source><![CDATA[
+[DataMemberAttribute('SiteId'),
+ SysOperationLabelAttribute(literalStr("@ABS:ABSEOParmSite")),
+ SysOperationDisplayOrderAttribute('1')]
+public InventSiteId parmSiteId(InventSiteId _siteId = siteId)
+{
+    siteId = _siteId;
+    return siteId;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>parmAsOfDate</Name>
+        <Source><![CDATA[
+[DataMemberAttribute('AsOfDate'),
+ SysOperationLabelAttribute(literalStr("@ABS:ABSEOParmAsOfDate")),
+ SysOperationDisplayOrderAttribute('2')]
+public TransDate parmAsOfDate(TransDate _asOfDate = asOfDate)
+{
+    this.initDefaults();
+    if (!prmIsDefault(_asOfDate))
+    {
+        asOfDate = _asOfDate;
+    }
+    return asOfDate;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>parmProvisionPctSlow</Name>
+        <Source><![CDATA[
+[DataMemberAttribute('ProvisionPctSlow'),
+ SysOperationLabelAttribute(literalStr("@ABS:ABSEOParmProvisionSlow")),
+ SysOperationDisplayOrderAttribute('3')]
+public real parmProvisionPctSlow(real _v = provisionPctSlow)
+{
+    this.initDefaults();
+    if (!prmIsDefault(_v))
+    {
+        provisionPctSlow = _v;
+    }
+    return provisionPctSlow;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>parmProvisionPctVerySlow</Name>
+        <Source><![CDATA[
+[DataMemberAttribute('ProvisionPctVerySlow'),
+ SysOperationLabelAttribute(literalStr("@ABS:ABSEOParmProvisionVerySlow")),
+ SysOperationDisplayOrderAttribute('4')]
+public real parmProvisionPctVerySlow(real _v = provisionPctVerySlow)
+{
+    this.initDefaults();
+    if (!prmIsDefault(_v))
+    {
+        provisionPctVerySlow = _v;
+    }
+    return provisionPctVerySlow;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>parmProvisionPctDormant</Name>
+        <Source><![CDATA[
+[DataMemberAttribute('ProvisionPctDormant'),
+ SysOperationLabelAttribute(literalStr("@ABS:ABSEOParmProvisionDormant")),
+ SysOperationDisplayOrderAttribute('5')]
+public real parmProvisionPctDormant(real _v = provisionPctDormant)
+{
+    this.initDefaults();
+    if (!prmIsDefault(_v))
+    {
+        provisionPctDormant = _v;
+    }
+    return provisionPctDormant;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>parmProvisionPctDead</Name>
+        <Source><![CDATA[
+[DataMemberAttribute('ProvisionPctDead'),
+ SysOperationLabelAttribute(literalStr("@ABS:ABSEOParmProvisionDead")),
+ SysOperationDisplayOrderAttribute('6')]
+public real parmProvisionPctDead(real _v = provisionPctDead)
+{
+    this.initDefaults();
+    if (!prmIsDefault(_v))
+    {
+        provisionPctDead = _v;
+    }
+    return provisionPctDead;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>parmDeleteAndRegenerate</Name>
+        <Source><![CDATA[
+[DataMemberAttribute('DeleteAndRegenerate'),
+ SysOperationLabelAttribute(literalStr("@ABS:DeleteAndRegenerate")),
+ SysOperationDisplayOrderAttribute('7')]
+public boolean parmDeleteAndRegenerate(boolean _v = deleteAndRegenerate)
+{
+    this.initDefaults();
+    if (!prmIsDefault(_v))
+    {
+        deleteAndRegenerate = _v;
+    }
+    return deleteAndRegenerate;
+}
+        ]]></Source>
+      </Method>
+    </Methods>
+  </SourceCode>
+</AxClass>

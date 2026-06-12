@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>ABSMRPExceptionService</Name>
+  <SourceCode>
+    <Declaration><![CDATA[
+class ABSMRPExceptionService extends SysOperationServiceBase
+{
+}
+    ]]></Declaration>
+    <Methods>
+      <Method>
+        <Name>run</Name>
+        <Source><![CDATA[
+public void run(ABSMRPExceptionContract _contract)
+{
+    ReqPlan     reqPlan;
+    InventSite  inventSite;
+
+    container   planIds;
+    container   siteIds;
+    int         p;
+    int         s;
+
+    // Build plan list — blank means all plans
+    if (_contract.parmPlanId())
+    {
+        planIds = [_contract.parmPlanId()];
+    }
+    else
+    {
+        while select ReqPlanId from reqPlan
+        {
+            planIds += [reqPlan.ReqPlanId];
+        }
+    }
+
+    // Always run across all sites.
+    while select SiteId from inventSite
+    {
+        siteIds += [inventSite.SiteId];
+    }
+
+    for (p = 1; p <= conLen(planIds); p++)
+    {
+        for (s = 1; s <= conLen(siteIds); s++)
+        {
+            ABSMRPExceptionEngine::newParameters(
+                conPeek(planIds, p),
+                conPeek(siteIds, s)).run();
+        }
+    }
+
+    info(strFmt("@ABS:ABSMRPExceptionDetectionCompleted",
+        conLen(planIds), conLen(siteIds)));
+}
+        ]]></Source>
+      </Method>
+    </Methods>
+  </SourceCode>
+</AxClass>

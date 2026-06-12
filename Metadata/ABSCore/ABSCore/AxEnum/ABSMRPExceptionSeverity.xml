@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxEnum xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>ABSMRPExceptionSeverity</Name>
+  <SourceCode>
+    <Declaration><![CDATA[]]></Declaration>
+  </SourceCode>
+  <DeveloperDocumentation>@ABS:ABSMRPExceptionSeverityDeveloperDocumentation</DeveloperDocumentation>
+  <Label>@ABS:ABSMRPExceptionSeverity</Label>
+  <EnumValues>
+    <AxEnumValue>
+      <Name>High</Name>
+      <Label>@ABS:SeverityHigh</Label>
+      <Value>0</Value>
+      <DeveloperDocumentation>@ABS:SeverityHighDeveloperDocumentation</DeveloperDocumentation>
+    </AxEnumValue>
+    <AxEnumValue>
+      <Name>Medium</Name>
+      <Label>@ABS:SeverityMedium</Label>
+      <Value>1</Value>
+      <DeveloperDocumentation>@ABS:SeverityMediumDeveloperDocumentation</DeveloperDocumentation>
+    </AxEnumValue>
+    <AxEnumValue>
+      <Name>Low</Name>
+      <Label>@ABS:SeverityLow</Label>
+      <Value>2</Value>
+      <DeveloperDocumentation>@ABS:SeverityLowDeveloperDocumentation</DeveloperDocumentation>
+    </AxEnumValue>
+  </EnumValues>
+</AxEnum>

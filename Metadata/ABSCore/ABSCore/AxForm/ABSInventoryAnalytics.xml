@@ -1,0 +1,657 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxForm xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="Microsoft.Dynamics.AX.Metadata.V6">
+	<Name>ABSInventoryAnalytics</Name>
+	<SourceCode>
+		<Methods xmlns="">
+			<Method>
+				<Name>classDeclaration</Name>
+				<Source><![CDATA[
+[Form]
+public class ABSInventoryAnalytics extends FormRun
+{
+}
+]]></Source>
+			</Method>
+			<Method>
+				<Name>init</Name>
+				<Source><![CDATA[
+public void init()
+{
+    super();
+
+    element.buildExceptionSeries(ABSExceptionTypeChartData);
+    ABSExceptionTypeChartData_ds.research();
+
+    element.buildEOSeries(ABSEOChartData);
+    ABSEOChartData_ds.research();
+
+    if (SegmentValueChart)
+    {
+        SegmentValueChart.update();
+    }
+    if (ExceptionTypeChart)
+    {
+        ExceptionTypeChart.update();
+    }
+    if (EOProvisionChart)
+    {
+        EOProvisionChart.update();
+    }
+}
+]]></Source>
+			</Method>
+			<Method>
+				<Name>buildEOSeries</Name>
+				<Source><![CDATA[
+    /// Aggregates the Excess & Obsolete cockpit rows into provision vs remaining value
+    /// per aging bucket, so the workspace shows write-down exposure at a glance without
+    /// the planner opening the cockpit. Mirrors ABSExcessObsolete.refreshChartData().
+    public void buildEOSeries(ABSEOChartData _cursor)
+    {
+        ABSExcessObsolete   eo;
+        ABSEOAgingBucket    bucketLoop;
+        container           buckets = [
+            ABSEOAgingBucket::NoHistory,
+            ABSEOAgingBucket::Active,
+            ABSEOAgingBucket::Slow,
+            ABSEOAgingBucket::VerySlow,
+            ABSEOAgingBucket::Dormant,
+            ABSEOAgingBucket::Dead];
+        int                 i;
+
+        delete_from _cursor;
+
+        for (i = 1; i <= conLen(buckets); i++)
+        {
+            bucketLoop = conPeek(buckets, i);
+
+            select sum(OnHandValue), sum(ProvisionValue) from eo
+                where eo.AgingBucket == bucketLoop;
+
+            if (eo.OnHandValue == 0 && eo.ProvisionValue == 0)
+            {
+                continue;
+            }
+
+            _cursor.clear();
+            _cursor.BucketName     = SysDictEnum::newName(enumStr(ABSEOAgingBucket)).value2Label(enum2int(bucketLoop));
+            _cursor.ProvisionValue = eo.ProvisionValue;
+            _cursor.RemainingValue = max(0, eo.OnHandValue - eo.ProvisionValue);
+            _cursor.insert();
+        }
+    }
+]]></Source>
+			</Method>
+			<Method>
+				<Name>buildExceptionSeries</Name>
+				<Source><![CDATA[
+    /// Aggregates OPEN MRP exceptions into a small count-by-type series for the chart,
+    /// instead of binding the chart to the full ABSMRPException row set (which would
+    /// plot one category per row and render an unreadable axis of zeros).
+    public void buildExceptionSeries(ABSExceptionTypeChartData _cursor)
+    {
+        ABSMRPException exception;
+
+        delete_from _cursor;
+
+        while select count(RecId), ExceptionType, TypeName from exception
+            group by exception.ExceptionType, exception.TypeName
+            where exception.Status == ABSMRPExceptionStatus::Open
+        {
+            _cursor.clear();
+            _cursor.TypeName       = exception.TypeName
+                ? exception.TypeName
+                : SysDictEnum::newName(enumStr(ABSMRPExceptionType)).value2Label(enum2int(exception.ExceptionType));
+            _cursor.ExceptionCount = any2int(exception.RecId);
+            _cursor.insert();
+        }
+    }
+]]></Source>
+			</Method>
+			<Method>
+				<Name>populateCards</Name>
+				<Source><![CDATA[
+    public void populateCards(ABSWorkspaceCardData _cursor)
+    {
+        ABSItemABCXYZ           abcXyzAgg;
+        ABSItemABCXYZ           abcXyzJoin;
+        InventSum               inventSumAgg;
+        InventDim               inventDimJoin;
+        int                     abcInt;
+        int                     xyzInt;
+
+        delete_from _cursor;
+
+        for (abcInt = 1; abcInt <= 3; abcInt++)
+        {
+            for (xyzInt = 1; xyzInt <= 3; xyzInt++)
+            {
+                ABSABCClassification abcClass = abcInt;
+                ABSXYZClassification xyzClass = xyzInt;
+
+                select count(RecId), sum(SalesAmt12M) from abcXyzAgg
+                    where abcXyzAgg.ABCClass == abcClass
+                       && abcXyzAgg.XYZClass == xyzClass;
+
+                select sum(PostedValue) from inventSumAgg
+                    join inventDimJoin
+                        where inventDimJoin.inventDimId == inventSumAgg.inventDimId
+                    exists join abcXyzJoin
+                        where abcXyzJoin.ItemId   == inventSumAgg.ItemId
+                           && abcXyzJoin.SiteId   == inventDimJoin.InventSiteId
+                           && abcXyzJoin.ABCClass == abcClass
+                           && abcXyzJoin.XYZClass == xyzClass;
+
+                _cursor.ABCClass            = abcClass;
+                _cursor.XYZClass            = xyzClass;
+                _cursor.SegmentName         = enum2Str(abcClass) + enum2Str(xyzClass);
+                _cursor.ItemCount           = any2Int(abcXyzAgg.RecId);
+                _cursor.TotalConsumption12M = abcXyzAgg.SalesAmt12M;
+                _cursor.TotalInventoryValue = inventSumAgg.PostedValue;
+                _cursor.insert();
+            }
+        }
+    }
+]]></Source>
+			</Method>
+		</Methods>
+		<DataSources xmlns="">
+			<DataSource>
+				<Name>ABSWorkspaceCardData</Name>
+				<Methods>
+					<Method>
+						<Name>executeQuery</Name>
+						<Source><![CDATA[
+        public void executeQuery()
+        {
+            element.populateCards(ABSWorkspaceCardData);
+            super();
+        }
+]]></Source>
+					</Method>
+				</Methods>
+			</DataSource>
+		</DataSources>
+		<DataControls xmlns="" />
+		<Members xmlns="" />
+	</SourceCode>
+	<DataSources>
+		<AxFormDataSource xmlns="">
+			<Name>ABSWorkspaceCardData</Name>
+			<Table>ABSWorkspaceCardData</Table>
+			<Fields>
+				<AxFormDataSourceField>
+					<DataField>SegmentName</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ABCClass</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>XYZClass</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ItemCount</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>TotalInventoryValue</DataField>
+				</AxFormDataSourceField>
+			</Fields>
+			<ReferencedDataSources />
+			<AllowCreate>No</AllowCreate>
+			<AllowDelete>No</AllowDelete>
+			<AllowEdit>No</AllowEdit>
+			<InsertIfEmpty>No</InsertIfEmpty>
+			<DataSourceLinks />
+			<DerivedDataSources />
+		</AxFormDataSource>
+		<AxFormDataSource xmlns="">
+			<Name>ABSExceptionTypeChartData</Name>
+			<Table>ABSExceptionTypeChartData</Table>
+			<Fields>
+				<AxFormDataSourceField>
+					<DataField>TypeName</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ExceptionCount</DataField>
+				</AxFormDataSourceField>
+			</Fields>
+			<ReferencedDataSources />
+			<AllowCreate>No</AllowCreate>
+			<AllowDelete>No</AllowDelete>
+			<AllowEdit>No</AllowEdit>
+			<InsertIfEmpty>No</InsertIfEmpty>
+			<DataSourceLinks />
+			<DerivedDataSources />
+		</AxFormDataSource>
+		<AxFormDataSource xmlns="">
+			<Name>ABSEOChartData</Name>
+			<Table>ABSEOChartData</Table>
+			<Fields>
+				<AxFormDataSourceField>
+					<DataField>BucketName</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ProvisionValue</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RemainingValue</DataField>
+				</AxFormDataSourceField>
+			</Fields>
+			<ReferencedDataSources />
+			<AllowCreate>No</AllowCreate>
+			<AllowDelete>No</AllowDelete>
+			<AllowEdit>No</AllowEdit>
+			<InsertIfEmpty>No</InsertIfEmpty>
+			<DataSourceLinks />
+			<DerivedDataSources />
+		</AxFormDataSource>
+	</DataSources>
+	<Design>
+		<Caption xmlns="">@ABS:ABSWorkspaceAnalytics</Caption>
+		<Pattern xmlns="">Custom</Pattern>
+		<Style xmlns="">DetailsFormMaster</Style>
+		<Controls xmlns="">
+			<AxFormControl xmlns="" i:type="AxFormGroupControl">
+				<Name>SegmentValueChartGroup</Name>
+				<Pattern>Custom</Pattern>
+				<Type>Group</Type>
+				<FormControlExtension i:nil="true" />
+				<HeightMode>SizeToContent</HeightMode>
+				<WidthMode>SizeToAvailable</WidthMode>
+				<Controls>
+					<AxFormControl xmlns="" i:type="AxFormContainerControl">
+						<Name>SegmentValueChart</Name>
+						<AutoDeclaration>Yes</AutoDeclaration>
+						<Type>Container</Type>
+						<Visible>Yes</Visible>
+						<Width>800</Width>
+						<WidthMode>Manual</WidthMode>
+						<Height>320</Height>
+						<HeightMode>Manual</HeightMode>
+						<FormControlExtension>
+							<Name>SysChart</Name>
+							<ExtensionComponents>
+								<AxFormControlExtensionComponent xmlns="" i:type="AxFormControlExtensionComponentComposite">
+									<Name>parmDataSets</Name>
+									<ExtensionComponents>
+										<AxFormControlExtensionComponent xmlns="" i:type="AxFormControlExtensionComponentLeaf">
+											<Name>SegmentValueDataSet</Name>
+											<ComponentType>SysBuildChartDataSet</ComponentType>
+											<ExtensionProperties>
+												<AxFormControlExtensionProperty>
+													<Name>parmDataSource</Name>
+													<Type>String</Type>
+													<Value>ABSWorkspaceCardData</Value>
+												</AxFormControlExtensionProperty>
+												<AxFormControlExtensionProperty>
+													<Name>parmCategoryField</Name>
+													<Type>String</Type>
+													<Value>SegmentName</Value>
+												</AxFormControlExtensionProperty>
+											</ExtensionProperties>
+										</AxFormControlExtensionComponent>
+									</ExtensionComponents>
+								</AxFormControlExtensionComponent>
+								<AxFormControlExtensionComponent xmlns="" i:type="AxFormControlExtensionComponentComposite">
+									<Name>parmMeasures</Name>
+									<ExtensionComponents>
+										<AxFormControlExtensionComponent xmlns="" i:type="AxFormControlExtensionComponentLeaf">
+											<Name>TotalInventoryValue</Name>
+											<ComponentType>SysBuildChartMeasure</ComponentType>
+											<ExtensionProperties>
+												<AxFormControlExtensionProperty>
+													<Name>parmChartType</Name>
+													<Type>Enum</Type>
+													<TypeName>SysChartType</TypeName>
+													<Value>Column</Value>
+												</AxFormControlExtensionProperty>
+												<AxFormControlExtensionProperty>
+													<Name>parmDataSet</Name>
+													<Type>String</Type>
+													<Value>SegmentValueDataSet</Value>
+												</AxFormControlExtensionProperty>
+												<AxFormControlExtensionProperty>
+													<Name>parmMeasureField</Name>
+													<Type>String</Type>
+													<Value>TotalInventoryValue</Value>
+												</AxFormControlExtensionProperty>
+												<AxFormControlExtensionProperty>
+													<Name>parmUseSecondaryYAxis</Name>
+													<Type>Enum</Type>
+													<TypeName>boolean</TypeName>
+													<Value>False</Value>
+												</AxFormControlExtensionProperty>
+											</ExtensionProperties>
+										</AxFormControlExtensionComponent>
+									</ExtensionComponents>
+								</AxFormControlExtensionComponent>
+								<AxFormControlExtensionComponent xmlns="" i:type="AxFormControlExtensionComponentComposite">
+									<Name>parmSecondaryYAxes</Name>
+									<ExtensionComponents />
+								</AxFormControlExtensionComponent>
+							</ExtensionComponents>
+							<ExtensionProperties>
+								<AxFormControlExtensionProperty>
+									<Name>parmLegendEnabled</Name>
+									<Type>Enum</Type>
+									<TypeName>boolean</TypeName>
+									<Value>True</Value>
+								</AxFormControlExtensionProperty>
+								<AxFormControlExtensionProperty>
+									<Name>parmLegendPosition</Name>
+									<Type>Enum</Type>
+									<TypeName>SysChartVerticalAlignment</TypeName>
+									<Value>Bottom</Value>
+								</AxFormControlExtensionProperty>
+								<AxFormControlExtensionProperty>
+									<Name>parmText</Name>
+									<Type>String</Type>
+									<Value>@ABS:ABSAnalyticsSegmentValueChartTitle</Value>
+								</AxFormControlExtensionProperty>
+								<AxFormControlExtensionProperty>
+									<Name>parmTitlePosition</Name>
+									<Type>Enum</Type>
+									<TypeName>SysChartVerticalAlignment</TypeName>
+									<Value>Top</Value>
+								</AxFormControlExtensionProperty>
+								<AxFormControlExtensionProperty>
+									<Name>parmToolbarEnabled</Name>
+									<Type>Enum</Type>
+									<TypeName>boolean</TypeName>
+									<Value>True</Value>
+								</AxFormControlExtensionProperty>
+								<AxFormControlExtensionProperty>
+									<Name>parmPadMargin</Name>
+									<Type>Int32</Type>
+									<Value>0</Value>
+								</AxFormControlExtensionProperty>
+							</ExtensionProperties>
+						</FormControlExtension>
+						<Controls />
+					</AxFormControl>
+				</Controls>
+				<ArrangeMethod>Vertical</ArrangeMethod>
+			</AxFormControl>
+			<AxFormControl xmlns="" i:type="AxFormGroupControl">
+				<Name>ExceptionTypeChartGroup</Name>
+				<Pattern>Custom</Pattern>
+				<Type>Group</Type>
+				<FormControlExtension i:nil="true" />
+				<HeightMode>SizeToContent</HeightMode>
+				<WidthMode>SizeToAvailable</WidthMode>
+				<Controls>
+					<AxFormControl xmlns="" i:type="AxFormContainerControl">
+						<Name>ExceptionTypeChart</Name>
+						<AutoDeclaration>Yes</AutoDeclaration>
+						<Type>Container</Type>
+						<Visible>Yes</Visible>
+						<Width>800</Width>
+						<WidthMode>Manual</WidthMode>
+						<Height>320</Height>
+						<HeightMode>Manual</HeightMode>
+						<FormControlExtension>
+							<Name>SysChart</Name>
+							<ExtensionComponents>
+								<AxFormControlExtensionComponent xmlns="" i:type="AxFormControlExtensionComponentComposite">
+									<Name>parmDataSets</Name>
+									<ExtensionComponents>
+										<AxFormControlExtensionComponent xmlns="" i:type="AxFormControlExtensionComponentLeaf">
+											<Name>ExceptionTypeDataSet</Name>
+											<ComponentType>SysBuildChartDataSet</ComponentType>
+											<ExtensionProperties>
+												<AxFormControlExtensionProperty>
+													<Name>parmDataSource</Name>
+													<Type>String</Type>
+													<Value>ABSExceptionTypeChartData</Value>
+												</AxFormControlExtensionProperty>
+												<AxFormControlExtensionProperty>
+													<Name>parmCategoryField</Name>
+													<Type>String</Type>
+													<Value>TypeName</Value>
+												</AxFormControlExtensionProperty>
+											</ExtensionProperties>
+										</AxFormControlExtensionComponent>
+									</ExtensionComponents>
+								</AxFormControlExtensionComponent>
+								<AxFormControlExtensionComponent xmlns="" i:type="AxFormControlExtensionComponentComposite">
+									<Name>parmMeasures</Name>
+									<ExtensionComponents>
+										<AxFormControlExtensionComponent xmlns="" i:type="AxFormControlExtensionComponentLeaf">
+											<Name>ExceptionCount</Name>
+											<ComponentType>SysBuildChartMeasure</ComponentType>
+											<ExtensionProperties>
+												<AxFormControlExtensionProperty>
+													<Name>parmChartType</Name>
+													<Type>Enum</Type>
+													<TypeName>SysChartType</TypeName>
+													<Value>Column</Value>
+												</AxFormControlExtensionProperty>
+												<AxFormControlExtensionProperty>
+													<Name>parmDataSet</Name>
+													<Type>String</Type>
+													<Value>ExceptionTypeDataSet</Value>
+												</AxFormControlExtensionProperty>
+												<AxFormControlExtensionProperty>
+													<Name>parmMeasureField</Name>
+													<Type>String</Type>
+													<Value>ExceptionCount</Value>
+												</AxFormControlExtensionProperty>
+												<AxFormControlExtensionProperty>
+													<Name>parmUseSecondaryYAxis</Name>
+													<Type>Enum</Type>
+													<TypeName>boolean</TypeName>
+													<Value>False</Value>
+												</AxFormControlExtensionProperty>
+											</ExtensionProperties>
+										</AxFormControlExtensionComponent>
+									</ExtensionComponents>
+								</AxFormControlExtensionComponent>
+								<AxFormControlExtensionComponent xmlns="" i:type="AxFormControlExtensionComponentComposite">
+									<Name>parmSecondaryYAxes</Name>
+									<ExtensionComponents />
+								</AxFormControlExtensionComponent>
+							</ExtensionComponents>
+							<ExtensionProperties>
+								<AxFormControlExtensionProperty>
+									<Name>parmLegendEnabled</Name>
+									<Type>Enum</Type>
+									<TypeName>boolean</TypeName>
+									<Value>True</Value>
+								</AxFormControlExtensionProperty>
+								<AxFormControlExtensionProperty>
+									<Name>parmLegendPosition</Name>
+									<Type>Enum</Type>
+									<TypeName>SysChartVerticalAlignment</TypeName>
+									<Value>Bottom</Value>
+								</AxFormControlExtensionProperty>
+								<AxFormControlExtensionProperty>
+									<Name>parmText</Name>
+									<Type>String</Type>
+									<Value>@ABS:ABSAnalyticsExceptionTypeChartTitle</Value>
+								</AxFormControlExtensionProperty>
+								<AxFormControlExtensionProperty>
+									<Name>parmTitlePosition</Name>
+									<Type>Enum</Type>
+									<TypeName>SysChartVerticalAlignment</TypeName>
+									<Value>Top</Value>
+								</AxFormControlExtensionProperty>
+								<AxFormControlExtensionProperty>
+									<Name>parmToolbarEnabled</Name>
+									<Type>Enum</Type>
+									<TypeName>boolean</TypeName>
+									<Value>True</Value>
+								</AxFormControlExtensionProperty>
+								<AxFormControlExtensionProperty>
+									<Name>parmPadMargin</Name>
+									<Type>Int32</Type>
+									<Value>0</Value>
+								</AxFormControlExtensionProperty>
+							</ExtensionProperties>
+						</FormControlExtension>
+						<Controls />
+					</AxFormControl>
+				</Controls>
+				<ArrangeMethod>Vertical</ArrangeMethod>
+			</AxFormControl>
+			<AxFormControl xmlns="" i:type="AxFormGroupControl">
+				<Name>EOProvisionChartGroup</Name>
+				<Pattern>Custom</Pattern>
+				<Type>Group</Type>
+				<FormControlExtension i:nil="true" />
+				<HeightMode>SizeToContent</HeightMode>
+				<WidthMode>SizeToAvailable</WidthMode>
+				<Controls>
+					<AxFormControl xmlns="" i:type="AxFormContainerControl">
+						<Name>EOProvisionChart</Name>
+						<AutoDeclaration>Yes</AutoDeclaration>
+						<Type>Container</Type>
+						<Visible>Yes</Visible>
+						<Width>800</Width>
+						<WidthMode>Manual</WidthMode>
+						<Height>320</Height>
+						<HeightMode>Manual</HeightMode>
+						<FormControlExtension>
+							<Name>SysChart</Name>
+							<ExtensionComponents>
+								<AxFormControlExtensionComponent xmlns="" i:type="AxFormControlExtensionComponentComposite">
+									<Name>parmDataSets</Name>
+									<ExtensionComponents>
+										<AxFormControlExtensionComponent xmlns="" i:type="AxFormControlExtensionComponentLeaf">
+											<Name>EOProvisionDataSet</Name>
+											<ComponentType>SysBuildChartDataSet</ComponentType>
+											<ExtensionProperties>
+												<AxFormControlExtensionProperty>
+													<Name>parmDataSource</Name>
+													<Type>String</Type>
+													<Value>ABSEOChartData</Value>
+												</AxFormControlExtensionProperty>
+												<AxFormControlExtensionProperty>
+													<Name>parmCategoryField</Name>
+													<Type>String</Type>
+													<Value>BucketName</Value>
+												</AxFormControlExtensionProperty>
+											</ExtensionProperties>
+										</AxFormControlExtensionComponent>
+									</ExtensionComponents>
+								</AxFormControlExtensionComponent>
+								<AxFormControlExtensionComponent xmlns="" i:type="AxFormControlExtensionComponentComposite">
+									<Name>parmMeasures</Name>
+									<ExtensionComponents>
+										<AxFormControlExtensionComponent xmlns="" i:type="AxFormControlExtensionComponentLeaf">
+											<Name>ProvisionValue</Name>
+											<ComponentType>SysBuildChartMeasure</ComponentType>
+											<ExtensionProperties>
+												<AxFormControlExtensionProperty>
+													<Name>parmChartType</Name>
+													<Type>Enum</Type>
+													<TypeName>SysChartType</TypeName>
+													<Value>StackedColumn</Value>
+												</AxFormControlExtensionProperty>
+												<AxFormControlExtensionProperty>
+													<Name>parmDataSet</Name>
+													<Type>String</Type>
+													<Value>EOProvisionDataSet</Value>
+												</AxFormControlExtensionProperty>
+												<AxFormControlExtensionProperty>
+													<Name>parmMeasureField</Name>
+													<Type>String</Type>
+													<Value>ProvisionValue</Value>
+												</AxFormControlExtensionProperty>
+												<AxFormControlExtensionProperty>
+													<Name>parmTitle</Name>
+													<Type>String</Type>
+													<Value>@ABS:ABSEOProvisionValue</Value>
+												</AxFormControlExtensionProperty>
+												<AxFormControlExtensionProperty>
+													<Name>parmUseSecondaryYAxis</Name>
+													<Type>Enum</Type>
+													<TypeName>boolean</TypeName>
+													<Value>False</Value>
+												</AxFormControlExtensionProperty>
+											</ExtensionProperties>
+										</AxFormControlExtensionComponent>
+										<AxFormControlExtensionComponent xmlns="" i:type="AxFormControlExtensionComponentLeaf">
+											<Name>RemainingValue</Name>
+											<ComponentType>SysBuildChartMeasure</ComponentType>
+											<ExtensionProperties>
+												<AxFormControlExtensionProperty>
+													<Name>parmChartType</Name>
+													<Type>Enum</Type>
+													<TypeName>SysChartType</TypeName>
+													<Value>StackedColumn</Value>
+												</AxFormControlExtensionProperty>
+												<AxFormControlExtensionProperty>
+													<Name>parmDataSet</Name>
+													<Type>String</Type>
+													<Value>EOProvisionDataSet</Value>
+												</AxFormControlExtensionProperty>
+												<AxFormControlExtensionProperty>
+													<Name>parmMeasureField</Name>
+													<Type>String</Type>
+													<Value>RemainingValue</Value>
+												</AxFormControlExtensionProperty>
+												<AxFormControlExtensionProperty>
+													<Name>parmTitle</Name>
+													<Type>String</Type>
+													<Value>@ABS:ABSEORemainingValue</Value>
+												</AxFormControlExtensionProperty>
+												<AxFormControlExtensionProperty>
+													<Name>parmUseSecondaryYAxis</Name>
+													<Type>Enum</Type>
+													<TypeName>boolean</TypeName>
+													<Value>False</Value>
+												</AxFormControlExtensionProperty>
+											</ExtensionProperties>
+										</AxFormControlExtensionComponent>
+									</ExtensionComponents>
+								</AxFormControlExtensionComponent>
+								<AxFormControlExtensionComponent xmlns="" i:type="AxFormControlExtensionComponentComposite">
+									<Name>parmSecondaryYAxes</Name>
+									<ExtensionComponents />
+								</AxFormControlExtensionComponent>
+							</ExtensionComponents>
+							<ExtensionProperties>
+								<AxFormControlExtensionProperty>
+									<Name>parmLegendEnabled</Name>
+									<Type>Enum</Type>
+									<TypeName>boolean</TypeName>
+									<Value>True</Value>
+								</AxFormControlExtensionProperty>
+								<AxFormControlExtensionProperty>
+									<Name>parmLegendPosition</Name>
+									<Type>Enum</Type>
+									<TypeName>SysChartVerticalAlignment</TypeName>
+									<Value>Bottom</Value>
+								</AxFormControlExtensionProperty>
+								<AxFormControlExtensionProperty>
+									<Name>parmText</Name>
+									<Type>String</Type>
+									<Value>@ABS:ABSEOChartTitle</Value>
+								</AxFormControlExtensionProperty>
+								<AxFormControlExtensionProperty>
+									<Name>parmTitlePosition</Name>
+									<Type>Enum</Type>
+									<TypeName>SysChartVerticalAlignment</TypeName>
+									<Value>Top</Value>
+								</AxFormControlExtensionProperty>
+								<AxFormControlExtensionProperty>
+									<Name>parmToolbarEnabled</Name>
+									<Type>Enum</Type>
+									<TypeName>boolean</TypeName>
+									<Value>False</Value>
+								</AxFormControlExtensionProperty>
+								<AxFormControlExtensionProperty>
+									<Name>parmPadMargin</Name>
+									<Type>Int32</Type>
+									<Value>0</Value>
+								</AxFormControlExtensionProperty>
+							</ExtensionProperties>
+						</FormControlExtension>
+						<Controls />
+					</AxFormControl>
+				</Controls>
+				<ArrangeMethod>Vertical</ArrangeMethod>
+			</AxFormControl>
+		</Controls>
+	</Design>
+</AxForm>

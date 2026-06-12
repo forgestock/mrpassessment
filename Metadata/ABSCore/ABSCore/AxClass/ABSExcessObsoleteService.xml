@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>ABSExcessObsoleteService</Name>
+  <SourceCode>
+    <Declaration><![CDATA[
+class ABSExcessObsoleteService extends SysOperationServiceBase
+{
+}
+    ]]></Declaration>
+    <Methods>
+      <Method>
+        <Name>run</Name>
+        <Source><![CDATA[
+public void run(ABSExcessObsoleteContract _contract)
+{
+    ABSExcessObsolete   toDelete;
+    ABSExcessObsolete   eoTotal;
+    InventSiteId        siteId      = _contract.parmSiteId();
+    boolean             deleteRegen = _contract.parmDeleteAndRegenerate();
+    InventSite          inventSite;
+    real                totalProvision;
+
+    if (deleteRegen)
+    {
+        try
+        {
+            ttsbegin;
+
+            toDelete.skipDataMethods(true);
+            toDelete.skipDeleteActions(true);
+            toDelete.skipEvents(true);
+
+            if (siteId)
+                delete_from toDelete where toDelete.SiteId == siteId;
+            else
+                delete_from toDelete;
+
+            ttscommit;
+        }
+        catch (Exception::Error)
+        {
+            error("@ABS:ABSEODeleteFailed");
+            return;
+        }
+    }
+
+    if (siteId)
+    {
+        ABSExcessObsoleteEngine::newParameters(siteId, _contract).run();
+    }
+    else
+    {
+        while select SiteId from inventSite
+        {
+            ABSExcessObsoleteEngine::newParameters(inventSite.SiteId, _contract).run();
+        }
+    }
+
+    select sum(ProvisionValue) from eoTotal
+        where (siteId == '' || eoTotal.SiteId == siteId);
+    totalProvision = eoTotal.ProvisionValue;
+
+    info(strFmt("@ABS:ABSEOCompleted",
+        siteId ? siteId : "@ABS:ABSAllSites",
+        totalProvision));
+}
+        ]]></Source>
+      </Method>
+    </Methods>
+  </SourceCode>
+</AxClass>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>ABSMRPAssessmentReportContract</Name>
+  <SourceCode>
+    <Declaration><![CDATA[
+[DataContractAttribute]
+class ABSMRPAssessmentReportContract
+{
+    ABSMRPAssessmentRunId runId;
+}
+    ]]></Declaration>
+    <Methods>
+      <Method>
+        <Name>parmRunId</Name>
+        <Source><![CDATA[
+[DataMemberAttribute('RunId'),
+ SysOperationLabelAttribute(literalStr("@ABS:AssessmentRunId")),
+ SysOperationDisplayOrderAttribute('1')]
+public ABSMRPAssessmentRunId parmRunId(ABSMRPAssessmentRunId _runId = runId)
+{
+    runId = _runId;
+    return runId;
+}
+        ]]></Source>
+      </Method>
+    </Methods>
+  </SourceCode>
+</AxClass>

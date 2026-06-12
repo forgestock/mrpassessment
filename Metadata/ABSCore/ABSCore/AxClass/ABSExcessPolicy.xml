@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>ABSExcessPolicy</Name>
+  <SourceCode>
+    <Declaration><![CDATA[
+/// <summary>
+/// Single source of truth for the module's "excess stock" days-of-supply thresholds
+/// (Hoppe ch.3.4.1 matrix). Used by the E&amp;O cockpit and the MRP exception engine so
+/// every surface that asks "is this item overstocked?" agrees by construction.
+/// </summary>
+public final class ABSExcessPolicy
+{
+}
+    ]]></Declaration>
+    <Methods>
+      <Method>
+        <Name>coverageLimitDays</Name>
+        <Source><![CDATA[
+/// <summary>Maximum acceptable days of supply before stock is considered excess, by ABC class.</summary>
+public static int coverageLimitDays(ABSABCClassification _abc)
+{
+    switch (_abc)
+    {
+        case ABSABCClassification::A: return 30;
+        case ABSABCClassification::B: return 60;
+        default:                      return 120;
+    }
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>isExcess</Name>
+        <Source><![CDATA[
+/// <summary>Returns true when the supplied days-of-supply breaches the class coverage limit.</summary>
+public static boolean isExcess(ABSABCClassification _abc, real _daysOfSupply)
+{
+    return _daysOfSupply > ABSExcessPolicy::coverageLimitDays(_abc);
+}
+        ]]></Source>
+      </Method>
+    </Methods>
+  </SourceCode>
+  <DeveloperDocumentation>@ABS:ABSExcessPolicyDeveloperDocumentation</DeveloperDocumentation>
+</AxClass>

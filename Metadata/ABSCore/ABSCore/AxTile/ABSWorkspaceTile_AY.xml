@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxTile xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="Microsoft.Dynamics.AX.Metadata.V1">
+	<Name>ABSWorkspaceTile_AY</Name>
+	<Label>@ABS:MatrixCellAY</Label>
+	<MenuItemName>ABSItemABCXYZ_AY</MenuItemName>
+	<Query>ABSWorkspaceTile_AY</Query>
+	<Size>Large</Size>
+	<Type>Count</Type>
+</AxTile>

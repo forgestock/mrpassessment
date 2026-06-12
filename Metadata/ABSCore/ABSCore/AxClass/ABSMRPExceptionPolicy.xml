@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>ABSMRPExceptionPolicy</Name>
+  <SourceCode>
+    <Declaration><![CDATA[
+/// <summary>
+/// R4: single source of truth for the MRP exception detection thresholds, read from the
+/// Inventory and warehouse management parameters (InventParameters ABS extension) so they
+/// are customer-tunable without code changes. Each accessor falls back to the documented
+/// default when the parameter is unset (0), so an unconfigured environment behaves exactly
+/// as the previous hardcoded engine did.
+/// </summary>
+public final class ABSMRPExceptionPolicy
+{
+}
+    ]]></Declaration>
+    <Methods>
+      <Method>
+        <Name>overdueHighDays</Name>
+        <Source><![CDATA[
+/// <summary>Days overdue at or above which an overdue order is High severity (default 7).</summary>
+public static int overdueHighDays()
+{
+    InventParameters parameters = InventParameters::find();
+    return parameters.MRPOverdueHighDays > 0 ? parameters.MRPOverdueHighDays : 7;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>overdueMediumDays</Name>
+        <Source><![CDATA[
+/// <summary>Days overdue at or above which an overdue order is Medium severity (default 3).</summary>
+public static int overdueMediumDays()
+{
+    InventParameters parameters = InventParameters::find();
+    return parameters.MRPOverdueMediumDays > 0 ? parameters.MRPOverdueMediumDays : 3;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>oversizedOrderMonths</Name>
+        <Source><![CDATA[
+/// <summary>Months of average demand above which a single planned order is flagged
+/// oversized (default 3).</summary>
+public static int oversizedOrderMonths()
+{
+    InventParameters parameters = InventParameters::find();
+    return parameters.MRPOversizedOrderMonths > 0 ? parameters.MRPOversizedOrderMonths : 3;
+}
+        ]]></Source>
+      </Method>
+    </Methods>
+  </SourceCode>
+  <DeveloperDocumentation>@ABS:ABSMRPExceptionPolicyDeveloperDocumentation</DeveloperDocumentation>
+</AxClass>

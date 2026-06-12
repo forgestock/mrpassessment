@@ -1,0 +1,187 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AxSecurityPrivilege xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ABSInventoryOptimizerWorkspaceView</Name>
+	<Description>@ABS:ABSInventoryOptimizerWorkspaceViewDescription</Description>
+	<Label>@ABS:ABSInventoryOptimizerWorkspaceViewLabel</Label>
+	<DataEntityPermissions />
+	<DirectAccessPermissions />
+	<EntryPoints>
+		<AxSecurityEntryPointReference>
+			<Name>ABSInventoryOptimizerWorkspace</Name>
+			<Grant>
+				<Read>Allow</Read>
+			</Grant>
+			<ObjectName>ABSInventoryOptimizerWorkspace</ObjectName>
+			<ObjectType>MenuItemDisplay</ObjectType>
+			<Forms>
+				<AxSecurityEntryPointReferenceForm>
+					<Name>ABSInventoryOptimizerWorkspace</Name>
+					<Controls />
+					<DataSources />
+				</AxSecurityEntryPointReferenceForm>
+			</Forms>
+		</AxSecurityEntryPointReference>
+		<AxSecurityEntryPointReference>
+			<Name>ABSInventoryAnalytics</Name>
+			<Grant>
+				<Read>Allow</Read>
+			</Grant>
+			<ObjectName>ABSInventoryAnalytics</ObjectName>
+			<ObjectType>MenuItemDisplay</ObjectType>
+			<Forms />
+		</AxSecurityEntryPointReference>
+		<AxSecurityEntryPointReference>
+			<Name>ABSWorkspaceKpiStrip</Name>
+			<Grant>
+				<Read>Allow</Read>
+			</Grant>
+			<ObjectName>ABSWorkspaceKpiStrip</ObjectName>
+			<ObjectType>MenuItemDisplay</ObjectType>
+			<Forms />
+		</AxSecurityEntryPointReference>
+		<AxSecurityEntryPointReference>
+			<Name>ABSMRPExceptionAttention</Name>
+			<Grant>
+				<Read>Allow</Read>
+			</Grant>
+			<ObjectName>ABSMRPExceptionAttention</ObjectName>
+			<ObjectType>MenuItemDisplay</ObjectType>
+			<Forms />
+		</AxSecurityEntryPointReference>
+		<AxSecurityEntryPointReference>
+			<Name>ABSItemABCXYZ_AX</Name>
+			<Grant>
+				<Read>Allow</Read>
+			</Grant>
+			<ObjectName>ABSItemABCXYZ_AX</ObjectName>
+			<ObjectType>MenuItemDisplay</ObjectType>
+			<Forms />
+		</AxSecurityEntryPointReference>
+		<AxSecurityEntryPointReference>
+			<Name>ABSItemABCXYZ_AY</Name>
+			<Grant>
+				<Read>Allow</Read>
+			</Grant>
+			<ObjectName>ABSItemABCXYZ_AY</ObjectName>
+			<ObjectType>MenuItemDisplay</ObjectType>
+			<Forms />
+		</AxSecurityEntryPointReference>
+		<AxSecurityEntryPointReference>
+			<Name>ABSItemABCXYZ_AZ</Name>
+			<Grant>
+				<Read>Allow</Read>
+			</Grant>
+			<ObjectName>ABSItemABCXYZ_AZ</ObjectName>
+			<ObjectType>MenuItemDisplay</ObjectType>
+			<Forms />
+		</AxSecurityEntryPointReference>
+		<AxSecurityEntryPointReference>
+			<Name>ABSItemABCXYZ_BX</Name>
+			<Grant>
+				<Read>Allow</Read>
+			</Grant>
+			<ObjectName>ABSItemABCXYZ_BX</ObjectName>
+			<ObjectType>MenuItemDisplay</ObjectType>
+			<Forms />
+		</AxSecurityEntryPointReference>
+		<AxSecurityEntryPointReference>
+			<Name>ABSItemABCXYZ_BY</Name>
+			<Grant>
+				<Read>Allow</Read>
+			</Grant>
+			<ObjectName>ABSItemABCXYZ_BY</ObjectName>
+			<ObjectType>MenuItemDisplay</ObjectType>
+			<Forms />
+		</AxSecurityEntryPointReference>
+		<AxSecurityEntryPointReference>
+			<Name>ABSItemABCXYZ_BZ</Name>
+			<Grant>
+				<Read>Allow</Read>
+			</Grant>
+			<ObjectName>ABSItemABCXYZ_BZ</ObjectName>
+			<ObjectType>MenuItemDisplay</ObjectType>
+			<Forms />
+		</AxSecurityEntryPointReference>
+		<AxSecurityEntryPointReference>
+			<Name>ABSItemABCXYZ_CX</Name>
+			<Grant>
+				<Read>Allow</Read>
+			</Grant>
+			<ObjectName>ABSItemABCXYZ_CX</ObjectName>
+			<ObjectType>MenuItemDisplay</ObjectType>
+			<Forms />
+		</AxSecurityEntryPointReference>
+		<AxSecurityEntryPointReference>
+			<Name>ABSItemABCXYZ_CY</Name>
+			<Grant>
+				<Read>Allow</Read>
+			</Grant>
+			<ObjectName>ABSItemABCXYZ_CY</ObjectName>
+			<ObjectType>MenuItemDisplay</ObjectType>
+			<Forms />
+		</AxSecurityEntryPointReference>
+		<AxSecurityEntryPointReference>
+			<Name>ABSItemABCXYZ_CZ</Name>
+			<Grant>
+				<Read>Allow</Read>
+			</Grant>
+			<ObjectName>ABSItemABCXYZ_CZ</ObjectName>
+			<ObjectType>MenuItemDisplay</ObjectType>
+			<Forms />
+		</AxSecurityEntryPointReference>
+		<AxSecurityEntryPointReference>
+			<Name>ABSMRPAssessment</Name>
+			<Grant>
+				<Read>Allow</Read>
+			</Grant>
+			<ObjectName>ABSMRPAssessment</ObjectName>
+			<ObjectType>MenuItemDisplay</ObjectType>
+			<Forms />
+		</AxSecurityEntryPointReference>
+		<AxSecurityEntryPointReference>
+			<Name>ABSMRPAssessmentRunDetail</Name>
+			<Grant>
+				<Read>Allow</Read>
+			</Grant>
+			<ObjectName>ABSMRPAssessmentRunDetail</ObjectName>
+			<ObjectType>MenuItemDisplay</ObjectType>
+			<Forms />
+		</AxSecurityEntryPointReference>
+		<AxSecurityEntryPointReference>
+			<Name>ABSWorkspaceCardGrid</Name>
+			<Grant>
+				<Read>Allow</Read>
+			</Grant>
+			<ObjectName>ABSWorkspaceCardGrid</ObjectName>
+			<ObjectType>MenuItemDisplay</ObjectType>
+			<Forms />
+		</AxSecurityEntryPointReference>
+		<AxSecurityEntryPointReference>
+			<Name>ABSMRPAssessmentRun</Name>
+			<Grant>
+				<Correct>Allow</Correct>
+				<Create>Allow</Create>
+				<Delete>Allow</Delete>
+				<Read>Allow</Read>
+				<Update>Allow</Update>
+			</Grant>
+			<ObjectName>ABSMRPAssessmentRun</ObjectName>
+			<ObjectType>MenuItemAction</ObjectType>
+			<Forms />
+		</AxSecurityEntryPointReference>
+		<AxSecurityEntryPointReference>
+			<Name>ABSMRPAssessmentReport</Name>
+			<Grant>
+				<Correct>Allow</Correct>
+				<Create>Allow</Create>
+				<Delete>Allow</Delete>
+				<Read>Allow</Read>
+				<Update>Allow</Update>
+			</Grant>
+			<ObjectName>ABSMRPAssessmentReport</ObjectName>
+			<ObjectType>MenuItemAction</ObjectType>
+			<Forms />
+		</AxSecurityEntryPointReference>
+	</EntryPoints>
+	<FormControlOverrides />
+</AxSecurityPrivilege>

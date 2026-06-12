@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxEnum xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>ABSABCClassification</Name>
+  <SourceCode>
+    <Declaration><![CDATA[]]></Declaration>
+  </SourceCode>
+  <DeveloperDocumentation>@ABS:ABSABCClassificationDeveloperDocumentation</DeveloperDocumentation>
+  <Label>@ABS:ABSABCClassification</Label>
+  <EnumValues>
+    <AxEnumValue>
+      <Name>None</Name>
+      <Label>@ABS:ClassificationNone</Label>
+      <Value>0</Value>
+    </AxEnumValue>
+    <AxEnumValue>
+      <Name>A</Name>
+      <Label>@ABS:ABCClassA</Label>
+      <Value>1</Value>
+      <DeveloperDocumentation>@ABS:ABCClassADeveloperDocumentation</DeveloperDocumentation>
+    </AxEnumValue>
+    <AxEnumValue>
+      <Name>B</Name>
+      <Label>@ABS:ABCClassB</Label>
+      <Value>2</Value>
+      <DeveloperDocumentation>@ABS:ABCClassBDeveloperDocumentation</DeveloperDocumentation>
+    </AxEnumValue>
+    <AxEnumValue>
+      <Name>C</Name>
+      <Label>@ABS:ABCClassC</Label>
+      <Value>3</Value>
+      <DeveloperDocumentation>@ABS:ABCClassCDeveloperDocumentation</DeveloperDocumentation>
+    </AxEnumValue>
+  </EnumValues>
+</AxEnum>

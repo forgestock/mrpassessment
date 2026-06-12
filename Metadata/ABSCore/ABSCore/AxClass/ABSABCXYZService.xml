@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>ABSABCXYZService</Name>
+  <SourceCode>
+    <Declaration><![CDATA[
+class ABSABCXYZService extends SysOperationServiceBase
+{
+}
+    ]]></Declaration>
+    <Methods>
+      <Method>
+        <Name>run</Name>
+        <Source><![CDATA[
+public void run(ABSABCXYZContract _contract)
+{
+    ABSItemABCXYZ   toDelete;
+    InventSiteId    siteId      = _contract.parmSiteId();
+    TransDate       fromDate    = _contract.parmFromDate();
+    TransDate       toDate      = _contract.parmToDate();
+    boolean         deleteRegen = _contract.parmDeleteAndRegenerate();
+    InventSite      inventSite;
+
+    if (deleteRegen)
+    {
+        try
+        {
+            ttsbegin;
+
+            toDelete.skipDataMethods(true);
+            toDelete.skipDeleteActions(true);
+            toDelete.skipEvents(true);
+
+            if (siteId)
+                delete_from toDelete where toDelete.SiteId == siteId;
+            else
+                delete_from toDelete;
+
+            ttscommit;
+        }
+        catch (Exception::Error)
+        {
+            error("@ABS:ABSABCXYZDeleteFailed");
+            return;
+        }
+    }
+
+    if (siteId)
+    {
+        ABSABCClassificationEngine::newParameters(siteId, fromDate, toDate).run();
+        ABSXYZClassificationEngine::newParameters(siteId, fromDate, toDate).run();
+        this.sweepUnclassified(siteId);
+    }
+    else
+    {
+        while select SiteId from inventSite
+        {
+            ABSABCClassificationEngine::newParameters(inventSite.SiteId, fromDate, toDate).run();
+            ABSXYZClassificationEngine::newParameters(inventSite.SiteId, fromDate, toDate).run();
+            this.sweepUnclassified(inventSite.SiteId);
+        }
+    }
+
+    info(strFmt("@ABS:ABSABCXYZCompleted",
+        siteId ? siteId : "@ABS:ABSAllSites"));
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>sweepUnclassified</Name>
+        <Source><![CDATA[
+// Sweep items that have requirement (coverage) settings at this site but received no
+// value/demand-based classification (no qualifying issue history) into the lowest
+// quadrant: ABC = C, XYZ = Z. This makes the matrix complete so that "Unclassified"
+// genuinely means "not yet run" rather than "no history".
+private void sweepUnclassified(InventSiteId _siteId)
+{
+    ReqItemTable  reqItem;
+    InventDim     covDim;
+    ABSItemABCXYZ itemRecord;
+    TransDate     calcDate = DateTimeUtil::getToday(DateTimeUtil::getUserPreferredTimeZone());
+
+    if (!_siteId) { return; }
+
+    ttsbegin;
+
+    while select reqItem
+        where reqItem.ItemId != ''
+    join covDim
+        where covDim.InventDimId  == reqItem.CovInventDimId
+           && covDim.InventSiteId == _siteId
+    {
+        select firstonly forUpdate itemRecord
+            where itemRecord.ItemId == reqItem.ItemId
+               && itemRecord.SiteId == _siteId;
+
+        if (!itemRecord.RecId)
+        {
+            itemRecord.clear();
+            itemRecord.ItemId         = reqItem.ItemId;
+            itemRecord.SiteId         = _siteId;
+            itemRecord.ABCClass       = ABSABCClassification::C;
+            itemRecord.XYZClass       = ABSXYZClassification::Z;
+            itemRecord.CalculatedDate = calcDate;
+            itemRecord.insert();
+        }
+        else
+        {
+            boolean changed = false;
+            if (itemRecord.ABCClass == ABSABCClassification::None)
+            {
+                itemRecord.ABCClass = ABSABCClassification::C;
+                changed = true;
+            }
+            if (itemRecord.XYZClass == ABSXYZClassification::None)
+            {
+                itemRecord.XYZClass = ABSXYZClassification::Z;
+                changed = true;
+            }
+            if (changed)
+            {
+                itemRecord.CalculatedDate = calcDate;
+                itemRecord.update();
+            }
+        }
+    }
+
+    ttscommit;
+}
+        ]]></Source>
+      </Method>
+    </Methods>
+  </SourceCode>
+</AxClass>

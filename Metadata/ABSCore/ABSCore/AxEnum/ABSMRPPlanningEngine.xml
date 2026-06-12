@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxEnum xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>ABSMRPPlanningEngine</Name>
+  <SourceCode>
+    <Declaration><![CDATA[]]></Declaration>
+  </SourceCode>
+  <DeveloperDocumentation>@ABS:ABSMRPPlanningEngineDeveloperDocumentation</DeveloperDocumentation>
+  <Label>@ABS:ABSMRPPlanningEngine</Label>
+  <EnumValues>
+    <AxEnumValue>
+      <Name>LegacyMRP</Name>
+      <Label>@ABS:PlanningEngineLegacyMRP</Label>
+      <Value>0</Value>
+    </AxEnumValue>
+    <AxEnumValue>
+      <Name>PlanningOptimization</Name>
+      <Label>@ABS:PlanningEnginePlanningOptimization</Label>
+      <Value>1</Value>
+    </AxEnumValue>
+  </EnumValues>
+</AxEnum>

@@ -1,0 +1,1817 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>ABSMRPAssessmentEngine</Name>
+  <SourceCode>
+    <Declaration><![CDATA[
+class ABSMRPAssessmentEngine
+{
+    ABSMRPAssessmentRun      runHeader;
+    ABSMRPAssessmentContract contract;
+    ABSMRPPlanningEngine     activeEngine;
+}
+    ]]></Declaration>
+    <Methods>
+      <Method>
+        <Name>parmContract</Name>
+        <Source><![CDATA[
+public ABSMRPAssessmentContract parmContract(ABSMRPAssessmentContract _contract = contract)
+{
+    contract = _contract;
+    return contract;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>init</Name>
+        <Source><![CDATA[
+public void init()
+{
+    activeEngine = MpsMasterPlanningHelper::isPlanningServiceEnabledForCurrentCompany()
+        ? ABSMRPPlanningEngine::PlanningOptimization
+        : ABSMRPPlanningEngine::LegacyMRP;
+
+    runHeader.initValue();
+    runHeader.PlanId         = contract.parmPlanId();
+    runHeader.PlanningEngine = activeEngine;
+
+    boolean inserted = false;
+    while (!inserted)
+    {
+        runHeader.RunId = ABSMRPAssessmentRun::generateRunId(contract.parmPlanId());
+        try
+        {
+            runHeader.insert();
+            inserted = true;
+        }
+        catch (Exception::DuplicateKeyException)
+        {
+            exceptionTextFallThrough();
+        }
+    }
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>runAllChecks</Name>
+        <Source><![CDATA[
+public void runAllChecks()
+{
+    try
+    {
+        this.checkPlanConfiguration();
+        this.checkDataQuality();
+        this.checkSafetyStock();
+        this.checkItemCoverage();
+        this.checkPerformanceRisk();
+        this.checkFirmingWindow();
+        this.checkBOMRouteQuality();
+        this.checkPlannerBehaviour();
+        this.checkPlanningOptimizationHealth();
+        this.flagCompoundedRisk();
+        this.finalizeRunHeader();
+    }
+    catch (Exception::Error)
+    {
+        ttsbegin;
+        ABSMRPAssessmentRun updateRun = ABSMRPAssessmentRun::find(runHeader.RunId, true);
+        updateRun.Status = ABSMRPAssessmentStatus::Failed;
+        updateRun.update();
+        ttscommit;
+        throw Exception::Error;
+    }
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>checkPlanConfiguration</Name>
+        <Source><![CDATA[
+private void checkPlanConfiguration()
+{
+    // PC-001: Time fence override
+    if (this.isCheckApplicable('PC-001') && !this.isCheckSuppressed('PC-001'))
+    {
+        ReqPlanSched reqPlanSched;
+        int          cnt;
+        select count(RecId) from reqPlanSched
+            where reqPlanSched.ReqPlanIdSched    == contract.parmPlanId()
+               && (reqPlanSched.TimeFenceFutures  > 0
+                || reqPlanSched.TimeFenceAction   > 0
+                || reqPlanSched.TimeFenceCov      > 0);
+        cnt = any2Int(reqPlanSched.RecId);
+
+        this.writeResult('PC-001', ABSMRPAssessmentCategory::PlanConfig,
+            ABSMRPAssessmentSeverity::High, cnt,
+            "@ABS:ABSCheckPC001Title",
+            "@ABS:ABSCheckPC001Reco",
+            contract.parmPlanId());
+    }
+
+    // PC-002: Negative days too low
+    if (this.isCheckApplicable('PC-002') && !this.isCheckSuppressed('PC-002'))
+    {
+        ReqGroup covGroup;
+        int      cnt;
+        str      affected;
+        while select covGroup
+            where covGroup.MaxNegativeDays < 7
+        {
+            cnt++;
+            affected = affected ? (affected + ', ' + covGroup.ReqGroupId) : covGroup.ReqGroupId;
+        }
+
+        this.writeResult('PC-002', ABSMRPAssessmentCategory::PlanConfig,
+            ABSMRPAssessmentSeverity::Medium, cnt,
+            "@ABS:ABSCheckPC002Title",
+            "@ABS:ABSCheckPC002Reco",
+            affected);
+    }
+
+    // PC-003: Static = Dynamic plan (Legacy MRP only)
+    if (this.isCheckApplicable('PC-003') && !this.isCheckSuppressed('PC-003'))
+    {
+        ReqParameters reqParm;
+        int           cnt;
+        select firstonly reqParm;
+        cnt = (reqParm.CurrentReqPlanIdSchedDynamic != '' && reqParm.CurrentReqPlanIdSchedDynamic == reqParm.CurrentReqPlanIdSchedStatic) ? 1 : 0;
+
+        this.writeResult('PC-003', ABSMRPAssessmentCategory::PlanConfig,
+            ABSMRPAssessmentSeverity::High, cnt,
+            "@ABS:ABSCheckPC003Title",
+            "@ABS:ABSCheckPC003Reco",
+            reqParm.CurrentReqPlanIdSchedDynamic);
+    }
+
+    // PC-005: No active master plan
+    if (this.isCheckApplicable('PC-005') && !this.isCheckSuppressed('PC-005'))
+    {
+        ReqParameters reqParm;
+        int           cnt;
+        select firstonly reqParm;
+        cnt = (reqParm.CurrentReqPlanIdSchedDynamic == '') ? 1 : 0;
+
+        this.writeResult('PC-005', ABSMRPAssessmentCategory::PlanConfig,
+            ABSMRPAssessmentSeverity::Critical, cnt,
+            "@ABS:ABSCheckPC005Title",
+            "@ABS:ABSCheckPC005Reco",
+            '');
+    }
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>checkDataQuality</Name>
+        <Source><![CDATA[
+private void checkDataQuality()
+{
+    // DQ-001: Inactive plan version data (Legacy MRP only)
+    if (this.isCheckApplicable('DQ-001') && !this.isCheckSuppressed('DQ-001'))
+    {
+        ReqPO         reqPO;
+        ReqPlanVersion planVer;
+        int cnt;
+        select count(RecId) from reqPO
+        join planVer
+            where planVer.RecId      == reqPO.PlanVersion
+               && planVer.ReqPlanId == contract.parmPlanId()
+               && planVer.Active    == NoYes::No;
+        cnt = any2Int(reqPO.RecId);
+
+        this.writeResult('DQ-001', ABSMRPAssessmentCategory::DataQuality,
+            ABSMRPAssessmentSeverity::Medium, cnt,
+            "@ABS:ABSCheckDQ001Title",
+            "@ABS:ABSCheckDQ001Reco",
+            '');
+    }
+
+    // DQ-002: Orphaned MRP plan data (Legacy MRP only)
+    if (this.isCheckApplicable('DQ-002') && !this.isCheckSuppressed('DQ-002'))
+    {
+        ReqPO         reqPO;
+        ReqPlanVersion planVer;
+        int cnt;
+        select count(RecId) from reqPO
+        notexists join planVer
+            where planVer.RecId == reqPO.PlanVersion;
+        cnt = any2Int(reqPO.RecId);
+
+        this.writeResult('DQ-002', ABSMRPAssessmentCategory::DataQuality,
+            ABSMRPAssessmentSeverity::High, cnt,
+            "@ABS:ABSCheckDQ002Title",
+            "@ABS:ABSCheckDQ002Reco",
+            '');
+    }
+
+    // DQ-004: BOM version without BOM lines
+    if (this.isCheckApplicable('DQ-004') && !this.isCheckSuppressed('DQ-004'))
+    {
+        BOMVersion bomVer;
+        BOM        bomLine;
+        ABSItemABCXYZ abcDQ4;
+        int        cnt;
+        str        affected;
+        while select bomVer
+            where bomVer.Active == NoYes::Yes
+        notexists join bomLine
+            where bomLine.BOMId == bomVer.BOMId
+        {
+            cnt++;
+            if (cnt <= 20)
+                affected = affected ? (affected + ', ' + bomVer.ItemId) : bomVer.ItemId;
+            if (contract.parmIncludeItemChecks() == NoYes::Yes)
+            {
+                boolean wroteAnyDQ4 = false;
+                while select abcDQ4
+                    where abcDQ4.ItemId == bomVer.ItemId
+                {
+                    this.writeDetail('DQ-004', bomVer.ItemId, abcDQ4.SiteId, abcDQ4.ABCClass, abcDQ4.XYZClass,
+                        strFmt("@ABS:ABSCheckDQ004Detail", bomVer.BOMId));
+                    wroteAnyDQ4 = true;
+                }
+                if (!wroteAnyDQ4)
+                    this.writeDetail('DQ-004', bomVer.ItemId, '', ABSABCClassification::None, ABSXYZClassification::None,
+                        strFmt("@ABS:ABSCheckDQ004Detail", bomVer.BOMId));
+            }
+        }
+
+        this.writeResult('DQ-004', ABSMRPAssessmentCategory::DataQuality,
+            ABSMRPAssessmentSeverity::High, cnt,
+            "@ABS:ABSCheckDQ004Title",
+            "@ABS:ABSCheckDQ004Reco",
+            affected);
+    }
+
+    // DQ-005: Released product with missing unit of measure
+    if (this.isCheckApplicable('DQ-005') && !this.isCheckSuppressed('DQ-005'))
+    {
+        InventTableModule invModDQ5;
+        ABSItemABCXYZ     abcDQ5;
+        int               cnt;
+        str               affected;
+
+        while select invModDQ5
+            where invModDQ5.ModuleType == ModuleInventPurchSales::Invent
+               && invModDQ5.UnitId     == ''
+        {
+            cnt++;
+            if (cnt <= 20)
+                affected = affected ? (affected + ', ' + invModDQ5.ItemId) : invModDQ5.ItemId;
+
+            if (contract.parmIncludeItemChecks() == NoYes::Yes)
+            {
+                boolean wroteAnyDQ5 = false;
+                while select abcDQ5
+                    where abcDQ5.ItemId == invModDQ5.ItemId
+                {
+                    this.writeDetail('DQ-005', invModDQ5.ItemId, abcDQ5.SiteId, abcDQ5.ABCClass, abcDQ5.XYZClass,
+                        "@ABS:ABSCheckDQ005Detail");
+                    wroteAnyDQ5 = true;
+                }
+
+                if (!wroteAnyDQ5)
+                    this.writeDetail('DQ-005', invModDQ5.ItemId, '', ABSABCClassification::None, ABSXYZClassification::None,
+                        "@ABS:ABSCheckDQ005Detail");
+            }
+        }
+
+        this.writeResult('DQ-005', ABSMRPAssessmentCategory::DataQuality,
+            ABSMRPAssessmentSeverity::Critical, cnt,
+            "@ABS:ABSCheckDQ005Title",
+            "@ABS:ABSCheckDQ005Reco",
+            affected);
+    }
+
+    // DQ-006: BOM line unit of measure mismatch
+    if (this.isCheckApplicable('DQ-006') && !this.isCheckSuppressed('DQ-006'))
+    {
+        BOM              bomLineDQ6;
+        InventTableModule invModDQ6;
+        ABSItemABCXYZ    abcDQ6;
+        int              cnt;
+        str              affected;
+
+        while select bomLineDQ6
+            where bomLineDQ6.ItemId    != ''
+               && bomLineDQ6.UnitId    != ''
+        join invModDQ6
+            where invModDQ6.ItemId     == bomLineDQ6.ItemId
+               && invModDQ6.ModuleType == ModuleInventPurchSales::Invent
+               && invModDQ6.UnitId     != ''
+               && invModDQ6.UnitId     != bomLineDQ6.UnitId
+        {
+            cnt++;
+            if (cnt <= 20)
+                affected = affected ? (affected + ', ' + bomLineDQ6.ItemId) : bomLineDQ6.ItemId;
+
+            if (contract.parmIncludeItemChecks() == NoYes::Yes)
+            {
+                boolean wroteAnyDQ6 = false;
+                while select abcDQ6
+                    where abcDQ6.ItemId == bomLineDQ6.ItemId
+                {
+                    this.writeDetail('DQ-006', bomLineDQ6.ItemId, abcDQ6.SiteId, abcDQ6.ABCClass, abcDQ6.XYZClass,
+                        strFmt("@ABS:ABSCheckDQ006Detail", bomLineDQ6.UnitId, invModDQ6.UnitId));
+                    wroteAnyDQ6 = true;
+                }
+
+                if (!wroteAnyDQ6)
+                    this.writeDetail('DQ-006', bomLineDQ6.ItemId, '', ABSABCClassification::None, ABSXYZClassification::None,
+                        strFmt("@ABS:ABSCheckDQ006Detail", bomLineDQ6.UnitId, invModDQ6.UnitId));
+            }
+        }
+
+        this.writeResult('DQ-006', ABSMRPAssessmentCategory::DataQuality,
+            ABSMRPAssessmentSeverity::High, cnt,
+            "@ABS:ABSCheckDQ006Title",
+            "@ABS:ABSCheckDQ006Reco",
+            affected);
+    }
+
+    // DQ-007: Default order type vs BOM line type mismatch
+    // Driven from active BOM versions (manufacturable items). An item is flagged when its
+    // EFFECTIVE default order type resolves to Purchase. A per-coverage override on
+    // ReqItemTable (ReqPOTypeActive) takes precedence over the global
+    // InventItemSetupSupplyType default, and a missing supply-type record is implicitly
+    // Purchase (getDefaultOrderType returns ReqPOType::Purch for an empty buffer).
+    // Override resolution is deterministic: if ANY active override is non-Purchase the
+    // item is manufacturable-by-coverage and is NOT flagged; the item is treated as
+    // Purchase only when an active Purchase override exists (and none contradict it) or
+    // there is no active override and the global default is Purchase.
+    if (this.isCheckApplicable('DQ-007') && !this.isCheckSuppressed('DQ-007'))
+    {
+        BOMVersion    bomVer;
+        ReqItemTable  reqNonPurch;
+        ReqItemTable  reqPurch;
+        ABSItemABCXYZ abcDQ7;
+        boolean       isPurch;
+        int           cnt;
+        str           affected;
+        while select ItemId from bomVer
+            group by bomVer.ItemId
+            where bomVer.Active == NoYes::Yes
+        {
+            // Any active override that is NOT Purchase => manufacturable by coverage; skip.
+            select firstonly RecId from reqNonPurch
+                where reqNonPurch.ItemId          == bomVer.ItemId
+                   && reqNonPurch.ReqPOTypeActive == NoYes::Yes
+                   && reqNonPurch.ReqPOType       != ReqPOType::Purch;
+            if (reqNonPurch.RecId) { continue; }
+
+            // An active Purchase override is decisive; otherwise use the global default
+            // (empty supply-type buffer resolves to ReqPOType::Purch).
+            select firstonly RecId from reqPurch
+                where reqPurch.ItemId          == bomVer.ItemId
+                   && reqPurch.ReqPOTypeActive == NoYes::Yes
+                   && reqPurch.ReqPOType       == ReqPOType::Purch;
+
+            isPurch = reqPurch.RecId
+                ? true
+                : (InventItemSetupSupplyType::getDefaultOrderType(bomVer.ItemId, curExt()) == ReqPOType::Purch);
+
+            if (!isPurch) { continue; }
+
+            cnt++;
+            if (cnt <= 20)
+                affected = affected ? (affected + ', ' + bomVer.ItemId) : bomVer.ItemId;
+            if (contract.parmIncludeItemChecks() == NoYes::Yes)
+            {
+                boolean wroteAnyDQ7 = false;
+                while select abcDQ7
+                    where abcDQ7.ItemId == bomVer.ItemId
+                {
+                    this.writeDetail('DQ-007', bomVer.ItemId, abcDQ7.SiteId, abcDQ7.ABCClass, abcDQ7.XYZClass,
+                        "@ABS:ABSCheckDQ007Detail");
+                    wroteAnyDQ7 = true;
+                }
+                if (!wroteAnyDQ7)
+                    this.writeDetail('DQ-007', bomVer.ItemId, '', ABSABCClassification::None, ABSXYZClassification::None,
+                        "@ABS:ABSCheckDQ007Detail");
+            }
+        }
+
+        this.writeResult('DQ-007', ABSMRPAssessmentCategory::DataQuality,
+            ABSMRPAssessmentSeverity::Medium, cnt,
+            "@ABS:ABSCheckDQ007Title",
+            "@ABS:ABSCheckDQ007Reco",
+            affected);
+    }
+
+    // DQ-008: Route references non-existent item
+    if (this.isCheckApplicable('DQ-008') && !this.isCheckSuppressed('DQ-008'))
+    {
+        RouteOpr     routeOpr;
+        InventTable  inventTable;
+        int          cnt;
+        while select routeOpr
+            where routeOpr.ItemCode     == TableGroupAll::Table
+               && routeOpr.ItemRelation != ''
+        notexists join inventTable
+            where inventTable.ItemId == routeOpr.ItemRelation
+        {
+            cnt++;
+        }
+
+        this.writeResult('DQ-008', ABSMRPAssessmentCategory::DataQuality,
+            ABSMRPAssessmentSeverity::Medium, cnt,
+            "@ABS:ABSCheckDQ008Title",
+            "@ABS:ABSCheckDQ008Reco",
+            '');
+    }
+
+    // DQ-009: Order quantity setting too low
+    if (this.isCheckApplicable('DQ-009') && !this.isCheckSuppressed('DQ-009'))
+    {
+        ReqItemTable         reqItemDQ9;
+        InventItemPurchSetup purchSetupDQ9;
+        ABSItemABCXYZ        abcDQ9;
+        int                  cnt;
+        str                  affected;
+
+        while select reqItemDQ9
+            where reqItemDQ9.MinInventOnhand > 0
+        join purchSetupDQ9
+            where purchSetupDQ9.ItemId       == reqItemDQ9.ItemId
+               && purchSetupDQ9.StandardQty > 0
+               && purchSetupDQ9.StandardQty < (reqItemDQ9.MinInventOnhand / 2)
+        {
+            cnt++;
+            if (cnt <= 20)
+                affected = affected ? (affected + ', ' + reqItemDQ9.ItemId) : reqItemDQ9.ItemId;
+
+            if (contract.parmIncludeItemChecks() == NoYes::Yes)
+            {
+                boolean wroteAnyDQ9 = false;
+                while select abcDQ9
+                    where abcDQ9.ItemId == reqItemDQ9.ItemId
+                {
+                    this.writeDetail('DQ-009', reqItemDQ9.ItemId, abcDQ9.SiteId, abcDQ9.ABCClass, abcDQ9.XYZClass,
+                        strFmt("@ABS:ABSCheckDQ009Detail", purchSetupDQ9.StandardQty, reqItemDQ9.MinInventOnhand));
+                    wroteAnyDQ9 = true;
+                }
+
+                if (!wroteAnyDQ9)
+                    this.writeDetail('DQ-009', reqItemDQ9.ItemId, '', ABSABCClassification::None, ABSXYZClassification::None,
+                        strFmt("@ABS:ABSCheckDQ009Detail", purchSetupDQ9.StandardQty, reqItemDQ9.MinInventOnhand));
+            }
+        }
+
+        this.writeResult('DQ-009', ABSMRPAssessmentCategory::DataQuality,
+            ABSMRPAssessmentSeverity::Medium, cnt,
+            "@ABS:ABSCheckDQ009Title",
+            "@ABS:ABSCheckDQ009Reco",
+            affected);
+    }
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>checkSafetyStock</Name>
+        <Source><![CDATA[
+private void checkSafetyStock()
+{
+    // SS-001: A-class item with zero safety stock
+    if (this.isCheckApplicable('SS-001') && !this.isCheckSuppressed('SS-001'))
+    {
+        ABSItemABCXYZ abcXyz;
+        ReqItemTable  reqItem;
+        int           cnt;
+        str           affected;
+        while select abcXyz
+            where abcXyz.ABCClass == ABSABCClassification::A
+        exists join reqItem
+            where reqItem.ItemId          == abcXyz.ItemId
+               && reqItem.MinInventOnhand == 0
+        {
+            cnt++;
+            if (cnt <= 20)
+                affected = affected ? (affected + ', ' + abcXyz.ItemId) : abcXyz.ItemId;
+            if (contract.parmIncludeItemChecks() == NoYes::Yes)
+                this.writeDetail('SS-001', abcXyz.ItemId, abcXyz.SiteId, abcXyz.ABCClass, abcXyz.XYZClass,
+                    "@ABS:ABSCheckSS001Detail");
+        }
+
+        this.writeResult('SS-001', ABSMRPAssessmentCategory::SafetyStock,
+            ABSMRPAssessmentSeverity::High, cnt,
+            "@ABS:ABSCheckSS001Title",
+            "@ABS:ABSCheckSS001Reco",
+            affected);
+    }
+
+    // SS-002: Safety stock exceeds on-hand
+    if (this.isCheckApplicable('SS-002') && !this.isCheckSuppressed('SS-002'))
+    {
+        ReqItemTable  reqItem;
+        InventDim     covDim;
+        InventSum     invSum;
+        InventDim     invSumDim;
+        ABSItemABCXYZ abcSS2;
+        real          totalOnHand;
+        int           cnt;
+        str           affected;
+        // Compare the SUMMED on-hand within the coverage dimension scope (site) to
+        // the minimum, rather than triggering on any single dimension row below it.
+        while select reqItem
+            where reqItem.MinInventOnhand > 0
+        join covDim
+            where covDim.InventDimId == reqItem.CovInventDimId
+        {
+            totalOnHand = 0;
+            select sum(PhysicalInvent) from invSum
+                where invSum.ItemId == reqItem.ItemId
+                join invSumDim
+                    where invSumDim.InventDimId  == invSum.InventDimId
+                       && (covDim.InventSiteId == '' || invSumDim.InventSiteId == covDim.InventSiteId);
+            totalOnHand = invSum.PhysicalInvent;
+
+            if (totalOnHand >= reqItem.MinInventOnhand) { continue; }
+
+            cnt++;
+            if (cnt <= 20)
+                affected = affected ? (affected + ', ' + reqItem.ItemId) : reqItem.ItemId;
+            if (contract.parmIncludeItemChecks() == NoYes::Yes)
+            {
+                boolean wroteAnySS2 = false;
+                while select abcSS2
+                    where abcSS2.ItemId == reqItem.ItemId
+                {
+                    this.writeDetail('SS-002', reqItem.ItemId, abcSS2.SiteId, abcSS2.ABCClass, abcSS2.XYZClass,
+                        strFmt("@ABS:ABSCheckSS002Detail", reqItem.MinInventOnhand));
+                    wroteAnySS2 = true;
+                }
+                if (!wroteAnySS2)
+                    this.writeDetail('SS-002', reqItem.ItemId, '', ABSABCClassification::None, ABSXYZClassification::None,
+                        strFmt("@ABS:ABSCheckSS002Detail", reqItem.MinInventOnhand));
+            }
+        }
+
+        this.writeResult('SS-002', ABSMRPAssessmentCategory::SafetyStock,
+            ABSMRPAssessmentSeverity::Medium, cnt,
+            "@ABS:ABSCheckSS002Title",
+            "@ABS:ABSCheckSS002Reco",
+            affected);
+    }
+
+    // SS-003: Z-class item with safety stock (informational)
+    if (this.isCheckApplicable('SS-003') && !this.isCheckSuppressed('SS-003'))
+    {
+        ABSItemABCXYZ abcXyz;
+        ReqItemTable  reqItem;
+        int           cnt;
+        str           affected;
+        while select abcXyz
+            where abcXyz.XYZClass == ABSXYZClassification::Z
+        exists join reqItem
+            where reqItem.ItemId         == abcXyz.ItemId
+               && reqItem.MinInventOnhand > 0
+        {
+            cnt++;
+            if (cnt <= 20)
+                affected = affected ? (affected + ', ' + abcXyz.ItemId) : abcXyz.ItemId;
+            if (contract.parmIncludeItemChecks() == NoYes::Yes)
+                this.writeDetail('SS-003', abcXyz.ItemId, abcXyz.SiteId, abcXyz.ABCClass, abcXyz.XYZClass,
+                    "@ABS:ABSCheckSS003Detail");
+        }
+
+        this.writeResult('SS-003', ABSMRPAssessmentCategory::SafetyStock,
+            ABSMRPAssessmentSeverity::Low, cnt,
+            "@ABS:ABSCheckSS003Title",
+            "@ABS:ABSCheckSS003Reco",
+            affected);
+    }
+
+    // SS-004: Safety stock with no coverage group
+    if (this.isCheckApplicable('SS-004') && !this.isCheckSuppressed('SS-004'))
+    {
+        ReqItemTable  reqItem;
+        ABSItemABCXYZ abcSS4;
+        int           cnt;
+        str           affected;
+        while select reqItem
+            where reqItem.MinInventOnhand > 0
+               && reqItem.ReqGroupId      == ''
+        {
+            cnt++;
+            if (cnt <= 20)
+                affected = affected ? (affected + ', ' + reqItem.ItemId) : reqItem.ItemId;
+            if (contract.parmIncludeItemChecks() == NoYes::Yes)
+            {
+                boolean wroteAnySS4 = false;
+                while select abcSS4
+                    where abcSS4.ItemId == reqItem.ItemId
+                {
+                    this.writeDetail('SS-004', reqItem.ItemId, abcSS4.SiteId, abcSS4.ABCClass, abcSS4.XYZClass,
+                        "@ABS:ABSCheckSS004Detail");
+                    wroteAnySS4 = true;
+                }
+                if (!wroteAnySS4)
+                    this.writeDetail('SS-004', reqItem.ItemId, '', ABSABCClassification::None, ABSXYZClassification::None,
+                        "@ABS:ABSCheckSS004Detail");
+            }
+        }
+
+        this.writeResult('SS-004', ABSMRPAssessmentCategory::SafetyStock,
+            ABSMRPAssessmentSeverity::High, cnt,
+            "@ABS:ABSCheckSS004Title",
+            "@ABS:ABSCheckSS004Reco",
+            affected);
+    }
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>checkItemCoverage</Name>
+        <Source><![CDATA[
+private void checkItemCoverage()
+{
+    // CV-001: A-class item on Manual coverage
+    if (this.isCheckApplicable('CV-001') && !this.isCheckSuppressed('CV-001'))
+    {
+        ABSItemABCXYZ abcXyz;
+        ReqItemTable  reqItem;
+        ReqGroup      covGroup;
+        int           cnt;
+        str           affected;
+        while select abcXyz
+            where abcXyz.ABCClass == ABSABCClassification::A
+        join reqItem
+            where reqItem.ItemId     == abcXyz.ItemId
+               && reqItem.ReqGroupId != ''
+        exists join covGroup
+            where covGroup.ReqGroupId == reqItem.ReqGroupId
+               && covGroup.CovRule    == ReqCovType::Manual
+        {
+            cnt++;
+            if (cnt <= 20)
+                affected = affected ? (affected + ', ' + abcXyz.ItemId) : abcXyz.ItemId;
+            if (contract.parmIncludeItemChecks() == NoYes::Yes)
+                this.writeDetail('CV-001', abcXyz.ItemId, abcXyz.SiteId, abcXyz.ABCClass, abcXyz.XYZClass,
+                    strFmt("@ABS:ABSCheckCV001Detail", reqItem.ReqGroupId));
+        }
+
+        this.writeResult('CV-001', ABSMRPAssessmentCategory::Coverage,
+            ABSMRPAssessmentSeverity::High, cnt,
+            "@ABS:ABSCheckCV001Title",
+            "@ABS:ABSCheckCV001Reco",
+            affected);
+    }
+
+    // CV-002: Item coverage with zero lead time
+    if (this.isCheckApplicable('CV-002') && !this.isCheckSuppressed('CV-002'))
+    {
+        ReqItemTable  reqItem;
+        ReqGroup      covGroup;
+        ABSItemABCXYZ abcXyz2;
+        int           cnt;
+        str           affected;
+        // Only meaningful when the per-item lead-time override is active; otherwise a
+        // zero LeadTimePurchase just means "not overridden" (default order settings apply).
+        while select reqItem
+            where reqItem.ReqGroupId            != ''
+               && reqItem.LeadTimePurchaseActive == NoYes::Yes
+               && reqItem.LeadTimePurchase       == 0
+        exists join covGroup
+            where covGroup.ReqGroupId == reqItem.ReqGroupId
+               && covGroup.CovRule    != ReqCovType::Manual
+        {
+            cnt++;
+            if (cnt <= 20)
+                affected = affected ? (affected + ', ' + reqItem.ItemId) : reqItem.ItemId;
+            if (contract.parmIncludeItemChecks() == NoYes::Yes)
+            {
+                boolean wroteAny = false;
+                while select abcXyz2
+                    where abcXyz2.ItemId == reqItem.ItemId
+                {
+                    this.writeDetail('CV-002', reqItem.ItemId, abcXyz2.SiteId, abcXyz2.ABCClass, abcXyz2.XYZClass,
+                        strFmt("@ABS:ABSCheckCV002Detail", reqItem.ReqGroupId));
+                    wroteAny = true;
+                }
+                if (!wroteAny)
+                    this.writeDetail('CV-002', reqItem.ItemId, '', ABSABCClassification::None, ABSXYZClassification::None,
+                        strFmt("@ABS:ABSCheckCV002Detail", reqItem.ReqGroupId));
+            }
+        }
+
+        this.writeResult('CV-002', ABSMRPAssessmentCategory::Coverage,
+            ABSMRPAssessmentSeverity::High, cnt,
+            "@ABS:ABSCheckCV002Title",
+            "@ABS:ABSCheckCV002Reco",
+            affected);
+    }
+
+    // CV-003: A-class item with no coverage group
+    if (this.isCheckApplicable('CV-003') && !this.isCheckSuppressed('CV-003'))
+    {
+        ABSItemABCXYZ abcXyz;
+        ReqItemTable  reqItem;
+        int           cnt;
+        str           affected;
+        while select abcXyz
+            where abcXyz.ABCClass == ABSABCClassification::A
+        exists join reqItem
+            where reqItem.ItemId     == abcXyz.ItemId
+               && reqItem.ReqGroupId == ''
+        {
+            cnt++;
+            if (cnt <= 20)
+                affected = affected ? (affected + ', ' + abcXyz.ItemId) : abcXyz.ItemId;
+            if (contract.parmIncludeItemChecks() == NoYes::Yes)
+                this.writeDetail('CV-003', abcXyz.ItemId, abcXyz.SiteId, abcXyz.ABCClass, abcXyz.XYZClass,
+                    "@ABS:ABSCheckCV003Detail");
+        }
+
+        this.writeResult('CV-003', ABSMRPAssessmentCategory::Coverage,
+            ABSMRPAssessmentSeverity::Critical, cnt,
+            "@ABS:ABSCheckCV003Title",
+            "@ABS:ABSCheckCV003Reco",
+            affected);
+    }
+
+    // CV-004: Period coverage with no period length
+    if (this.isCheckApplicable('CV-004') && !this.isCheckSuppressed('CV-004'))
+    {
+        ReqGroup covGroup;
+        int      cnt;
+        str      affected;
+        while select covGroup
+            where covGroup.CovRule     == ReqCovType::Period
+               && covGroup.CovTimeFence == 0
+        {
+            cnt++;
+            affected = affected ? (affected + ', ' + covGroup.ReqGroupId) : covGroup.ReqGroupId;
+        }
+
+        this.writeResult('CV-004', ABSMRPAssessmentCategory::Coverage,
+            ABSMRPAssessmentSeverity::Medium, cnt,
+            "@ABS:ABSCheckCV004Title",
+            "@ABS:ABSCheckCV004Reco",
+            affected);
+    }
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>checkPerformanceRisk</Name>
+        <Source><![CDATA[
+private void checkPerformanceRisk()
+{
+    // PR-001: Finite capacity on main plan
+    if (this.isCheckApplicable('PR-001') && !this.isCheckSuppressed('PR-001'))
+    {
+        ReqPlanSched              reqPlanSched;
+        ABSMRPAssessmentSeverity  sev;
+        int                       cnt;
+        select firstonly reqPlanSched
+            where reqPlanSched.ReqPlanIdSched == contract.parmPlanId()
+               && reqPlanSched.CovCapLimited  == NoYes::Yes;
+        cnt = reqPlanSched.RecId ? 1 : 0;
+
+        sev = ABSMRPAssessmentSeverity::Medium;
+        if (activeEngine == ABSMRPPlanningEngine::PlanningOptimization)
+            sev = ABSMRPAssessmentSeverity::Low;
+
+        this.writeResult('PR-001', ABSMRPAssessmentCategory::Performance,
+            sev, cnt,
+            "@ABS:ABSCheckPR001Title",
+            "@ABS:ABSCheckPR001Reco",
+            contract.parmPlanId());
+    }
+
+    // PR-002: Large inactive plan data volume
+    if (this.isCheckApplicable('PR-002') && !this.isCheckSuppressed('PR-002'))
+    {
+        ReqPO         reqPO;
+        ReqPlanVersion planVer;
+        int cnt;
+        select count(RecId) from reqPO
+        notexists join planVer
+            where planVer.RecId == reqPO.PlanVersion;
+        cnt = any2Int(reqPO.RecId);
+
+        ABSMRPAssessmentSeverity sev2 = cnt > 10000 ? ABSMRPAssessmentSeverity::High : ABSMRPAssessmentSeverity::Medium;
+
+        this.writeResult('PR-002', ABSMRPAssessmentCategory::Performance,
+            sev2, cnt,
+            strFmt("@ABS:ABSCheckPR002Title", cnt),
+            "@ABS:ABSCheckPR002Reco",
+            '');
+    }
+
+    // PR-003: High BOM depth
+    if (this.isCheckApplicable('PR-003') && !this.isCheckSuppressed('PR-003'))
+    {
+        BOMVersion      bomVersion;
+        ABSItemABCXYZ   abcPR3;
+        Set             processedItems = new Set(Types::String);
+        int             cnt;
+        int             bomDepth;
+        str             affected;
+
+        while select bomVersion
+            where bomVersion.Active == NoYes::Yes
+               && bomVersion.ItemId != ''
+        {
+            if (processedItems.in(bomVersion.ItemId))
+            {
+                continue;
+            }
+
+            processedItems.add(bomVersion.ItemId);
+            bomDepth = this.calculateBomDepth(bomVersion.ItemId, today(), 12, new Set(Types::String));
+
+            if (bomDepth > 5)
+            {
+                cnt++;
+                if (cnt <= 20)
+                {
+                    affected = affected ? (affected + ', ' + bomVersion.ItemId) : bomVersion.ItemId;
+                }
+
+                if (contract.parmIncludeItemChecks() == NoYes::Yes)
+                {
+                    boolean wroteAnyPR3 = false;
+                    while select abcPR3
+                        where abcPR3.ItemId == bomVersion.ItemId
+                    {
+                        this.writeDetail('PR-003', bomVersion.ItemId, abcPR3.SiteId, abcPR3.ABCClass, abcPR3.XYZClass,
+                            strFmt("@ABS:ABSCheckPR003Detail", bomDepth));
+                        wroteAnyPR3 = true;
+                    }
+
+                    if (!wroteAnyPR3)
+                    {
+                        this.writeDetail('PR-003', bomVersion.ItemId, '', ABSABCClassification::None, ABSXYZClassification::None,
+                            strFmt("@ABS:ABSCheckPR003Detail", bomDepth));
+                    }
+                }
+            }
+        }
+
+        this.writeResult('PR-003', ABSMRPAssessmentCategory::Performance,
+            ABSMRPAssessmentSeverity::Medium, cnt,
+            strFmt("@ABS:ABSCheckPR003Title", cnt),
+            "@ABS:ABSCheckPR003Reco",
+            affected);
+    }
+
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>calculateBomDepth</Name>
+        <Source><![CDATA[
+private int calculateBomDepth(ItemId _itemId, TransDate _asOfDate, int _maxDepth, Set _visited)
+{
+    BOMVersion bomVersion;
+    BOM        bomLine;
+    int        maxChildDepth;
+    int        childDepth;
+
+    if (!_itemId || _maxDepth <= 0)
+    {
+        return 0;
+    }
+
+    if (_visited.in(_itemId))
+    {
+        // Circular BOM reference protection
+        return 0;
+    }
+
+    _visited.add(_itemId);
+
+    select firstonly BOMId from bomVersion
+        where bomVersion.ItemId   == _itemId
+           && bomVersion.Active   == NoYes::Yes
+           && bomVersion.FromDate <= _asOfDate;
+
+    if (!bomVersion.BOMId)
+    {
+        _visited.remove(_itemId);
+        return 0;
+    }
+
+    while select bomLine
+        where bomLine.BOMId == bomVersion.BOMId
+    {
+        childDepth = 1 + this.calculateBomDepth(bomLine.ItemId, _asOfDate, _maxDepth - 1, _visited);
+        if (childDepth > maxChildDepth)
+        {
+            maxChildDepth = childDepth;
+        }
+    }
+
+    _visited.remove(_itemId);
+    return maxChildDepth;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>checkFirmingWindow</Name>
+        <Source><![CDATA[
+private void checkFirmingWindow()
+{
+    // FW-001: Firming fence < lead time
+    if (this.isCheckApplicable('FW-001') && !this.isCheckSuppressed('FW-001'))
+    {
+        ReqItemTable  reqItem;
+        ReqPlan       reqPlan;
+        ABSItemABCXYZ abcFW1;
+        int           cnt;
+        str           affected;
+
+        select firstonly reqPlan where reqPlan.ReqPlanId == contract.parmPlanId();
+
+        // The LeadTimePurchase field is only meaningful when its per-item override is
+        // active; otherwise the effective lead time comes from default order settings.
+        while select reqItem
+            where reqItem.AuthorizationTimeFence  > 0
+               && reqItem.LeadTimePurchaseActive == NoYes::Yes
+               && reqItem.LeadTimePurchase        > reqItem.AuthorizationTimeFence
+        {
+            cnt++;
+            if (cnt <= 20)
+                affected = affected ? (affected + ', ' + reqItem.ItemId) : reqItem.ItemId;
+            if (contract.parmIncludeItemChecks() == NoYes::Yes)
+            {
+                boolean wroteAnyFW1 = false;
+                while select abcFW1
+                    where abcFW1.ItemId == reqItem.ItemId
+                {
+                    this.writeDetail('FW-001', reqItem.ItemId, abcFW1.SiteId, abcFW1.ABCClass, abcFW1.XYZClass,
+                        strFmt("@ABS:ABSCheckFW001Detail", reqItem.LeadTimePurchase, reqItem.AuthorizationTimeFence));
+                    wroteAnyFW1 = true;
+                }
+                if (!wroteAnyFW1)
+                    this.writeDetail('FW-001', reqItem.ItemId, '', ABSABCClassification::None, ABSXYZClassification::None,
+                        strFmt("@ABS:ABSCheckFW001Detail", reqItem.LeadTimePurchase, reqItem.AuthorizationTimeFence));
+            }
+        }
+
+        this.writeResult('FW-001', ABSMRPAssessmentCategory::FirmingWindow,
+            ABSMRPAssessmentSeverity::High, cnt,
+            "@ABS:ABSCheckFW001Title",
+            "@ABS:ABSCheckFW001Reco",
+            affected);
+    }
+
+    // FW-002: Stale planned orders
+    if (this.isCheckApplicable('FW-002') && !this.isCheckSuppressed('FW-002'))
+    {
+        ReqPO          reqPO;
+        ReqItemTable   reqItem;
+        ABSItemABCXYZ  abcFW2;
+        int            cnt;
+        str            affected;
+        ReqPlanVersion planVer2;
+        while select reqPO
+            where reqPO.ReqDate     < today()
+               && reqPO.RefType     == ReqRefType::Purch
+               && reqPO.ReqPOStatus != ReqPOStatus::Approved
+        join planVer2
+            where planVer2.RecId      == reqPO.PlanVersion
+               && planVer2.ReqPlanId == contract.parmPlanId()
+        exists join reqItem
+            where reqItem.ItemId == reqPO.ItemId
+               && reqPO.ReqDate  < today() - reqItem.LeadTimePurchase
+        {
+            cnt++;
+            if (cnt <= 20)
+                affected = affected ? (affected + ', ' + reqPO.ItemId) : reqPO.ItemId;
+            if (contract.parmIncludeItemChecks() == NoYes::Yes)
+            {
+                select firstonly abcFW2
+                    where abcFW2.ItemId == reqPO.ItemId;
+                this.writeDetail('FW-002', reqPO.ItemId, abcFW2.SiteId, abcFW2.ABCClass, abcFW2.XYZClass,
+                    strFmt("@ABS:ABSCheckFW002Detail", reqPO.ReqDate));
+            }
+        }
+
+        this.writeResult('FW-002', ABSMRPAssessmentCategory::FirmingWindow,
+            ABSMRPAssessmentSeverity::High, cnt,
+            "@ABS:ABSCheckFW002Title",
+            "@ABS:ABSCheckFW002Reco",
+            affected);
+    }
+
+    // FW-003: Negative on-hand with no open inbound supply
+    if (this.isCheckApplicable('FW-003') && !this.isCheckSuppressed('FW-003'))
+    {
+        InventSum  invSum;
+        PurchLine  purchLine;
+        int        cnt;
+        str        affected;
+        while select ItemId, InventSiteId from invSum
+            group by ItemId, InventSiteId
+            where invSum.PhysicalInvent < 0
+        notexists join purchLine
+            where purchLine.ItemId               == invSum.ItemId
+               && purchLine.PurchStatus          != PurchStatus::Received
+               && purchLine.PurchStatus          != PurchStatus::Canceled
+               && purchLine.RemainInventPhysical  > 0
+        {
+            cnt++;
+            if (cnt <= 20)
+                affected = affected ? (affected + ', ' + invSum.ItemId) : invSum.ItemId;
+            if (contract.parmIncludeItemChecks() == NoYes::Yes)
+            {
+                ABSItemABCXYZ abcFW3;
+                select firstonly abcFW3
+                    where abcFW3.ItemId == invSum.ItemId
+                       && abcFW3.SiteId == invSum.InventSiteId;
+                this.writeDetail('FW-003', invSum.ItemId, invSum.InventSiteId,
+                    abcFW3.RecId ? abcFW3.ABCClass : ABSABCClassification::None,
+                    abcFW3.RecId ? abcFW3.XYZClass : ABSXYZClassification::None,
+                    strFmt("@ABS:ABSCheckFW003Detail", invSum.PhysicalInvent));
+            }
+        }
+
+        this.writeResult('FW-003', ABSMRPAssessmentCategory::FirmingWindow,
+            ABSMRPAssessmentSeverity::Critical, cnt,
+            "@ABS:ABSCheckFW003Title",
+            "@ABS:ABSCheckFW003Reco",
+            affected);
+    }
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>checkBOMRouteQuality</Name>
+        <Source><![CDATA[
+private void checkBOMRouteQuality()
+{
+    // BR-001: Multiple active BOM versions for same item+site
+    if (this.isCheckApplicable('BR-001') && !this.isCheckSuppressed('BR-001'))
+    {
+        BOMVersion bomVer;
+        BOMVersion bomCount;
+        int        cnt;
+        str        affected;
+        while select firstonly ItemId, InventDimId from bomVer
+            group by ItemId, InventDimId
+            where bomVer.Active == NoYes::Yes
+        {
+            select count(RecId) from bomCount
+                where bomCount.ItemId      == bomVer.ItemId
+                   && bomCount.InventDimId == bomVer.InventDimId
+                   && bomCount.Active      == NoYes::Yes;
+            if (any2Int(bomCount.RecId) > 1)
+            {
+                cnt++;
+                if (cnt <= 20)
+                    affected = affected ? (affected + ', ' + bomVer.ItemId) : bomVer.ItemId;
+                if (contract.parmIncludeItemChecks() == NoYes::Yes)
+                {
+                    ABSItemABCXYZ abcBR1;
+                    select firstonly abcBR1
+                        where abcBR1.ItemId == bomVer.ItemId;
+                    this.writeDetail('BR-001', bomVer.ItemId, abcBR1.SiteId, abcBR1.ABCClass, abcBR1.XYZClass,
+                        strFmt("@ABS:ABSCheckBR001Detail", any2Int(bomCount.RecId)));
+                }
+            }
+        }
+
+        this.writeResult('BR-001', ABSMRPAssessmentCategory::BOMRoute,
+            ABSMRPAssessmentSeverity::Medium, cnt,
+            "@ABS:ABSCheckBR001Title",
+            "@ABS:ABSCheckBR001Reco",
+            affected);
+    }
+
+    // BR-002: Future-dated BOM versions only
+    if (this.isCheckApplicable('BR-002') && !this.isCheckSuppressed('BR-002'))
+    {
+        BOMVersion        bomVer;
+        InventTableModule invMod;
+        int               cnt;
+        str               affected;
+        while select firstonly ItemId from bomVer
+            group by ItemId
+            where bomVer.FromDate > today()
+        exists join invMod
+            where invMod.ItemId    == bomVer.ItemId
+               && invMod.ModuleType == ModuleInventPurchSales::Invent
+        {
+            // Check no active version exists today
+            BOMVersion activeVer;
+            select firstonly activeVer
+                where activeVer.ItemId  == bomVer.ItemId
+                   && activeVer.Active  == NoYes::Yes
+                   && activeVer.FromDate <= today()
+                   && (activeVer.ToDate == dateNull() || activeVer.ToDate >= today());
+            if (!activeVer.RecId)
+            {
+                cnt++;
+                if (cnt <= 20)
+                    affected = affected ? (affected + ', ' + bomVer.ItemId) : bomVer.ItemId;
+                if (contract.parmIncludeItemChecks() == NoYes::Yes)
+                {
+                    ABSItemABCXYZ abcBR2;
+                    select firstonly abcBR2
+                        where abcBR2.ItemId == bomVer.ItemId;
+                    this.writeDetail('BR-002', bomVer.ItemId, abcBR2.SiteId, abcBR2.ABCClass, abcBR2.XYZClass,
+                        strFmt("@ABS:ABSCheckBR002Detail", bomVer.FromDate));
+                }
+            }
+        }
+
+        this.writeResult('BR-002', ABSMRPAssessmentCategory::BOMRoute,
+            ABSMRPAssessmentSeverity::Critical, cnt,
+            "@ABS:ABSCheckBR002Title",
+            "@ABS:ABSCheckBR002Reco",
+            affected);
+    }
+
+    // BR-003: Vendor lead time vs coverage lead time drift
+    if (this.isCheckApplicable('BR-003') && !this.isCheckSuppressed('BR-003'))
+    {
+        ReqItemTable         reqItem;
+        ReqItemTable         reqItemFallback;
+        InventDim            covDim;
+        InventItemPurchSetup purchSetup;
+        ABSItemABCXYZ        abcBR3;
+        int                  plannedLt;
+        int                  vendorLt;
+        int                  cnt;
+        str                  affected;
+
+        while select reqItem
+            where reqItem.ItemId != ''
+        join covDim
+            where covDim.InventDimId  == reqItem.CovInventDimId
+               && covDim.InventSiteId != ''
+        {
+            // Honour the per-item lead-time override flag: an inactive override means the
+            // LeadTimePurchase value is not in effect, so treat it as unset and fall back.
+            plannedLt = reqItem.LeadTimePurchaseActive == NoYes::Yes ? reqItem.LeadTimePurchase : 0;
+            if (!plannedLt)
+            {
+                select firstonly LeadTimePurchase from reqItemFallback
+                    where reqItemFallback.ItemId                == reqItem.ItemId
+                       && reqItemFallback.LeadTimePurchaseActive == NoYes::Yes;
+                plannedLt = reqItemFallback.LeadTimePurchase;
+            }
+
+            select firstonly LeadTime from purchSetup
+                where purchSetup.ItemId == reqItem.ItemId;
+            vendorLt = purchSetup.LeadTime;
+
+            if (plannedLt > 0 && vendorLt > 0 && abs(plannedLt - vendorLt) > 5)
+            {
+                cnt++;
+                if (cnt <= 20)
+                    affected = affected ? (affected + ', ' + reqItem.ItemId) : reqItem.ItemId;
+
+                if (contract.parmIncludeItemChecks() == NoYes::Yes)
+                {
+                    select firstonly abcBR3
+                        where abcBR3.ItemId == reqItem.ItemId
+                           && abcBR3.SiteId == covDim.InventSiteId;
+
+                    this.writeDetail('BR-003', reqItem.ItemId, covDim.InventSiteId,
+                        abcBR3.RecId ? abcBR3.ABCClass : ABSABCClassification::None,
+                        abcBR3.RecId ? abcBR3.XYZClass : ABSXYZClassification::None,
+                        strFmt("@ABS:ABSCheckBR003Detail", plannedLt, vendorLt));
+                }
+            }
+        }
+
+        this.writeResult('BR-003', ABSMRPAssessmentCategory::BOMRoute,
+            ABSMRPAssessmentSeverity::Medium, cnt,
+            "@ABS:ABSCheckBR003Title",
+            "@ABS:ABSCheckBR003Reco",
+            affected);
+    }
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>checkPlannerBehaviour</Name>
+        <Source><![CDATA[
+private void checkPlannerBehaviour()
+{
+    // PB-001: Dead stock with open supply
+    if (this.isCheckApplicable('PB-001') && !this.isCheckSuppressed('PB-001'))
+    {
+        ABSItemABCXYZ abcXyz;
+        ReqPO         reqPO;
+        int           cnt;
+        str           affected;
+        while select abcXyz
+            where abcXyz.ZeroPeriods >= 3
+        exists join reqPO
+            where reqPO.ItemId      == abcXyz.ItemId
+               && reqPO.Qty         > 0
+               && reqPO.ReqPOStatus != ReqPOStatus::Approved
+        {
+            cnt++;
+            if (cnt <= 20)
+                affected = affected ? (affected + ', ' + abcXyz.ItemId) : abcXyz.ItemId;
+            if (contract.parmIncludeItemChecks() == NoYes::Yes)
+                this.writeDetail('PB-001', abcXyz.ItemId, abcXyz.SiteId, abcXyz.ABCClass, abcXyz.XYZClass,
+                    strFmt("@ABS:ABSCheckPB001Detail", abcXyz.ZeroPeriods));
+        }
+
+        this.writeResult('PB-001', ABSMRPAssessmentCategory::PlannerBehaviour,
+            ABSMRPAssessmentSeverity::High, cnt,
+            "@ABS:ABSCheckPB001Title",
+            "@ABS:ABSCheckPB001Reco",
+            affected);
+    }
+
+    // PB-002: Coverage policy too aggressive for lower-priority items
+    if (this.isCheckApplicable('PB-002') && !this.isCheckSuppressed('PB-002'))
+    {
+        ABSItemABCXYZ abcPB2;
+        ReqItemTable  reqItemPB2;
+        ReqGroup      covGroupPB2;
+        int           cnt;
+        str           affected;
+
+        while select abcPB2
+            where abcPB2.ABCClass == ABSABCClassification::C
+        join reqItemPB2
+            where reqItemPB2.ItemId      == abcPB2.ItemId
+               && reqItemPB2.ReqGroupId != ''
+        exists join covGroupPB2
+            where covGroupPB2.ReqGroupId == reqItemPB2.ReqGroupId
+               && covGroupPB2.CovRule    != ReqCovType::Manual
+        {
+            if (reqItemPB2.MinInventOnhand > 0 || reqItemPB2.LeadTimePurchase > 14)
+            {
+                cnt++;
+                if (cnt <= 20)
+                    affected = affected ? (affected + ', ' + abcPB2.ItemId) : abcPB2.ItemId;
+
+                if (contract.parmIncludeItemChecks() == NoYes::Yes)
+                {
+                    this.writeDetail('PB-002', abcPB2.ItemId, abcPB2.SiteId, abcPB2.ABCClass, abcPB2.XYZClass,
+                        strFmt("@ABS:ABSCheckPB002Detail", reqItemPB2.MinInventOnhand, reqItemPB2.LeadTimePurchase));
+                }
+            }
+        }
+
+        this.writeResult('PB-002', ABSMRPAssessmentCategory::PlannerBehaviour,
+            ABSMRPAssessmentSeverity::Medium, cnt,
+            "@ABS:ABSCheckPB002Title",
+            "@ABS:ABSCheckPB002Reco",
+            affected);
+    }
+
+    // PB-003: A-class item with open planned purchase supply but no recent invoiced PO history
+    if (this.isCheckApplicable('PB-003') && !this.isCheckSuppressed('PB-003'))
+    {
+        ABSItemABCXYZ abcPB3;
+        ReqPO         reqPOPB3;
+        PurchLine     purchLinePB3;
+        PurchTable    purchTablePB3;
+        Set           processedItemsPB3 = new Set(Types::String);
+        int           cnt;
+        str           affected;
+
+        while select abcPB3
+            where abcPB3.ABCClass == ABSABCClassification::A
+        exists join reqPOPB3
+            where reqPOPB3.ItemId      == abcPB3.ItemId
+               && reqPOPB3.RefType     == ReqRefType::Purch
+               && reqPOPB3.ReqPOStatus != ReqPOStatus::Approved
+        {
+            if (processedItemsPB3.in(abcPB3.ItemId))
+            {
+                continue;
+            }
+
+            processedItemsPB3.add(abcPB3.ItemId);
+
+            select firstonly purchLinePB3
+                where purchLinePB3.ItemId       == abcPB3.ItemId
+                   && purchLinePB3.DeliveryDate >= (today() - 365)
+            join purchTablePB3
+                where purchTablePB3.PurchId     == purchLinePB3.PurchId
+                   && purchTablePB3.PurchStatus == PurchStatus::Invoiced;
+
+            if (!purchLinePB3.RecId)
+            {
+                cnt++;
+                if (cnt <= 20)
+                    affected = affected ? (affected + ', ' + abcPB3.ItemId) : abcPB3.ItemId;
+
+                if (contract.parmIncludeItemChecks() == NoYes::Yes)
+                {
+                    this.writeDetail('PB-003', abcPB3.ItemId, abcPB3.SiteId, abcPB3.ABCClass, abcPB3.XYZClass,
+                        "@ABS:ABSCheckPB003Detail");
+                }
+            }
+        }
+
+        this.writeResult('PB-003', ABSMRPAssessmentCategory::PlannerBehaviour,
+            ABSMRPAssessmentSeverity::High, cnt,
+            "@ABS:ABSCheckPB003Title",
+            "@ABS:ABSCheckPB003Reco",
+            affected);
+    }
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>checkPlanningOptimizationHealth</Name>
+        <Source><![CDATA[
+private void checkPlanningOptimizationHealth()
+{
+    container fitResults;
+    int       fitResultCount;
+    boolean   fitResultsEvaluated = false;
+
+    // PO-001: Global PO service integration flag disabled at partition level
+    if (this.isCheckApplicable('PO-001') && !this.isCheckSuppressed('PO-001'))
+    {
+        MpsIntegrationParameters mpsParams;
+        select firstonly mpsParams;
+        int cnt = (mpsParams.IsPlanningServiceEnabled == NoYes::No) ? 1 : 0;
+        this.writeResult('PO-001', ABSMRPAssessmentCategory::POHealth,
+            ABSMRPAssessmentSeverity::Critical, cnt,
+            "@ABS:ABSCheckPO001Title",
+            "@ABS:ABSCheckPO001Reco",
+            '');
+    }
+
+    // PO-002: Current company explicitly excluded from Planning Optimization
+    if (this.isCheckApplicable('PO-002') && !this.isCheckSuppressed('PO-002'))
+    {
+        int cnt = (ReqParameters::find().MustExcludeCompanyFromUsingPlanningService == NoYes::Yes) ? 1 : 0;
+        this.writeResult('PO-002', ABSMRPAssessmentCategory::POHealth,
+            ABSMRPAssessmentSeverity::High, cnt,
+            "@ABS:ABSCheckPO002Title",
+            "@ABS:ABSCheckPO002Reco",
+            '');
+    }
+
+    // PO-003: Combined availability check — PO not enabled for current company
+    if (this.isCheckApplicable('PO-003') && !this.isCheckSuppressed('PO-003'))
+    {
+        int cnt = MpsMasterPlanningHelper::isPlanningServiceEnabledForCurrentCompany() ? 0 : 1;
+        this.writeResult('PO-003', ABSMRPAssessmentCategory::POHealth,
+            ABSMRPAssessmentSeverity::Critical, cnt,
+            "@ABS:ABSCheckPO003Title",
+            "@ABS:ABSCheckPO003Reco",
+            '');
+    }
+
+    // PO-004: Fit analysis issues detected (only relevant when PO is active)
+    if (this.isCheckApplicable('PO-004') && !this.isCheckSuppressed('PO-004'))
+    {
+        if (!fitResultsEvaluated)
+        {
+            fitResults = MpsFitAnalyzer::runAnalysis([false]);
+            fitResultCount = conLen(fitResults);
+            fitResultsEvaluated = true;
+        }
+
+        this.writeResult('PO-004', ABSMRPAssessmentCategory::POHealth,
+            ABSMRPAssessmentSeverity::High, fitResultCount,
+            strFmt("@ABS:ABSCheckPO004Title", fitResultCount),
+            "@ABS:ABSCheckPO004Reco",
+            '');
+    }
+
+    // PO-005: Fit analysis runtime toggle not available
+    if (this.isCheckApplicable('PO-005') && !this.isCheckSuppressed('PO-005'))
+    {
+        boolean fitRuntimeAvailable = true;
+
+        if (!fitResultsEvaluated)
+        {
+            try
+            {
+                fitResults = MpsFitAnalyzer::runAnalysis([false]);
+                fitResultCount = conLen(fitResults);
+                fitResultsEvaluated = true;
+            }
+            catch (Exception::CLRError)
+            {
+                fitRuntimeAvailable = false;
+            }
+            catch (Exception::Error)
+            {
+                fitRuntimeAvailable = false;
+            }
+        }
+
+        int cnt = fitRuntimeAvailable ? 0 : 1;
+        this.writeResult('PO-005', ABSMRPAssessmentCategory::POHealth,
+            ABSMRPAssessmentSeverity::High, cnt,
+            "@ABS:ABSCheckPO005Title",
+            "@ABS:ABSCheckPO005Reco",
+            '');
+    }
+
+    // PO-006: Fit analysis issue count (implementable runtime signal)
+    if (this.isCheckApplicable('PO-006') && !this.isCheckSuppressed('PO-006'))
+    {
+        if (!fitResultsEvaluated)
+        {
+            fitResults = MpsFitAnalyzer::runAnalysis([false]);
+            fitResultCount = conLen(fitResults);
+            fitResultsEvaluated = true;
+        }
+
+        this.writeResult('PO-006', ABSMRPAssessmentCategory::POHealth,
+            ABSMRPAssessmentSeverity::High, fitResultCount,
+            strFmt("@ABS:ABSCheckPO006Title", fitResultCount),
+            "@ABS:ABSCheckPO006Reco",
+            '');
+    }
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>flagCompoundedRisk</Name>
+        <Source><![CDATA[
+private void flagCompoundedRisk()
+{
+    // For each detail row, check if the item also has an open ABSMRPException of a related type
+    ABSMRPAssessmentDetail detail;
+    ABSMRPException        exception;
+    ABSExcessObsolete      eo;
+
+    // Select for update INSIDE the transaction that performs the update, and wrap the
+    // whole sweep in a single transaction (not per row).
+    ttsbegin;
+
+    while select forUpdate detail
+        where detail.RunId == runHeader.RunId
+    {
+        ABSMRPExceptionType relatedType;
+        boolean             checkException = false;
+        boolean             checkExcessObsolete = false;
+        boolean             compounded = false;
+
+        switch (detail.CheckCode)
+        {
+            case 'SS-001':
+            case 'SS-004':
+                relatedType = ABSMRPExceptionType::SafetyStockBreach;
+                checkException = true;
+                break;
+            case 'FW-003':
+                relatedType = ABSMRPExceptionType::OverdueOrder;
+                checkException = true;
+                break;
+            case 'CV-002':
+            case 'CV-003':
+                relatedType = ABSMRPExceptionType::LeadTimeViolation;
+                checkException = true;
+                break;
+            case 'PB-001':
+                // K2: the ExcessInventory exception type is retired (the Excess & Obsolete
+                // cockpit supersedes it). PB-001 (dead stock with open supply) is now
+                // corroborated against ABSExcessObsolete Dormant/Dead rows that still
+                // carry open supply, rather than against an ABSMRPException.
+                checkExcessObsolete = true;
+                break;
+        }
+
+        if (checkException)
+        {
+            // Many detail rows are written with a blank site (fallback path) while
+            // ABSMRPException rows carry real sites. Only constrain on site when the
+            // detail row actually has one, so compounded risk is not silently masked.
+            select firstonly exception
+                where exception.ItemId        == detail.ItemId
+                   && exception.ExceptionType == relatedType
+                   && exception.Status        == ABSMRPExceptionStatus::Open
+                   && (detail.SiteId == '' || exception.SiteId == detail.SiteId);
+
+            compounded = (exception.RecId != 0);
+        }
+        else if (checkExcessObsolete)
+        {
+            // Explicit bucket equality (NOT >= Dormant): the NoHistory bucket has a
+            // higher enum ordinal than Dead, so an ordinal comparison would wrongly
+            // include brand-new never-issued stock.
+            select firstonly eo
+                where eo.ItemId == detail.ItemId
+                   && eo.OpenSupplyFlag == NoYes::Yes
+                   && (eo.AgingBucket == ABSEOAgingBucket::Dormant
+                    || eo.AgingBucket == ABSEOAgingBucket::Dead)
+                   && (detail.SiteId == '' || eo.SiteId == detail.SiteId);
+
+            compounded = (eo.RecId != 0);
+        }
+
+        if (compounded)
+        {
+            detail.CompoundedRisk = NoYes::Yes;
+            detail.PriorityScore  = real2int(detail.PriorityScore * 1.5 + 0.5);
+            detail.update();
+        }
+    }
+
+    ttscommit;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>finalizeRunHeader</Name>
+        <Source><![CDATA[
+private void finalizeRunHeader()
+{
+    ABSMRPAssessmentResult result;
+    ABSMRPAssessmentSeverity maxSeverity = ABSMRPAssessmentSeverity::NoIssue;
+    int totalChecks;
+    int issuesFound;
+
+    while select result
+        where result.RunId == runHeader.RunId
+    {
+        totalChecks++;
+        if (result.AffectedCount > 0 && result.Suppressed == NoYes::No && result.NotApplicable == NoYes::No)
+        {
+            issuesFound++;
+            if (result.Severity > maxSeverity)
+                maxSeverity = result.Severity;
+        }
+    }
+
+    ttsbegin;
+    ABSMRPAssessmentRun updateRun = ABSMRPAssessmentRun::find(runHeader.RunId, true);
+    updateRun.Status          = ABSMRPAssessmentStatus::Completed;
+    updateRun.OverallSeverity = maxSeverity;
+    updateRun.TotalChecks     = totalChecks;
+    updateRun.IssuesFound     = issuesFound;
+    updateRun.update();
+    ttscommit;
+
+    runHeader = updateRun;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>writeResult</Name>
+        <Source><![CDATA[
+private void writeResult(
+    ABSMRPCheckCode          _checkCode,
+    ABSMRPAssessmentCategory _category,
+    ABSMRPAssessmentSeverity _severity,
+    int                      _affectedCount,
+    str                      _description,
+    str                      _recommendation,
+    str                      _affectedObjects)
+{
+    boolean suppressed  = this.isCheckSuppressed(_checkCode);
+    boolean applicable  = this.isCheckApplicable(_checkCode);
+
+    ttsbegin;
+    ABSMRPAssessmentResult result;
+    result.RunId           = runHeader.RunId;
+    result.CheckCode       = _checkCode;
+    result.Category        = _category;
+    result.CategoryName    = SysDictEnum::newName(enumStr(ABSMRPAssessmentCategory)).value2Label(enum2int(_category));
+    result.Severity        = (suppressed || !applicable) ? ABSMRPAssessmentSeverity::NoIssue : _severity;
+    result.AffectedCount   = applicable ? _affectedCount : 0;
+    result.CheckDescription = _description;
+    result.Recommendation  = _recommendation;
+    result.AffectedObjects = _affectedObjects;
+    result.SeverityTrend   = applicable ? this.resolveTrend(_checkCode, _affectedCount) : ABSMRPAssessmentSeverityTrend::Unchanged;
+    result.Suppressed      = suppressed ? NoYes::Yes : NoYes::No;
+    result.NotApplicable   = !applicable ? NoYes::Yes : NoYes::No;
+    result.insert();
+    ttscommit;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>writeDetail</Name>
+        <Source><![CDATA[
+private void writeDetail(
+    ABSMRPCheckCode      _checkCode,
+    ItemId               _itemId,
+    InventSiteId         _siteId,
+    ABSABCClassification _abc,
+    ABSXYZClassification _xyz,
+    str                  _note)
+{
+    // Resolve ABC/XYZ from ABSItemABCXYZ if not provided
+    ABSABCClassification resolvedAbc = _abc;
+    ABSXYZClassification resolvedXyz = _xyz;
+    if (_siteId != '')
+    {
+        ABSItemABCXYZ abcXyz;
+        select firstonly abcXyz
+            where abcXyz.ItemId == _itemId
+               && abcXyz.SiteId == _siteId;
+        if (abcXyz.RecId)
+        {
+            resolvedAbc = abcXyz.ABCClass;
+            resolvedXyz = abcXyz.XYZClass;
+        }
+    }
+
+    int abcScore = resolvedAbc == ABSABCClassification::A ? 3 : resolvedAbc == ABSABCClassification::B ? 2 : 1;
+    int xyzScore = resolvedXyz == ABSXYZClassification::Z ? 3 : resolvedXyz == ABSXYZClassification::Y ? 2 : 1;
+    // Severity score from the result row for this checkcode.
+    // If detail is written before result, fall back to check's default severity.
+    ABSMRPAssessmentResult resRow = ABSMRPAssessmentResult::findByRunCheck(runHeader.RunId, _checkCode);
+    ABSMRPAssessmentSeverity sev = resRow.RecId ? resRow.Severity : this.defaultSeverity(_checkCode);
+    int sevScore = sev == ABSMRPAssessmentSeverity::Critical ? 4
+                 : sev == ABSMRPAssessmentSeverity::High     ? 3
+                 : sev == ABSMRPAssessmentSeverity::Medium   ? 2
+                 : sev == ABSMRPAssessmentSeverity::Low      ? 1 : 0;
+
+    if (ABSMRPAssessmentDetail::findByRunCheckItem(runHeader.RunId, _checkCode, _itemId, _siteId).RecId)
+    {
+        return;
+    }
+
+    try
+    {
+        ttsbegin;
+        ABSMRPAssessmentDetail detail;
+        detail.RunId         = runHeader.RunId;
+        detail.CheckCode     = _checkCode;
+        detail.ItemId        = _itemId;
+        detail.SiteId        = _siteId;
+        detail.ABCClass      = resolvedAbc;
+        detail.XYZClass      = resolvedXyz;
+        detail.PriorityScore = sevScore * abcScore * xyzScore;
+        detail.DetailNote    = _note;
+        detail.insert();
+        ttscommit;
+    }
+    catch (Exception::DuplicateKeyException)
+    {
+        // Another row with the same RunId+CheckCode+ItemId+SiteId was inserted in between find() and insert().
+    }
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>defaultSeverity</Name>
+        <Source><![CDATA[
+private ABSMRPAssessmentSeverity defaultSeverity(ABSMRPCheckCode _checkCode)
+{
+    switch (_checkCode)
+    {
+        case 'PC-005':
+        case 'CV-003':
+        case 'BR-002':
+        case 'FW-003':
+        case 'PO-001':
+        case 'PO-003':
+            return ABSMRPAssessmentSeverity::Critical;
+
+        case 'PC-001':
+        case 'PC-003':
+        case 'DQ-002':
+        case 'DQ-004':
+        case 'DQ-005':
+        case 'DQ-006':
+        case 'SS-001':
+        case 'SS-004':
+        case 'CV-001':
+        case 'CV-002':
+        case 'FW-001':
+        case 'FW-002':
+        case 'PB-001':
+        case 'PB-003':
+        case 'PO-002':
+        case 'PO-004':
+        case 'PO-005':
+        case 'PO-006':
+            return ABSMRPAssessmentSeverity::High;
+
+        case 'PC-002':
+        case 'DQ-001':
+        case 'DQ-007':
+        case 'DQ-008':
+        case 'DQ-009':
+        case 'SS-002':
+        case 'CV-004':
+        case 'PR-001':
+        case 'PR-002':
+        case 'PR-003':
+        case 'BR-001':
+        case 'BR-003':
+        case 'PB-002':
+            return ABSMRPAssessmentSeverity::Medium;
+
+        case 'SS-003':
+            return ABSMRPAssessmentSeverity::Low;
+
+        default:
+            return ABSMRPAssessmentSeverity::NoIssue;
+    }
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>resolveTrend</Name>
+        <Source><![CDATA[
+private ABSMRPAssessmentSeverityTrend resolveTrend(
+    ABSMRPCheckCode _checkCode,
+    int             _currentCount)
+{
+    ABSMRPAssessmentResult priorResult;
+    ABSMRPAssessmentRun    priorRun;
+
+    select firstonly priorRun
+        order by AssessmentTime desc
+        where priorRun.PlanId  == runHeader.PlanId
+           && priorRun.Status  == ABSMRPAssessmentStatus::Completed
+           && priorRun.RunId   != runHeader.RunId
+        join firstonly priorResult
+            where priorResult.RunId     == priorRun.RunId
+               && priorResult.CheckCode == _checkCode;
+
+    if (!priorResult.RecId)
+        return _currentCount > 0 ? ABSMRPAssessmentSeverityTrend::New : ABSMRPAssessmentSeverityTrend::Unchanged;
+
+    if (_currentCount == 0 && priorResult.AffectedCount == 0)
+        return ABSMRPAssessmentSeverityTrend::Unchanged;
+    if (_currentCount == 0)
+        return ABSMRPAssessmentSeverityTrend::Resolved;
+    if (_currentCount > priorResult.AffectedCount)
+        return ABSMRPAssessmentSeverityTrend::Worsening;
+    if (_currentCount < priorResult.AffectedCount)
+        return ABSMRPAssessmentSeverityTrend::Improving;
+    return ABSMRPAssessmentSeverityTrend::Stable;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>isCheckSuppressed</Name>
+        <Source><![CDATA[
+private boolean isCheckSuppressed(ABSMRPCheckCode _checkCode)
+{
+    return ABSMRPAssessmentCheckConfig::isSuppressed(_checkCode);
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>isCheckApplicable</Name>
+        <Source><![CDATA[
+private boolean isCheckApplicable(ABSMRPCheckCode _checkCode)
+{
+    ABSMRPCheckApplicability applicability;
+    ABSMRPAssessmentCheckConfig cfg = ABSMRPAssessmentCheckConfig::find(_checkCode);
+    applicability = cfg.RecId ? cfg.ApplicableEngine : this.defaultApplicability(_checkCode);
+
+    if (applicability == ABSMRPCheckApplicability::Both)
+        return true;
+    if (applicability == ABSMRPCheckApplicability::LegacyOnly)
+        return activeEngine == ABSMRPPlanningEngine::LegacyMRP;
+    return activeEngine == ABSMRPPlanningEngine::PlanningOptimization;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>defaultApplicability</Name>
+        <Source><![CDATA[
+private ABSMRPCheckApplicability defaultApplicability(ABSMRPCheckCode _checkCode)
+{
+    switch (_checkCode)
+    {
+        case 'PC-003':
+        case 'DQ-001':
+        case 'DQ-002':
+            return ABSMRPCheckApplicability::LegacyOnly;
+
+        case 'PO-004':
+        case 'PO-005':
+        case 'PO-006':
+            return ABSMRPCheckApplicability::POOnly;
+
+        default:
+            return ABSMRPCheckApplicability::Both;
+    }
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>deletePreviousRuns</Name>
+        <Source><![CDATA[
+public void deletePreviousRuns(int _keepDays)
+{
+    ABSMRPAssessmentRun    oldRun;
+    ABSMRPAssessmentResult oldResult;
+    ABSMRPAssessmentDetail oldDetail;
+    date                   cutoffDate = today() - _keepDays;
+
+    ttsbegin;
+
+    while select forUpdate oldRun
+        where oldRun.AssessmentDate < cutoffDate
+           && oldRun.Status         == ABSMRPAssessmentStatus::Completed
+           && oldRun.RecId          != runHeader.RecId
+    {
+        delete_from oldDetail where oldDetail.RunId == oldRun.RunId;
+        delete_from oldResult where oldResult.RunId == oldRun.RunId;
+        oldRun.delete();
+    }
+
+    ttscommit;
+}
+        ]]></Source>
+      </Method>
+    </Methods>
+  </SourceCode>
+</AxClass>

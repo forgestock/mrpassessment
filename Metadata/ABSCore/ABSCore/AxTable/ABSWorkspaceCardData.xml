@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxTable xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>ABSWorkspaceCardData</Name>
+  <SourceCode>
+    <Declaration><![CDATA[
+public class ABSWorkspaceCardData extends common
+{
+}
+    ]]></Declaration>
+  </SourceCode>
+  <DeveloperDocumentation>@ABS:ABSWorkspaceCardDataDeveloperDocumentation</DeveloperDocumentation>
+  <Label>@ABS:ABSWorkspaceSummaryCaption</Label>
+  <TableGroup>WorksheetLine</TableGroup>
+  <TableType>InMemory</TableType>
+  <SaveDataPerCompany>No</SaveDataPerCompany>
+  <Fields>
+    <AxTableField xmlns="" i:type="AxTableFieldEnum">
+      <Name>ABCClass</Name>
+      <EnumType>ABSABCClassification</EnumType>
+      <Label>@ABS:ABCClass</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldEnum">
+      <Name>XYZClass</Name>
+      <EnumType>ABSXYZClassification</EnumType>
+      <Label>@ABS:XYZClass</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldString">
+      <Name>SegmentName</Name>
+      <ExtendedDataType>Description</ExtendedDataType>
+      <Label>@ABS:ABSWorkspaceSegment</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldInt">
+      <Name>ItemCount</Name>
+      <Label>@ABS:ABSWorkspaceItemCount</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldInt">
+      <Name>NoHistoryCount</Name>
+      <Label>@ABS:ABSWorkspaceNoHistoryCount</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldReal">
+      <Name>TotalConsumption12M</Name>
+      <ExtendedDataType>AmountMST</ExtendedDataType>
+      <Label>@ABS:ABSWorkspaceTotalConsumption</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldReal">
+      <Name>TotalInventoryValue</Name>
+      <ExtendedDataType>AmountMST</ExtendedDataType>
+      <Label>@ABS:ABSWorkspaceTotalInventValue</Label>
+    </AxTableField>
+  </Fields>
+  <FieldGroups>
+    <AxTableFieldGroup>
+      <Name>AutoReport</Name>
+      <Label>@SYS21932</Label>
+      <Fields>
+        <AxTableFieldGroupField>
+          <DataField>ABCClass</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>XYZClass</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>ItemCount</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>TotalConsumption12M</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>TotalInventoryValue</DataField>
+        </AxTableFieldGroupField>
+      </Fields>
+    </AxTableFieldGroup>
+    <AxTableFieldGroup>
+      <Name>AutoIdentification</Name>
+      <AutoPopulate>Yes</AutoPopulate>
+      <Label>@SYS19069</Label>
+      <Fields />
+    </AxTableFieldGroup>
+  </FieldGroups>
+  <Indexes />
+  <Mappings />
+  <Relations />
+  <StateMachines />
+</AxTable>

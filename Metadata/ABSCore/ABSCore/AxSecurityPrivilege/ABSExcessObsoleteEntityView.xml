@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxSecurityPrivilege xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>ABSExcessObsoleteEntityView</Name>
+  <Description>@ABS:ABSExcessObsoleteEntityViewDescription</Description>
+  <Label>@ABS:ABSExcessObsoleteEntityViewLabel</Label>
+  <DataEntityPermissions>
+    <AxSecurityDataEntityPermission>
+      <Grant>
+        <Read>Allow</Read>
+      </Grant>
+      <Name>ABSExcessObsoleteEntity</Name>
+      <Fields />
+      <Methods />
+    </AxSecurityDataEntityPermission>
+  </DataEntityPermissions>
+  <DirectAccessPermissions>
+    <AxSecurityDataEntityReference>
+      <Grant>
+        <Read>Allow</Read>
+      </Grant>
+      <Name>ABSExcessObsolete</Name>
+      <Fields />
+    </AxSecurityDataEntityReference>
+  </DirectAccessPermissions>
+  <EntryPoints />
+  <FormControlOverrides />
+</AxSecurityPrivilege>

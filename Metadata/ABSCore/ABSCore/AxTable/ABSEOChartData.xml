@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxTable xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>ABSEOChartData</Name>
+  <SourceCode>
+    <Declaration><![CDATA[
+public class ABSEOChartData extends common
+{
+}
+    ]]></Declaration>
+  </SourceCode>
+  <DeveloperDocumentation>@ABS:ABSEOChartDataDeveloperDocumentation</DeveloperDocumentation>
+  <Label>@ABS:ABSEOChartTitle</Label>
+  <TableGroup>WorksheetLine</TableGroup>
+  <TableType>InMemory</TableType>
+  <SaveDataPerCompany>No</SaveDataPerCompany>
+  <Fields>
+    <AxTableField xmlns="" i:type="AxTableFieldString">
+      <Name>BucketName</Name>
+      <ExtendedDataType>Description</ExtendedDataType>
+      <Label>@ABS:ABSEOAgingBucket</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldReal">
+      <Name>ProvisionValue</Name>
+      <ExtendedDataType>AmountMST</ExtendedDataType>
+      <Label>@ABS:ABSEOProvisionValue</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldReal">
+      <Name>RemainingValue</Name>
+      <ExtendedDataType>AmountMST</ExtendedDataType>
+      <Label>@ABS:ABSEORemainingValue</Label>
+    </AxTableField>
+  </Fields>
+  <FieldGroups>
+    <AxTableFieldGroup>
+      <Name>AutoReport</Name>
+      <Label>@SYS21932</Label>
+      <Fields>
+        <AxTableFieldGroupField>
+          <DataField>BucketName</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>ProvisionValue</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>RemainingValue</DataField>
+        </AxTableFieldGroupField>
+      </Fields>
+    </AxTableFieldGroup>
+    <AxTableFieldGroup>
+      <Name>AutoIdentification</Name>
+      <AutoPopulate>Yes</AutoPopulate>
+      <Label>@SYS19069</Label>
+      <Fields />
+    </AxTableFieldGroup>
+  </FieldGroups>
+  <Indexes />
+  <Mappings />
+  <Relations />
+  <StateMachines />
+</AxTable>

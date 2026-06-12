@@ -1,0 +1,1330 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AxReport xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="Microsoft.Dynamics.AX.Metadata.V2">
+  <Name>ABSMRPAssessmentReport</Name>
+  <DataProviderId>ABSMRPAssessmentReportDP</DataProviderId>
+  <DataMethods />
+  <DataSets>
+    <AxReportDataSet xmlns="">
+      <Name>ABSMRPAssessmentReportTmpResult</Name>
+      <DataSourceType>ReportDataProvider</DataSourceType>
+      <Query>SELECT * FROM ABSMRPAssessmentReportDP.ABSMRPAssessmentReportTmpResult</Query>
+      <FieldGroups />
+      <Fields>
+        <AxReportDataSetField>
+          <Name>RunId</Name>
+          <Alias>ABSMRPAssessmentReportTmpResult.1.RunId</Alias>
+          <Caption>@ABS:AssessmentRunId</Caption>
+          <DisplayWidth>Auto</DisplayWidth>
+          <UserDefined>false</UserDefined>
+        </AxReportDataSetField>
+        <AxReportDataSetField>
+          <Name>PlanId</Name>
+          <Alias>ABSMRPAssessmentReportTmpResult.1.PlanId</Alias>
+          <Caption>@ABS:PlanId</Caption>
+          <DisplayWidth>Auto</DisplayWidth>
+          <UserDefined>false</UserDefined>
+        </AxReportDataSetField>
+        <AxReportDataSetField>
+          <Name>SiteId</Name>
+          <Alias>ABSMRPAssessmentReportTmpResult.1.SiteId</Alias>
+          <Caption>@ABS:SiteId</Caption>
+          <DisplayWidth>Auto</DisplayWidth>
+          <UserDefined>false</UserDefined>
+        </AxReportDataSetField>
+        <AxReportDataSetField>
+          <Name>AssessmentDate</Name>
+          <Alias>ABSMRPAssessmentReportTmpResult.1.AssessmentDate</Alias>
+          <Caption>@ABS:AssessmentDate</Caption>
+          <DataType>System.DateTime</DataType>
+          <DisplayWidth>Auto</DisplayWidth>
+          <UserDefined>false</UserDefined>
+        </AxReportDataSetField>
+        <AxReportDataSetField>
+          <Name>OverallSeverity</Name>
+          <Alias>ABSMRPAssessmentReportTmpResult.1.OverallSeverity:LABEL(ABSMRPAssessmentSeverity)</Alias>
+          <Caption>@ABS:OverallSeverity</Caption>
+          <DisplayWidth>Auto</DisplayWidth>
+          <UserDefined>false</UserDefined>
+        </AxReportDataSetField>
+        <AxReportDataSetField>
+          <Name>TotalChecks</Name>
+          <Alias>ABSMRPAssessmentReportTmpResult.1.TotalChecks</Alias>
+          <Caption>@ABS:TotalChecks</Caption>
+          <DataType>System.Int32</DataType>
+          <DisplayWidth>Auto</DisplayWidth>
+          <UserDefined>false</UserDefined>
+        </AxReportDataSetField>
+        <AxReportDataSetField>
+          <Name>IssuesFound</Name>
+          <Alias>ABSMRPAssessmentReportTmpResult.1.IssuesFound</Alias>
+          <Caption>@ABS:IssuesFound</Caption>
+          <DataType>System.Int32</DataType>
+          <DisplayWidth>Auto</DisplayWidth>
+          <UserDefined>false</UserDefined>
+        </AxReportDataSetField>
+        <AxReportDataSetField>
+          <Name>PlanningEngine</Name>
+          <Alias>ABSMRPAssessmentReportTmpResult.1.PlanningEngine:LABEL(ABSMRPPlanningEngine)</Alias>
+          <Caption>@ABS:PlanningEngine</Caption>
+          <DisplayWidth>Auto</DisplayWidth>
+          <UserDefined>false</UserDefined>
+        </AxReportDataSetField>
+        <AxReportDataSetField>
+          <Name>CheckCode</Name>
+          <Alias>ABSMRPAssessmentReportTmpResult.1.CheckCode</Alias>
+          <Caption>@ABS:CheckCode</Caption>
+          <DisplayWidth>Auto</DisplayWidth>
+          <UserDefined>false</UserDefined>
+        </AxReportDataSetField>
+        <AxReportDataSetField>
+          <Name>Category</Name>
+          <Alias>ABSMRPAssessmentReportTmpResult.1.Category:LABEL(ABSMRPAssessmentCategory)</Alias>
+          <Caption>@ABS:Category</Caption>
+          <DisplayWidth>Auto</DisplayWidth>
+          <UserDefined>false</UserDefined>
+        </AxReportDataSetField>
+        <AxReportDataSetField>
+          <Name>Severity</Name>
+          <Alias>ABSMRPAssessmentReportTmpResult.1.Severity:LABEL(ABSMRPAssessmentSeverity)</Alias>
+          <Caption>@ABS:Severity</Caption>
+          <DisplayWidth>Auto</DisplayWidth>
+          <UserDefined>false</UserDefined>
+        </AxReportDataSetField>
+        <AxReportDataSetField>
+          <Name>AffectedCount</Name>
+          <Alias>ABSMRPAssessmentReportTmpResult.1.AffectedCount</Alias>
+          <Caption>@ABS:AffectedCount</Caption>
+          <DataType>System.Int32</DataType>
+          <DisplayWidth>Auto</DisplayWidth>
+          <UserDefined>false</UserDefined>
+        </AxReportDataSetField>
+        <AxReportDataSetField>
+          <Name>SeverityTrend</Name>
+          <Alias>ABSMRPAssessmentReportTmpResult.1.SeverityTrend:LABEL(ABSMRPAssessmentSeverityTrend)</Alias>
+          <Caption>@ABS:SeverityTrend</Caption>
+          <DisplayWidth>Auto</DisplayWidth>
+          <UserDefined>false</UserDefined>
+        </AxReportDataSetField>
+        <AxReportDataSetField>
+          <Name>CheckDescription</Name>
+          <Alias>ABSMRPAssessmentReportTmpResult.1.CheckDescription</Alias>
+          <Caption>@ABS:CheckDescription</Caption>
+          <DisplayWidth>Auto</DisplayWidth>
+          <UserDefined>false</UserDefined>
+        </AxReportDataSetField>
+        <AxReportDataSetField>
+          <Name>Recommendation</Name>
+          <Alias>ABSMRPAssessmentReportTmpResult.1.Recommendation</Alias>
+          <Caption>@ABS:Recommendation</Caption>
+          <DisplayWidth>Auto</DisplayWidth>
+          <UserDefined>false</UserDefined>
+        </AxReportDataSetField>
+        <AxReportDataSetField>
+          <Name>AffectedObjects</Name>
+          <Alias>ABSMRPAssessmentReportTmpResult.1.AffectedObjects</Alias>
+          <Caption>@ABS:AffectedObjects</Caption>
+          <DisplayWidth>Auto</DisplayWidth>
+          <UserDefined>false</UserDefined>
+        </AxReportDataSetField>
+      </Fields>
+      <Parameters>
+      <AxReportDataSetParameter>
+        <Name>AX_PartitionKey</Name>
+        <Alias>AX_PartitionKey</Alias>
+        <DataType>System.String</DataType>
+        <Parameter>AX_PartitionKey</Parameter>
+      </AxReportDataSetParameter>
+      <AxReportDataSetParameter>
+        <Name>AX_CompanyName</Name>
+        <Alias>AX_CompanyName</Alias>
+        <DataType>System.String</DataType>
+        <Parameter>AX_CompanyName</Parameter>
+      </AxReportDataSetParameter>
+      <AxReportDataSetParameter>
+        <Name>AX_UserContext</Name>
+        <Alias>AX_UserContext</Alias>
+        <DataType>System.String</DataType>
+        <Parameter>AX_UserContext</Parameter>
+      </AxReportDataSetParameter>
+      <AxReportDataSetParameter>
+        <Name>AX_RenderingCulture</Name>
+        <Alias>AX_RenderingCulture</Alias>
+        <DataType>System.String</DataType>
+        <Parameter>AX_RenderingCulture</Parameter>
+      </AxReportDataSetParameter>
+      <AxReportDataSetParameter>
+        <Name>AX_ReportContext</Name>
+        <Alias>AX_ReportContext</Alias>
+        <DataType>System.String</DataType>
+        <Parameter>AX_ReportContext</Parameter>
+      </AxReportDataSetParameter>
+      <AxReportDataSetParameter>
+        <Name>AX_RdpPreProcessedId</Name>
+        <Alias>AX_RdpPreProcessedId</Alias>
+        <DataType>System.String</DataType>
+        <Parameter>AX_RdpPreProcessedId</Parameter>
+      </AxReportDataSetParameter>
+      </Parameters>
+    </AxReportDataSet>
+    <AxReportDataSet xmlns="">
+      <Name>ABSMRPAssessmentReportTmpDetail</Name>
+      <DataSourceType>ReportDataProvider</DataSourceType>
+      <Query>SELECT * FROM ABSMRPAssessmentReportDP.ABSMRPAssessmentReportTmpDetail</Query>
+      <FieldGroups />
+      <Fields>
+        <AxReportDataSetField>
+          <Name>RunId</Name>
+          <Alias>ABSMRPAssessmentReportTmpDetail.1.RunId</Alias>
+          <Caption>@ABS:AssessmentRunId</Caption>
+          <DisplayWidth>Auto</DisplayWidth>
+          <UserDefined>false</UserDefined>
+        </AxReportDataSetField>
+        <AxReportDataSetField>
+          <Name>CheckCode</Name>
+          <Alias>ABSMRPAssessmentReportTmpDetail.1.CheckCode</Alias>
+          <Caption>@ABS:CheckCode</Caption>
+          <DisplayWidth>Auto</DisplayWidth>
+          <UserDefined>false</UserDefined>
+        </AxReportDataSetField>
+        <AxReportDataSetField>
+          <Name>ItemId</Name>
+          <Alias>ABSMRPAssessmentReportTmpDetail.1.ItemId</Alias>
+          <Caption>@ABS:ItemId</Caption>
+          <DisplayWidth>Auto</DisplayWidth>
+          <UserDefined>false</UserDefined>
+        </AxReportDataSetField>
+        <AxReportDataSetField>
+          <Name>SiteId</Name>
+          <Alias>ABSMRPAssessmentReportTmpDetail.1.SiteId</Alias>
+          <Caption>@ABS:SiteId</Caption>
+          <DisplayWidth>Auto</DisplayWidth>
+          <UserDefined>false</UserDefined>
+        </AxReportDataSetField>
+        <AxReportDataSetField>
+          <Name>ABCClass</Name>
+          <Alias>ABSMRPAssessmentReportTmpDetail.1.ABCClass:LABEL(ABSABCClassification)</Alias>
+          <Caption>@ABS:ABCClass</Caption>
+          <DisplayWidth>Auto</DisplayWidth>
+          <UserDefined>false</UserDefined>
+        </AxReportDataSetField>
+        <AxReportDataSetField>
+          <Name>XYZClass</Name>
+          <Alias>ABSMRPAssessmentReportTmpDetail.1.XYZClass:LABEL(ABSXYZClassification)</Alias>
+          <Caption>@ABS:XYZClass</Caption>
+          <DisplayWidth>Auto</DisplayWidth>
+          <UserDefined>false</UserDefined>
+        </AxReportDataSetField>
+        <AxReportDataSetField>
+          <Name>PriorityScore</Name>
+          <Alias>ABSMRPAssessmentReportTmpDetail.1.PriorityScore</Alias>
+          <Caption>@ABS:PriorityScore</Caption>
+          <DataType>System.Int32</DataType>
+          <DisplayWidth>Auto</DisplayWidth>
+          <UserDefined>false</UserDefined>
+        </AxReportDataSetField>
+        <AxReportDataSetField>
+          <Name>CompoundedRisk</Name>
+          <Alias>ABSMRPAssessmentReportTmpDetail.1.CompoundedRisk</Alias>
+          <Caption>@ABS:CompoundedRisk</Caption>
+          <DisplayWidth>Auto</DisplayWidth>
+          <UserDefined>false</UserDefined>
+        </AxReportDataSetField>
+        <AxReportDataSetField>
+          <Name>DetailNote</Name>
+          <Alias>ABSMRPAssessmentReportTmpDetail.1.DetailNote</Alias>
+          <Caption>@ABS:DetailNote</Caption>
+          <DisplayWidth>Auto</DisplayWidth>
+          <UserDefined>false</UserDefined>
+        </AxReportDataSetField>
+      </Fields>
+      <Parameters>
+      <AxReportDataSetParameter>
+        <Name>AX_PartitionKey</Name>
+        <Alias>AX_PartitionKey</Alias>
+        <DataType>System.String</DataType>
+        <Parameter>AX_PartitionKey</Parameter>
+      </AxReportDataSetParameter>
+      <AxReportDataSetParameter>
+        <Name>AX_CompanyName</Name>
+        <Alias>AX_CompanyName</Alias>
+        <DataType>System.String</DataType>
+        <Parameter>AX_CompanyName</Parameter>
+      </AxReportDataSetParameter>
+      <AxReportDataSetParameter>
+        <Name>AX_UserContext</Name>
+        <Alias>AX_UserContext</Alias>
+        <DataType>System.String</DataType>
+        <Parameter>AX_UserContext</Parameter>
+      </AxReportDataSetParameter>
+      <AxReportDataSetParameter>
+        <Name>AX_RenderingCulture</Name>
+        <Alias>AX_RenderingCulture</Alias>
+        <DataType>System.String</DataType>
+        <Parameter>AX_RenderingCulture</Parameter>
+      </AxReportDataSetParameter>
+      <AxReportDataSetParameter>
+        <Name>AX_ReportContext</Name>
+        <Alias>AX_ReportContext</Alias>
+        <DataType>System.String</DataType>
+        <Parameter>AX_ReportContext</Parameter>
+      </AxReportDataSetParameter>
+      <AxReportDataSetParameter>
+        <Name>AX_RdpPreProcessedId</Name>
+        <Alias>AX_RdpPreProcessedId</Alias>
+        <DataType>System.String</DataType>
+        <Parameter>AX_RdpPreProcessedId</Parameter>
+      </AxReportDataSetParameter>
+      </Parameters>
+    </AxReportDataSet>
+  </DataSets>
+  <DefaultParameterGroup>
+    <Name xmlns="">Parameters</Name>
+    <ReportParameterBases xmlns="">
+      <AxReportParameterBase xmlns=""
+        i:type="AxReportParameter">
+        <Name>AX_PartitionKey</Name>
+        <AllowBlank>true</AllowBlank>
+        <Nullable>true</Nullable>
+        <UserVisibility>Hidden</UserVisibility>
+        <DefaultValue />
+        <Values />
+      </AxReportParameterBase>
+      <AxReportParameterBase xmlns=""
+        i:type="AxReportParameter">
+        <Name>AX_CompanyName</Name>
+        <UserVisibility>Hidden</UserVisibility>
+        <DefaultValue />
+        <Values />
+      </AxReportParameterBase>
+      <AxReportParameterBase xmlns=""
+        i:type="AxReportParameter">
+        <Name>AX_UserContext</Name>
+        <AllowBlank>true</AllowBlank>
+        <Nullable>true</Nullable>
+        <UserVisibility>Hidden</UserVisibility>
+        <DefaultValue />
+        <Values />
+      </AxReportParameterBase>
+      <AxReportParameterBase xmlns=""
+        i:type="AxReportParameter">
+        <Name>AX_RenderingCulture</Name>
+        <AllowBlank>true</AllowBlank>
+        <Nullable>true</Nullable>
+        <UserVisibility>Hidden</UserVisibility>
+        <DefaultValue />
+        <Values />
+      </AxReportParameterBase>
+      <AxReportParameterBase xmlns=""
+        i:type="AxReportParameter">
+        <Name>AX_ReportContext</Name>
+        <AllowBlank>true</AllowBlank>
+        <Nullable>true</Nullable>
+        <UserVisibility>Hidden</UserVisibility>
+        <DefaultValue />
+        <Values />
+      </AxReportParameterBase>
+      <AxReportParameterBase xmlns=""
+        i:type="AxReportParameter">
+        <Name>AX_RdpPreProcessedId</Name>
+        <AllowBlank>true</AllowBlank>
+        <Nullable>true</Nullable>
+        <UserVisibility>Hidden</UserVisibility>
+        <DefaultValue />
+        <Values />
+      </AxReportParameterBase>
+    </ReportParameterBases>
+  </DefaultParameterGroup>
+  <Designs>
+    <AxReportDesign xmlns=""
+      i:type="AxReportPrecisionDesign">
+      <Name>Report</Name>
+      <Text>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner"&gt;
+  &lt;AutoRefresh&gt;0&lt;/AutoRefresh&gt;
+  &lt;DataSources&gt;
+    &lt;DataSource Name="AutoGen__ReportDataProvider"&gt;
+      &lt;Transaction&gt;true&lt;/Transaction&gt;
+      &lt;ConnectionProperties&gt;
+        &lt;DataProvider&gt;AXREPORTDATAPROVIDER&lt;/DataProvider&gt;
+        &lt;ConnectString /&gt;
+        &lt;IntegratedSecurity&gt;true&lt;/IntegratedSecurity&gt;
+      &lt;/ConnectionProperties&gt;
+      &lt;rd:DataSourceID&gt;a1b2c3d4-e5f6-7890-abcd-ef1234567890&lt;/rd:DataSourceID&gt;
+    &lt;/DataSource&gt;
+  &lt;/DataSources&gt;
+  &lt;DataSets&gt;
+    &lt;DataSet Name="ABSMRPAssessmentReportTmpResult"&gt;
+      &lt;Query&gt;
+        &lt;DataSourceName&gt;AutoGen__ReportDataProvider&lt;/DataSourceName&gt;
+        &lt;QueryParameters&gt;
+          &lt;QueryParameter Name="AX_PartitionKey"&gt;
+            &lt;Value&gt;=Parameters!AX_PartitionKey.Value&lt;/Value&gt;
+          &lt;/QueryParameter&gt;
+          &lt;QueryParameter Name="AX_CompanyName"&gt;
+            &lt;Value&gt;=Parameters!AX_CompanyName.Value&lt;/Value&gt;
+          &lt;/QueryParameter&gt;
+          &lt;QueryParameter Name="AX_UserContext"&gt;
+            &lt;Value&gt;=Parameters!AX_UserContext.Value&lt;/Value&gt;
+          &lt;/QueryParameter&gt;
+          &lt;QueryParameter Name="AX_RenderingCulture"&gt;
+            &lt;Value&gt;=Parameters!AX_RenderingCulture.Value&lt;/Value&gt;
+          &lt;/QueryParameter&gt;
+          &lt;QueryParameter Name="AX_ReportContext"&gt;
+            &lt;Value&gt;=Parameters!AX_ReportContext.Value&lt;/Value&gt;
+          &lt;/QueryParameter&gt;
+          &lt;QueryParameter Name="AX_RdpPreProcessedId"&gt;
+            &lt;Value&gt;=Parameters!AX_RdpPreProcessedId.Value&lt;/Value&gt;
+          &lt;/QueryParameter&gt;
+        &lt;/QueryParameters&gt;
+        &lt;CommandText&gt;SELECT * FROM ABSMRPAssessmentReportDP.ABSMRPAssessmentReportTmpResult&lt;/CommandText&gt;
+        &lt;rd:UseGenericDesigner&gt;true&lt;/rd:UseGenericDesigner&gt;
+      &lt;/Query&gt;
+      &lt;Fields&gt;
+        &lt;Field Name="RunId"&gt;
+          &lt;DataField&gt;ABSMRPAssessmentReportTmpResult.1.RunId&lt;/DataField&gt;
+          &lt;rd:TypeName&gt;System.String&lt;/rd:TypeName&gt;
+        &lt;/Field&gt;
+        &lt;Field Name="PlanId"&gt;
+          &lt;DataField&gt;ABSMRPAssessmentReportTmpResult.1.PlanId&lt;/DataField&gt;
+          &lt;rd:TypeName&gt;System.String&lt;/rd:TypeName&gt;
+        &lt;/Field&gt;
+        &lt;Field Name="SiteId"&gt;
+          &lt;DataField&gt;ABSMRPAssessmentReportTmpResult.1.SiteId&lt;/DataField&gt;
+          &lt;rd:TypeName&gt;System.String&lt;/rd:TypeName&gt;
+        &lt;/Field&gt;
+        &lt;Field Name="AssessmentDate"&gt;
+          &lt;DataField&gt;ABSMRPAssessmentReportTmpResult.1.AssessmentDate&lt;/DataField&gt;
+          &lt;rd:TypeName&gt;System.DateTime&lt;/rd:TypeName&gt;
+        &lt;/Field&gt;
+        &lt;Field Name="OverallSeverity"&gt;
+          &lt;DataField&gt;ABSMRPAssessmentReportTmpResult.1.OverallSeverity:LABEL(ABSMRPAssessmentSeverity)&lt;/DataField&gt;
+          &lt;rd:TypeName&gt;System.String&lt;/rd:TypeName&gt;
+        &lt;/Field&gt;
+        &lt;Field Name="TotalChecks"&gt;
+          &lt;DataField&gt;ABSMRPAssessmentReportTmpResult.1.TotalChecks&lt;/DataField&gt;
+          &lt;rd:TypeName&gt;System.Int32&lt;/rd:TypeName&gt;
+        &lt;/Field&gt;
+        &lt;Field Name="IssuesFound"&gt;
+          &lt;DataField&gt;ABSMRPAssessmentReportTmpResult.1.IssuesFound&lt;/DataField&gt;
+          &lt;rd:TypeName&gt;System.Int32&lt;/rd:TypeName&gt;
+        &lt;/Field&gt;
+        &lt;Field Name="PlanningEngine"&gt;
+          &lt;DataField&gt;ABSMRPAssessmentReportTmpResult.1.PlanningEngine:LABEL(ABSMRPPlanningEngine)&lt;/DataField&gt;
+          &lt;rd:TypeName&gt;System.String&lt;/rd:TypeName&gt;
+        &lt;/Field&gt;
+        &lt;Field Name="CheckCode"&gt;
+          &lt;DataField&gt;ABSMRPAssessmentReportTmpResult.1.CheckCode&lt;/DataField&gt;
+          &lt;rd:TypeName&gt;System.String&lt;/rd:TypeName&gt;
+        &lt;/Field&gt;
+        &lt;Field Name="Category"&gt;
+          &lt;DataField&gt;ABSMRPAssessmentReportTmpResult.1.Category:LABEL(ABSMRPAssessmentCategory)&lt;/DataField&gt;
+          &lt;rd:TypeName&gt;System.String&lt;/rd:TypeName&gt;
+        &lt;/Field&gt;
+        &lt;Field Name="Severity"&gt;
+          &lt;DataField&gt;ABSMRPAssessmentReportTmpResult.1.Severity:LABEL(ABSMRPAssessmentSeverity)&lt;/DataField&gt;
+          &lt;rd:TypeName&gt;System.String&lt;/rd:TypeName&gt;
+        &lt;/Field&gt;
+        &lt;Field Name="AffectedCount"&gt;
+          &lt;DataField&gt;ABSMRPAssessmentReportTmpResult.1.AffectedCount&lt;/DataField&gt;
+          &lt;rd:TypeName&gt;System.Int32&lt;/rd:TypeName&gt;
+        &lt;/Field&gt;
+        &lt;Field Name="SeverityTrend"&gt;
+          &lt;DataField&gt;ABSMRPAssessmentReportTmpResult.1.SeverityTrend:LABEL(ABSMRPAssessmentSeverityTrend)&lt;/DataField&gt;
+          &lt;rd:TypeName&gt;System.String&lt;/rd:TypeName&gt;
+        &lt;/Field&gt;
+        &lt;Field Name="CheckDescription"&gt;
+          &lt;DataField&gt;ABSMRPAssessmentReportTmpResult.1.CheckDescription&lt;/DataField&gt;
+          &lt;rd:TypeName&gt;System.String&lt;/rd:TypeName&gt;
+        &lt;/Field&gt;
+        &lt;Field Name="Recommendation"&gt;
+          &lt;DataField&gt;ABSMRPAssessmentReportTmpResult.1.Recommendation&lt;/DataField&gt;
+          &lt;rd:TypeName&gt;System.String&lt;/rd:TypeName&gt;
+        &lt;/Field&gt;
+        &lt;Field Name="AffectedObjects"&gt;
+          &lt;DataField&gt;ABSMRPAssessmentReportTmpResult.1.AffectedObjects&lt;/DataField&gt;
+          &lt;rd:TypeName&gt;System.String&lt;/rd:TypeName&gt;
+        &lt;/Field&gt;
+      &lt;/Fields&gt;
+    &lt;/DataSet&gt;
+    &lt;DataSet Name="ABSMRPAssessmentReportTmpDetail"&gt;
+      &lt;Query&gt;
+        &lt;DataSourceName&gt;AutoGen__ReportDataProvider&lt;/DataSourceName&gt;
+        &lt;QueryParameters&gt;
+          &lt;QueryParameter Name="AX_PartitionKey"&gt;
+            &lt;Value&gt;=Parameters!AX_PartitionKey.Value&lt;/Value&gt;
+          &lt;/QueryParameter&gt;
+          &lt;QueryParameter Name="AX_CompanyName"&gt;
+            &lt;Value&gt;=Parameters!AX_CompanyName.Value&lt;/Value&gt;
+          &lt;/QueryParameter&gt;
+          &lt;QueryParameter Name="AX_UserContext"&gt;
+            &lt;Value&gt;=Parameters!AX_UserContext.Value&lt;/Value&gt;
+          &lt;/QueryParameter&gt;
+          &lt;QueryParameter Name="AX_RenderingCulture"&gt;
+            &lt;Value&gt;=Parameters!AX_RenderingCulture.Value&lt;/Value&gt;
+          &lt;/QueryParameter&gt;
+          &lt;QueryParameter Name="AX_ReportContext"&gt;
+            &lt;Value&gt;=Parameters!AX_ReportContext.Value&lt;/Value&gt;
+          &lt;/QueryParameter&gt;
+          &lt;QueryParameter Name="AX_RdpPreProcessedId"&gt;
+            &lt;Value&gt;=Parameters!AX_RdpPreProcessedId.Value&lt;/Value&gt;
+          &lt;/QueryParameter&gt;
+        &lt;/QueryParameters&gt;
+        &lt;CommandText&gt;SELECT * FROM ABSMRPAssessmentReportDP.ABSMRPAssessmentReportTmpDetail&lt;/CommandText&gt;
+        &lt;rd:UseGenericDesigner&gt;true&lt;/rd:UseGenericDesigner&gt;
+      &lt;/Query&gt;
+      &lt;Fields&gt;
+        &lt;Field Name="RunId"&gt;
+          &lt;DataField&gt;ABSMRPAssessmentReportTmpDetail.1.RunId&lt;/DataField&gt;
+          &lt;rd:TypeName&gt;System.String&lt;/rd:TypeName&gt;
+        &lt;/Field&gt;
+        &lt;Field Name="CheckCode"&gt;
+          &lt;DataField&gt;ABSMRPAssessmentReportTmpDetail.1.CheckCode&lt;/DataField&gt;
+          &lt;rd:TypeName&gt;System.String&lt;/rd:TypeName&gt;
+        &lt;/Field&gt;
+        &lt;Field Name="ItemId"&gt;
+          &lt;DataField&gt;ABSMRPAssessmentReportTmpDetail.1.ItemId&lt;/DataField&gt;
+          &lt;rd:TypeName&gt;System.String&lt;/rd:TypeName&gt;
+        &lt;/Field&gt;
+        &lt;Field Name="SiteId"&gt;
+          &lt;DataField&gt;ABSMRPAssessmentReportTmpDetail.1.SiteId&lt;/DataField&gt;
+          &lt;rd:TypeName&gt;System.String&lt;/rd:TypeName&gt;
+        &lt;/Field&gt;
+        &lt;Field Name="ABCClass"&gt;
+          &lt;DataField&gt;ABSMRPAssessmentReportTmpDetail.1.ABCClass:LABEL(ABSABCClassification)&lt;/DataField&gt;
+          &lt;rd:TypeName&gt;System.String&lt;/rd:TypeName&gt;
+        &lt;/Field&gt;
+        &lt;Field Name="XYZClass"&gt;
+          &lt;DataField&gt;ABSMRPAssessmentReportTmpDetail.1.XYZClass:LABEL(ABSXYZClassification)&lt;/DataField&gt;
+          &lt;rd:TypeName&gt;System.String&lt;/rd:TypeName&gt;
+        &lt;/Field&gt;
+        &lt;Field Name="PriorityScore"&gt;
+          &lt;DataField&gt;ABSMRPAssessmentReportTmpDetail.1.PriorityScore&lt;/DataField&gt;
+          &lt;rd:TypeName&gt;System.Int32&lt;/rd:TypeName&gt;
+        &lt;/Field&gt;
+        &lt;Field Name="CompoundedRisk"&gt;
+          &lt;DataField&gt;ABSMRPAssessmentReportTmpDetail.1.CompoundedRisk&lt;/DataField&gt;
+          &lt;rd:TypeName&gt;System.String&lt;/rd:TypeName&gt;
+        &lt;/Field&gt;
+        &lt;Field Name="DetailNote"&gt;
+          &lt;DataField&gt;ABSMRPAssessmentReportTmpDetail.1.DetailNote&lt;/DataField&gt;
+          &lt;rd:TypeName&gt;System.String&lt;/rd:TypeName&gt;
+        &lt;/Field&gt;
+      &lt;/Fields&gt;
+    &lt;/DataSet&gt;
+  &lt;/DataSets&gt;
+  &lt;ReportSections&gt;
+    &lt;ReportSection&gt;
+      &lt;Body&gt;
+        &lt;ReportItems&gt;
+          &lt;Tablix Name="ResultsTable"&gt;
+            &lt;TablixBody&gt;
+              &lt;TablixColumns&gt;
+              &lt;TablixColumn&gt;&lt;Width&gt;1.2in&lt;/Width&gt;&lt;/TablixColumn&gt;
+              &lt;TablixColumn&gt;&lt;Width&gt;1.2in&lt;/Width&gt;&lt;/TablixColumn&gt;
+              &lt;TablixColumn&gt;&lt;Width&gt;1.0in&lt;/Width&gt;&lt;/TablixColumn&gt;
+              &lt;TablixColumn&gt;&lt;Width&gt;0.75in&lt;/Width&gt;&lt;/TablixColumn&gt;
+              &lt;TablixColumn&gt;&lt;Width&gt;1.675in&lt;/Width&gt;&lt;/TablixColumn&gt;
+              &lt;TablixColumn&gt;&lt;Width&gt;1.675in&lt;/Width&gt;&lt;/TablixColumn&gt;
+              &lt;/TablixColumns&gt;
+              &lt;TablixRows&gt;
+                &lt;TablixRow&gt;
+                  &lt;Height&gt;0.25in&lt;/Height&gt;
+                  &lt;TablixCells&gt;
+            &lt;TablixCell&gt;
+              &lt;CellContents&gt;
+                &lt;Textbox Name="Hdr_Category"&gt;
+                  &lt;CanGrow&gt;true&lt;/CanGrow&gt;
+                  &lt;KeepTogether&gt;true&lt;/KeepTogether&gt;
+                  &lt;Paragraphs&gt;
+                    &lt;Paragraph&gt;
+                      &lt;TextRuns&gt;
+                        &lt;TextRun&gt;
+                          &lt;Value&gt;Category&lt;/Value&gt;
+                          &lt;Style /&gt;
+                        &lt;/TextRun&gt;
+                      &lt;/TextRuns&gt;
+                      &lt;Style /&gt;
+                    &lt;/Paragraph&gt;
+                  &lt;/Paragraphs&gt;
+                  &lt;rd:DefaultName&gt;Hdr_Category&lt;/rd:DefaultName&gt;
+                  &lt;Style&gt;
+                    &lt;Border&gt;&lt;Style&gt;None&lt;/Style&gt;&lt;/Border&gt;
+                  &lt;/Style&gt;
+                &lt;/Textbox&gt;
+              &lt;/CellContents&gt;
+            &lt;/TablixCell&gt;
+            &lt;TablixCell&gt;
+              &lt;CellContents&gt;
+                &lt;Textbox Name="Hdr_CheckCode"&gt;
+                  &lt;CanGrow&gt;true&lt;/CanGrow&gt;
+                  &lt;KeepTogether&gt;true&lt;/KeepTogether&gt;
+                  &lt;Paragraphs&gt;
+                    &lt;Paragraph&gt;
+                      &lt;TextRuns&gt;
+                        &lt;TextRun&gt;
+                          &lt;Value&gt;Check Code&lt;/Value&gt;
+                          &lt;Style /&gt;
+                        &lt;/TextRun&gt;
+                      &lt;/TextRuns&gt;
+                      &lt;Style /&gt;
+                    &lt;/Paragraph&gt;
+                  &lt;/Paragraphs&gt;
+                  &lt;rd:DefaultName&gt;Hdr_CheckCode&lt;/rd:DefaultName&gt;
+                  &lt;Style&gt;
+                    &lt;Border&gt;&lt;Style&gt;None&lt;/Style&gt;&lt;/Border&gt;
+                  &lt;/Style&gt;
+                &lt;/Textbox&gt;
+              &lt;/CellContents&gt;
+            &lt;/TablixCell&gt;
+            &lt;TablixCell&gt;
+              &lt;CellContents&gt;
+                &lt;Textbox Name="Hdr_Severity"&gt;
+                  &lt;CanGrow&gt;true&lt;/CanGrow&gt;
+                  &lt;KeepTogether&gt;true&lt;/KeepTogether&gt;
+                  &lt;Paragraphs&gt;
+                    &lt;Paragraph&gt;
+                      &lt;TextRuns&gt;
+                        &lt;TextRun&gt;
+                          &lt;Value&gt;Severity&lt;/Value&gt;
+                          &lt;Style /&gt;
+                        &lt;/TextRun&gt;
+                      &lt;/TextRuns&gt;
+                      &lt;Style /&gt;
+                    &lt;/Paragraph&gt;
+                  &lt;/Paragraphs&gt;
+                  &lt;rd:DefaultName&gt;Hdr_Severity&lt;/rd:DefaultName&gt;
+                  &lt;Style&gt;
+                    &lt;Border&gt;&lt;Style&gt;None&lt;/Style&gt;&lt;/Border&gt;
+                  &lt;/Style&gt;
+                &lt;/Textbox&gt;
+              &lt;/CellContents&gt;
+            &lt;/TablixCell&gt;
+            &lt;TablixCell&gt;
+              &lt;CellContents&gt;
+                &lt;Textbox Name="Hdr_AffectedCount"&gt;
+                  &lt;CanGrow&gt;true&lt;/CanGrow&gt;
+                  &lt;KeepTogether&gt;true&lt;/KeepTogether&gt;
+                  &lt;Paragraphs&gt;
+                    &lt;Paragraph&gt;
+                      &lt;TextRuns&gt;
+                        &lt;TextRun&gt;
+                          &lt;Value&gt;Affected&lt;/Value&gt;
+                          &lt;Style /&gt;
+                        &lt;/TextRun&gt;
+                      &lt;/TextRuns&gt;
+                      &lt;Style /&gt;
+                    &lt;/Paragraph&gt;
+                  &lt;/Paragraphs&gt;
+                  &lt;rd:DefaultName&gt;Hdr_AffectedCount&lt;/rd:DefaultName&gt;
+                  &lt;Style&gt;
+                    &lt;Border&gt;&lt;Style&gt;None&lt;/Style&gt;&lt;/Border&gt;
+                  &lt;/Style&gt;
+                &lt;/Textbox&gt;
+              &lt;/CellContents&gt;
+            &lt;/TablixCell&gt;
+            &lt;TablixCell&gt;
+              &lt;CellContents&gt;
+                &lt;Textbox Name="Hdr_CheckDescription"&gt;
+                  &lt;CanGrow&gt;true&lt;/CanGrow&gt;
+                  &lt;KeepTogether&gt;true&lt;/KeepTogether&gt;
+                  &lt;Paragraphs&gt;
+                    &lt;Paragraph&gt;
+                      &lt;TextRuns&gt;
+                        &lt;TextRun&gt;
+                          &lt;Value&gt;Description&lt;/Value&gt;
+                          &lt;Style /&gt;
+                        &lt;/TextRun&gt;
+                      &lt;/TextRuns&gt;
+                      &lt;Style /&gt;
+                    &lt;/Paragraph&gt;
+                  &lt;/Paragraphs&gt;
+                  &lt;rd:DefaultName&gt;Hdr_CheckDescription&lt;/rd:DefaultName&gt;
+                  &lt;Style&gt;
+                    &lt;Border&gt;&lt;Style&gt;None&lt;/Style&gt;&lt;/Border&gt;
+                  &lt;/Style&gt;
+                &lt;/Textbox&gt;
+              &lt;/CellContents&gt;
+            &lt;/TablixCell&gt;
+            &lt;TablixCell&gt;
+              &lt;CellContents&gt;
+                &lt;Textbox Name="Hdr_Recommendation"&gt;
+                  &lt;CanGrow&gt;true&lt;/CanGrow&gt;
+                  &lt;KeepTogether&gt;true&lt;/KeepTogether&gt;
+                  &lt;Paragraphs&gt;
+                    &lt;Paragraph&gt;
+                      &lt;TextRuns&gt;
+                        &lt;TextRun&gt;
+                          &lt;Value&gt;Recommendation&lt;/Value&gt;
+                          &lt;Style /&gt;
+                        &lt;/TextRun&gt;
+                      &lt;/TextRuns&gt;
+                      &lt;Style /&gt;
+                    &lt;/Paragraph&gt;
+                  &lt;/Paragraphs&gt;
+                  &lt;rd:DefaultName&gt;Hdr_Recommendation&lt;/rd:DefaultName&gt;
+                  &lt;Style&gt;
+                    &lt;Border&gt;&lt;Style&gt;None&lt;/Style&gt;&lt;/Border&gt;
+                  &lt;/Style&gt;
+                &lt;/Textbox&gt;
+              &lt;/CellContents&gt;
+            &lt;/TablixCell&gt;
+                  &lt;/TablixCells&gt;
+                &lt;/TablixRow&gt;
+                &lt;TablixRow&gt;
+                  &lt;Height&gt;0.25in&lt;/Height&gt;
+                  &lt;TablixCells&gt;
+            &lt;TablixCell&gt;
+              &lt;CellContents&gt;
+                &lt;Textbox Name="Data_Category"&gt;
+                  &lt;CanGrow&gt;true&lt;/CanGrow&gt;
+                  &lt;KeepTogether&gt;true&lt;/KeepTogether&gt;
+                  &lt;Paragraphs&gt;
+                    &lt;Paragraph&gt;
+                      &lt;TextRuns&gt;
+                        &lt;TextRun&gt;
+                          &lt;Value&gt;=Fields!Category.Value&lt;/Value&gt;
+                          &lt;Style /&gt;
+                        &lt;/TextRun&gt;
+                      &lt;/TextRuns&gt;
+                      &lt;Style /&gt;
+                    &lt;/Paragraph&gt;
+                  &lt;/Paragraphs&gt;
+                  &lt;rd:DefaultName&gt;Data_Category&lt;/rd:DefaultName&gt;
+                  &lt;Style&gt;
+                    &lt;Border&gt;&lt;Style&gt;None&lt;/Style&gt;&lt;/Border&gt;
+                  &lt;/Style&gt;
+                &lt;/Textbox&gt;
+              &lt;/CellContents&gt;
+            &lt;/TablixCell&gt;
+            &lt;TablixCell&gt;
+              &lt;CellContents&gt;
+                &lt;Textbox Name="Data_CheckCode"&gt;
+                  &lt;CanGrow&gt;true&lt;/CanGrow&gt;
+                  &lt;KeepTogether&gt;true&lt;/KeepTogether&gt;
+                  &lt;Paragraphs&gt;
+                    &lt;Paragraph&gt;
+                      &lt;TextRuns&gt;
+                        &lt;TextRun&gt;
+                          &lt;Value&gt;=Fields!CheckCode.Value&lt;/Value&gt;
+                          &lt;Style /&gt;
+                        &lt;/TextRun&gt;
+                      &lt;/TextRuns&gt;
+                      &lt;Style /&gt;
+                    &lt;/Paragraph&gt;
+                  &lt;/Paragraphs&gt;
+                  &lt;rd:DefaultName&gt;Data_CheckCode&lt;/rd:DefaultName&gt;
+                  &lt;Style&gt;
+                    &lt;Border&gt;&lt;Style&gt;None&lt;/Style&gt;&lt;/Border&gt;
+                  &lt;/Style&gt;
+                &lt;/Textbox&gt;
+              &lt;/CellContents&gt;
+            &lt;/TablixCell&gt;
+            &lt;TablixCell&gt;
+              &lt;CellContents&gt;
+                &lt;Textbox Name="Data_Severity"&gt;
+                  &lt;CanGrow&gt;true&lt;/CanGrow&gt;
+                  &lt;KeepTogether&gt;true&lt;/KeepTogether&gt;
+                  &lt;Paragraphs&gt;
+                    &lt;Paragraph&gt;
+                      &lt;TextRuns&gt;
+                        &lt;TextRun&gt;
+                          &lt;Value&gt;=Fields!Severity.Value&lt;/Value&gt;
+                          &lt;Style /&gt;
+                        &lt;/TextRun&gt;
+                      &lt;/TextRuns&gt;
+                      &lt;Style /&gt;
+                    &lt;/Paragraph&gt;
+                  &lt;/Paragraphs&gt;
+                  &lt;rd:DefaultName&gt;Data_Severity&lt;/rd:DefaultName&gt;
+                  &lt;Style&gt;
+                    &lt;Border&gt;&lt;Style&gt;None&lt;/Style&gt;&lt;/Border&gt;
+                  &lt;/Style&gt;
+                &lt;/Textbox&gt;
+              &lt;/CellContents&gt;
+            &lt;/TablixCell&gt;
+            &lt;TablixCell&gt;
+              &lt;CellContents&gt;
+                &lt;Textbox Name="Data_AffectedCount"&gt;
+                  &lt;CanGrow&gt;true&lt;/CanGrow&gt;
+                  &lt;KeepTogether&gt;true&lt;/KeepTogether&gt;
+                  &lt;Paragraphs&gt;
+                    &lt;Paragraph&gt;
+                      &lt;TextRuns&gt;
+                        &lt;TextRun&gt;
+                          &lt;Value&gt;=Fields!AffectedCount.Value&lt;/Value&gt;
+                          &lt;Style /&gt;
+                        &lt;/TextRun&gt;
+                      &lt;/TextRuns&gt;
+                      &lt;Style /&gt;
+                    &lt;/Paragraph&gt;
+                  &lt;/Paragraphs&gt;
+                  &lt;rd:DefaultName&gt;Data_AffectedCount&lt;/rd:DefaultName&gt;
+                  &lt;Style&gt;
+                    &lt;Border&gt;&lt;Style&gt;None&lt;/Style&gt;&lt;/Border&gt;
+                  &lt;/Style&gt;
+                &lt;/Textbox&gt;
+              &lt;/CellContents&gt;
+            &lt;/TablixCell&gt;
+            &lt;TablixCell&gt;
+              &lt;CellContents&gt;
+                &lt;Textbox Name="Data_CheckDescription"&gt;
+                  &lt;CanGrow&gt;true&lt;/CanGrow&gt;
+                  &lt;KeepTogether&gt;true&lt;/KeepTogether&gt;
+                  &lt;Paragraphs&gt;
+                    &lt;Paragraph&gt;
+                      &lt;TextRuns&gt;
+                        &lt;TextRun&gt;
+                          &lt;Value&gt;=Fields!CheckDescription.Value&lt;/Value&gt;
+                          &lt;Style /&gt;
+                        &lt;/TextRun&gt;
+                      &lt;/TextRuns&gt;
+                      &lt;Style /&gt;
+                    &lt;/Paragraph&gt;
+                  &lt;/Paragraphs&gt;
+                  &lt;rd:DefaultName&gt;Data_CheckDescription&lt;/rd:DefaultName&gt;
+                  &lt;Style&gt;
+                    &lt;Border&gt;&lt;Style&gt;None&lt;/Style&gt;&lt;/Border&gt;
+                  &lt;/Style&gt;
+                &lt;/Textbox&gt;
+              &lt;/CellContents&gt;
+            &lt;/TablixCell&gt;
+            &lt;TablixCell&gt;
+              &lt;CellContents&gt;
+                &lt;Textbox Name="Data_Recommendation"&gt;
+                  &lt;CanGrow&gt;true&lt;/CanGrow&gt;
+                  &lt;KeepTogether&gt;true&lt;/KeepTogether&gt;
+                  &lt;Paragraphs&gt;
+                    &lt;Paragraph&gt;
+                      &lt;TextRuns&gt;
+                        &lt;TextRun&gt;
+                          &lt;Value&gt;=Fields!Recommendation.Value&lt;/Value&gt;
+                          &lt;Style /&gt;
+                        &lt;/TextRun&gt;
+                      &lt;/TextRuns&gt;
+                      &lt;Style /&gt;
+                    &lt;/Paragraph&gt;
+                  &lt;/Paragraphs&gt;
+                  &lt;rd:DefaultName&gt;Data_Recommendation&lt;/rd:DefaultName&gt;
+                  &lt;Style&gt;
+                    &lt;Border&gt;&lt;Style&gt;None&lt;/Style&gt;&lt;/Border&gt;
+                  &lt;/Style&gt;
+                &lt;/Textbox&gt;
+              &lt;/CellContents&gt;
+            &lt;/TablixCell&gt;
+                  &lt;/TablixCells&gt;
+                &lt;/TablixRow&gt;
+              &lt;/TablixRows&gt;
+            &lt;/TablixBody&gt;
+            &lt;TablixColumnHierarchy&gt;
+              &lt;TablixMembers&gt;
+                &lt;TablixMember /&gt;
+                &lt;TablixMember /&gt;
+                &lt;TablixMember /&gt;
+                &lt;TablixMember /&gt;
+                &lt;TablixMember /&gt;
+                &lt;TablixMember /&gt;
+              &lt;/TablixMembers&gt;
+            &lt;/TablixColumnHierarchy&gt;
+            &lt;TablixRowHierarchy&gt;
+              &lt;TablixMembers&gt;
+                &lt;TablixMember&gt;&lt;KeepWithGroup&gt;After&lt;/KeepWithGroup&gt;&lt;/TablixMember&gt;
+                &lt;TablixMember&gt;
+                  &lt;Group Name="Details_ResultsTable"&gt;
+                  &lt;/Group&gt;
+                  &lt;TablixMembers&gt;
+                    &lt;TablixMember /&gt;
+                  &lt;/TablixMembers&gt;
+                &lt;/TablixMember&gt;
+              &lt;/TablixMembers&gt;
+            &lt;/TablixRowHierarchy&gt;
+            &lt;DataSetName&gt;ABSMRPAssessmentReportTmpResult&lt;/DataSetName&gt;
+            &lt;Height&gt;0.5in&lt;/Height&gt;
+            &lt;Width&gt;7.50000in&lt;/Width&gt;
+            &lt;Style&gt;&lt;Border&gt;&lt;Style&gt;None&lt;/Style&gt;&lt;/Border&gt;&lt;/Style&gt;
+          &lt;/Tablix&gt;
+          &lt;Tablix Name="DetailsTable"&gt;
+            &lt;TablixBody&gt;
+              &lt;TablixColumns&gt;
+              &lt;TablixColumn&gt;&lt;Width&gt;1.0in&lt;/Width&gt;&lt;/TablixColumn&gt;
+              &lt;TablixColumn&gt;&lt;Width&gt;1.0in&lt;/Width&gt;&lt;/TablixColumn&gt;
+              &lt;TablixColumn&gt;&lt;Width&gt;0.75in&lt;/Width&gt;&lt;/TablixColumn&gt;
+              &lt;TablixColumn&gt;&lt;Width&gt;0.65in&lt;/Width&gt;&lt;/TablixColumn&gt;
+              &lt;TablixColumn&gt;&lt;Width&gt;0.65in&lt;/Width&gt;&lt;/TablixColumn&gt;
+              &lt;TablixColumn&gt;&lt;Width&gt;0.65in&lt;/Width&gt;&lt;/TablixColumn&gt;
+              &lt;TablixColumn&gt;&lt;Width&gt;2.79in&lt;/Width&gt;&lt;/TablixColumn&gt;
+              &lt;/TablixColumns&gt;
+              &lt;TablixRows&gt;
+                &lt;TablixRow&gt;
+                  &lt;Height&gt;0.25in&lt;/Height&gt;
+                  &lt;TablixCells&gt;
+            &lt;TablixCell&gt;
+              &lt;CellContents&gt;
+                &lt;Textbox Name="DHdr_CheckCode"&gt;
+                  &lt;CanGrow&gt;true&lt;/CanGrow&gt;
+                  &lt;KeepTogether&gt;true&lt;/KeepTogether&gt;
+                  &lt;Paragraphs&gt;
+                    &lt;Paragraph&gt;
+                      &lt;TextRuns&gt;
+                        &lt;TextRun&gt;
+                          &lt;Value&gt;Check Code&lt;/Value&gt;
+                          &lt;Style /&gt;
+                        &lt;/TextRun&gt;
+                      &lt;/TextRuns&gt;
+                      &lt;Style /&gt;
+                    &lt;/Paragraph&gt;
+                  &lt;/Paragraphs&gt;
+                  &lt;rd:DefaultName&gt;DHdr_CheckCode&lt;/rd:DefaultName&gt;
+                  &lt;Style&gt;
+                    &lt;Border&gt;&lt;Style&gt;None&lt;/Style&gt;&lt;/Border&gt;
+                  &lt;/Style&gt;
+                &lt;/Textbox&gt;
+              &lt;/CellContents&gt;
+            &lt;/TablixCell&gt;
+            &lt;TablixCell&gt;
+              &lt;CellContents&gt;
+                &lt;Textbox Name="DHdr_ItemId"&gt;
+                  &lt;CanGrow&gt;true&lt;/CanGrow&gt;
+                  &lt;KeepTogether&gt;true&lt;/KeepTogether&gt;
+                  &lt;Paragraphs&gt;
+                    &lt;Paragraph&gt;
+                      &lt;TextRuns&gt;
+                        &lt;TextRun&gt;
+                          &lt;Value&gt;Item&lt;/Value&gt;
+                          &lt;Style /&gt;
+                        &lt;/TextRun&gt;
+                      &lt;/TextRuns&gt;
+                      &lt;Style /&gt;
+                    &lt;/Paragraph&gt;
+                  &lt;/Paragraphs&gt;
+                  &lt;rd:DefaultName&gt;DHdr_ItemId&lt;/rd:DefaultName&gt;
+                  &lt;Style&gt;
+                    &lt;Border&gt;&lt;Style&gt;None&lt;/Style&gt;&lt;/Border&gt;
+                  &lt;/Style&gt;
+                &lt;/Textbox&gt;
+              &lt;/CellContents&gt;
+            &lt;/TablixCell&gt;
+            &lt;TablixCell&gt;
+              &lt;CellContents&gt;
+                &lt;Textbox Name="DHdr_SiteId"&gt;
+                  &lt;CanGrow&gt;true&lt;/CanGrow&gt;
+                  &lt;KeepTogether&gt;true&lt;/KeepTogether&gt;
+                  &lt;Paragraphs&gt;
+                    &lt;Paragraph&gt;
+                      &lt;TextRuns&gt;
+                        &lt;TextRun&gt;
+                          &lt;Value&gt;Site&lt;/Value&gt;
+                          &lt;Style /&gt;
+                        &lt;/TextRun&gt;
+                      &lt;/TextRuns&gt;
+                      &lt;Style /&gt;
+                    &lt;/Paragraph&gt;
+                  &lt;/Paragraphs&gt;
+                  &lt;rd:DefaultName&gt;DHdr_SiteId&lt;/rd:DefaultName&gt;
+                  &lt;Style&gt;
+                    &lt;Border&gt;&lt;Style&gt;None&lt;/Style&gt;&lt;/Border&gt;
+                  &lt;/Style&gt;
+                &lt;/Textbox&gt;
+              &lt;/CellContents&gt;
+            &lt;/TablixCell&gt;
+            &lt;TablixCell&gt;
+              &lt;CellContents&gt;
+                &lt;Textbox Name="DHdr_ABCClass"&gt;
+                  &lt;CanGrow&gt;true&lt;/CanGrow&gt;
+                  &lt;KeepTogether&gt;true&lt;/KeepTogether&gt;
+                  &lt;Paragraphs&gt;
+                    &lt;Paragraph&gt;
+                      &lt;TextRuns&gt;
+                        &lt;TextRun&gt;
+                          &lt;Value&gt;ABC&lt;/Value&gt;
+                          &lt;Style /&gt;
+                        &lt;/TextRun&gt;
+                      &lt;/TextRuns&gt;
+                      &lt;Style /&gt;
+                    &lt;/Paragraph&gt;
+                  &lt;/Paragraphs&gt;
+                  &lt;rd:DefaultName&gt;DHdr_ABCClass&lt;/rd:DefaultName&gt;
+                  &lt;Style&gt;
+                    &lt;Border&gt;&lt;Style&gt;None&lt;/Style&gt;&lt;/Border&gt;
+                  &lt;/Style&gt;
+                &lt;/Textbox&gt;
+              &lt;/CellContents&gt;
+            &lt;/TablixCell&gt;
+            &lt;TablixCell&gt;
+              &lt;CellContents&gt;
+                &lt;Textbox Name="DHdr_XYZClass"&gt;
+                  &lt;CanGrow&gt;true&lt;/CanGrow&gt;
+                  &lt;KeepTogether&gt;true&lt;/KeepTogether&gt;
+                  &lt;Paragraphs&gt;
+                    &lt;Paragraph&gt;
+                      &lt;TextRuns&gt;
+                        &lt;TextRun&gt;
+                          &lt;Value&gt;XYZ&lt;/Value&gt;
+                          &lt;Style /&gt;
+                        &lt;/TextRun&gt;
+                      &lt;/TextRuns&gt;
+                      &lt;Style /&gt;
+                    &lt;/Paragraph&gt;
+                  &lt;/Paragraphs&gt;
+                  &lt;rd:DefaultName&gt;DHdr_XYZClass&lt;/rd:DefaultName&gt;
+                  &lt;Style&gt;
+                    &lt;Border&gt;&lt;Style&gt;None&lt;/Style&gt;&lt;/Border&gt;
+                  &lt;/Style&gt;
+                &lt;/Textbox&gt;
+              &lt;/CellContents&gt;
+            &lt;/TablixCell&gt;
+            &lt;TablixCell&gt;
+              &lt;CellContents&gt;
+                &lt;Textbox Name="DHdr_PriorityScore"&gt;
+                  &lt;CanGrow&gt;true&lt;/CanGrow&gt;
+                  &lt;KeepTogether&gt;true&lt;/KeepTogether&gt;
+                  &lt;Paragraphs&gt;
+                    &lt;Paragraph&gt;
+                      &lt;TextRuns&gt;
+                        &lt;TextRun&gt;
+                          &lt;Value&gt;Priority&lt;/Value&gt;
+                          &lt;Style /&gt;
+                        &lt;/TextRun&gt;
+                      &lt;/TextRuns&gt;
+                      &lt;Style /&gt;
+                    &lt;/Paragraph&gt;
+                  &lt;/Paragraphs&gt;
+                  &lt;rd:DefaultName&gt;DHdr_PriorityScore&lt;/rd:DefaultName&gt;
+                  &lt;Style&gt;
+                    &lt;Border&gt;&lt;Style&gt;None&lt;/Style&gt;&lt;/Border&gt;
+                  &lt;/Style&gt;
+                &lt;/Textbox&gt;
+              &lt;/CellContents&gt;
+            &lt;/TablixCell&gt;
+            &lt;TablixCell&gt;
+              &lt;CellContents&gt;
+                &lt;Textbox Name="DHdr_DetailNote"&gt;
+                  &lt;CanGrow&gt;true&lt;/CanGrow&gt;
+                  &lt;KeepTogether&gt;true&lt;/KeepTogether&gt;
+                  &lt;Paragraphs&gt;
+                    &lt;Paragraph&gt;
+                      &lt;TextRuns&gt;
+                        &lt;TextRun&gt;
+                          &lt;Value&gt;Detail Note&lt;/Value&gt;
+                          &lt;Style /&gt;
+                        &lt;/TextRun&gt;
+                      &lt;/TextRuns&gt;
+                      &lt;Style /&gt;
+                    &lt;/Paragraph&gt;
+                  &lt;/Paragraphs&gt;
+                  &lt;rd:DefaultName&gt;DHdr_DetailNote&lt;/rd:DefaultName&gt;
+                  &lt;Style&gt;
+                    &lt;Border&gt;&lt;Style&gt;None&lt;/Style&gt;&lt;/Border&gt;
+                  &lt;/Style&gt;
+                &lt;/Textbox&gt;
+              &lt;/CellContents&gt;
+            &lt;/TablixCell&gt;
+                  &lt;/TablixCells&gt;
+                &lt;/TablixRow&gt;
+                &lt;TablixRow&gt;
+                  &lt;Height&gt;0.25in&lt;/Height&gt;
+                  &lt;TablixCells&gt;
+            &lt;TablixCell&gt;
+              &lt;CellContents&gt;
+                &lt;Textbox Name="Data_D_CheckCode"&gt;
+                  &lt;CanGrow&gt;true&lt;/CanGrow&gt;
+                  &lt;KeepTogether&gt;true&lt;/KeepTogether&gt;
+                  &lt;Paragraphs&gt;
+                    &lt;Paragraph&gt;
+                      &lt;TextRuns&gt;
+                        &lt;TextRun&gt;
+                          &lt;Value&gt;=Fields!CheckCode.Value&lt;/Value&gt;
+                          &lt;Style /&gt;
+                        &lt;/TextRun&gt;
+                      &lt;/TextRuns&gt;
+                      &lt;Style /&gt;
+                    &lt;/Paragraph&gt;
+                  &lt;/Paragraphs&gt;
+                  &lt;rd:DefaultName&gt;Data_D_CheckCode&lt;/rd:DefaultName&gt;
+                  &lt;Style&gt;
+                    &lt;Border&gt;&lt;Style&gt;None&lt;/Style&gt;&lt;/Border&gt;
+                  &lt;/Style&gt;
+                &lt;/Textbox&gt;
+              &lt;/CellContents&gt;
+            &lt;/TablixCell&gt;
+            &lt;TablixCell&gt;
+              &lt;CellContents&gt;
+                &lt;Textbox Name="Data_D_ItemId"&gt;
+                  &lt;CanGrow&gt;true&lt;/CanGrow&gt;
+                  &lt;KeepTogether&gt;true&lt;/KeepTogether&gt;
+                  &lt;Paragraphs&gt;
+                    &lt;Paragraph&gt;
+                      &lt;TextRuns&gt;
+                        &lt;TextRun&gt;
+                          &lt;Value&gt;=Fields!ItemId.Value&lt;/Value&gt;
+                          &lt;Style /&gt;
+                        &lt;/TextRun&gt;
+                      &lt;/TextRuns&gt;
+                      &lt;Style /&gt;
+                    &lt;/Paragraph&gt;
+                  &lt;/Paragraphs&gt;
+                  &lt;rd:DefaultName&gt;Data_D_ItemId&lt;/rd:DefaultName&gt;
+                  &lt;Style&gt;
+                    &lt;Border&gt;&lt;Style&gt;None&lt;/Style&gt;&lt;/Border&gt;
+                  &lt;/Style&gt;
+                &lt;/Textbox&gt;
+              &lt;/CellContents&gt;
+            &lt;/TablixCell&gt;
+            &lt;TablixCell&gt;
+              &lt;CellContents&gt;
+                &lt;Textbox Name="Data_D_SiteId"&gt;
+                  &lt;CanGrow&gt;true&lt;/CanGrow&gt;
+                  &lt;KeepTogether&gt;true&lt;/KeepTogether&gt;
+                  &lt;Paragraphs&gt;
+                    &lt;Paragraph&gt;
+                      &lt;TextRuns&gt;
+                        &lt;TextRun&gt;
+                          &lt;Value&gt;=Fields!SiteId.Value&lt;/Value&gt;
+                          &lt;Style /&gt;
+                        &lt;/TextRun&gt;
+                      &lt;/TextRuns&gt;
+                      &lt;Style /&gt;
+                    &lt;/Paragraph&gt;
+                  &lt;/Paragraphs&gt;
+                  &lt;rd:DefaultName&gt;Data_D_SiteId&lt;/rd:DefaultName&gt;
+                  &lt;Style&gt;
+                    &lt;Border&gt;&lt;Style&gt;None&lt;/Style&gt;&lt;/Border&gt;
+                  &lt;/Style&gt;
+                &lt;/Textbox&gt;
+              &lt;/CellContents&gt;
+            &lt;/TablixCell&gt;
+            &lt;TablixCell&gt;
+              &lt;CellContents&gt;
+                &lt;Textbox Name="Data_D_ABCClass"&gt;
+                  &lt;CanGrow&gt;true&lt;/CanGrow&gt;
+                  &lt;KeepTogether&gt;true&lt;/KeepTogether&gt;
+                  &lt;Paragraphs&gt;
+                    &lt;Paragraph&gt;
+                      &lt;TextRuns&gt;
+                        &lt;TextRun&gt;
+                          &lt;Value&gt;=Fields!ABCClass.Value&lt;/Value&gt;
+                          &lt;Style /&gt;
+                        &lt;/TextRun&gt;
+                      &lt;/TextRuns&gt;
+                      &lt;Style /&gt;
+                    &lt;/Paragraph&gt;
+                  &lt;/Paragraphs&gt;
+                  &lt;rd:DefaultName&gt;Data_D_ABCClass&lt;/rd:DefaultName&gt;
+                  &lt;Style&gt;
+                    &lt;Border&gt;&lt;Style&gt;None&lt;/Style&gt;&lt;/Border&gt;
+                  &lt;/Style&gt;
+                &lt;/Textbox&gt;
+              &lt;/CellContents&gt;
+            &lt;/TablixCell&gt;
+            &lt;TablixCell&gt;
+              &lt;CellContents&gt;
+                &lt;Textbox Name="Data_D_XYZClass"&gt;
+                  &lt;CanGrow&gt;true&lt;/CanGrow&gt;
+                  &lt;KeepTogether&gt;true&lt;/KeepTogether&gt;
+                  &lt;Paragraphs&gt;
+                    &lt;Paragraph&gt;
+                      &lt;TextRuns&gt;
+                        &lt;TextRun&gt;
+                          &lt;Value&gt;=Fields!XYZClass.Value&lt;/Value&gt;
+                          &lt;Style /&gt;
+                        &lt;/TextRun&gt;
+                      &lt;/TextRuns&gt;
+                      &lt;Style /&gt;
+                    &lt;/Paragraph&gt;
+                  &lt;/Paragraphs&gt;
+                  &lt;rd:DefaultName&gt;Data_D_XYZClass&lt;/rd:DefaultName&gt;
+                  &lt;Style&gt;
+                    &lt;Border&gt;&lt;Style&gt;None&lt;/Style&gt;&lt;/Border&gt;
+                  &lt;/Style&gt;
+                &lt;/Textbox&gt;
+              &lt;/CellContents&gt;
+            &lt;/TablixCell&gt;
+            &lt;TablixCell&gt;
+              &lt;CellContents&gt;
+                &lt;Textbox Name="Data_D_PriorityScore"&gt;
+                  &lt;CanGrow&gt;true&lt;/CanGrow&gt;
+                  &lt;KeepTogether&gt;true&lt;/KeepTogether&gt;
+                  &lt;Paragraphs&gt;
+                    &lt;Paragraph&gt;
+                      &lt;TextRuns&gt;
+                        &lt;TextRun&gt;
+                          &lt;Value&gt;=Fields!PriorityScore.Value&lt;/Value&gt;
+                          &lt;Style /&gt;
+                        &lt;/TextRun&gt;
+                      &lt;/TextRuns&gt;
+                      &lt;Style /&gt;
+                    &lt;/Paragraph&gt;
+                  &lt;/Paragraphs&gt;
+                  &lt;rd:DefaultName&gt;Data_D_PriorityScore&lt;/rd:DefaultName&gt;
+                  &lt;Style&gt;
+                    &lt;Border&gt;&lt;Style&gt;None&lt;/Style&gt;&lt;/Border&gt;
+                  &lt;/Style&gt;
+                &lt;/Textbox&gt;
+              &lt;/CellContents&gt;
+            &lt;/TablixCell&gt;
+            &lt;TablixCell&gt;
+              &lt;CellContents&gt;
+                &lt;Textbox Name="Data_D_DetailNote"&gt;
+                  &lt;CanGrow&gt;true&lt;/CanGrow&gt;
+                  &lt;KeepTogether&gt;true&lt;/KeepTogether&gt;
+                  &lt;Paragraphs&gt;
+                    &lt;Paragraph&gt;
+                      &lt;TextRuns&gt;
+                        &lt;TextRun&gt;
+                          &lt;Value&gt;=Fields!DetailNote.Value&lt;/Value&gt;
+                          &lt;Style /&gt;
+                        &lt;/TextRun&gt;
+                      &lt;/TextRuns&gt;
+                      &lt;Style /&gt;
+                    &lt;/Paragraph&gt;
+                  &lt;/Paragraphs&gt;
+                  &lt;rd:DefaultName&gt;Data_D_DetailNote&lt;/rd:DefaultName&gt;
+                  &lt;Style&gt;
+                    &lt;Border&gt;&lt;Style&gt;None&lt;/Style&gt;&lt;/Border&gt;
+                  &lt;/Style&gt;
+                &lt;/Textbox&gt;
+              &lt;/CellContents&gt;
+            &lt;/TablixCell&gt;
+                  &lt;/TablixCells&gt;
+                &lt;/TablixRow&gt;
+              &lt;/TablixRows&gt;
+            &lt;/TablixBody&gt;
+            &lt;TablixColumnHierarchy&gt;
+              &lt;TablixMembers&gt;
+                &lt;TablixMember /&gt;
+                &lt;TablixMember /&gt;
+                &lt;TablixMember /&gt;
+                &lt;TablixMember /&gt;
+                &lt;TablixMember /&gt;
+                &lt;TablixMember /&gt;
+                &lt;TablixMember /&gt;
+              &lt;/TablixMembers&gt;
+            &lt;/TablixColumnHierarchy&gt;
+            &lt;TablixRowHierarchy&gt;
+              &lt;TablixMembers&gt;
+                &lt;TablixMember&gt;&lt;KeepWithGroup&gt;After&lt;/KeepWithGroup&gt;&lt;/TablixMember&gt;
+                &lt;TablixMember&gt;
+                  &lt;Group Name="Details_DetailsTable"&gt;
+                  &lt;/Group&gt;
+                  &lt;TablixMembers&gt;
+                    &lt;TablixMember /&gt;
+                  &lt;/TablixMembers&gt;
+                &lt;/TablixMember&gt;
+              &lt;/TablixMembers&gt;
+            &lt;/TablixRowHierarchy&gt;
+            &lt;DataSetName&gt;ABSMRPAssessmentReportTmpDetail&lt;/DataSetName&gt;
+            &lt;Top&gt;0.6in&lt;/Top&gt;
+            &lt;Height&gt;0.5in&lt;/Height&gt;
+            &lt;Width&gt;7.49000in&lt;/Width&gt;
+            &lt;Style&gt;&lt;Border&gt;&lt;Style&gt;None&lt;/Style&gt;&lt;/Border&gt;&lt;/Style&gt;
+          &lt;/Tablix&gt;
+        &lt;/ReportItems&gt;
+        &lt;Height&gt;2in&lt;/Height&gt;
+        &lt;Style /&gt;
+      &lt;/Body&gt;
+      &lt;Width&gt;7.5in&lt;/Width&gt;
+      &lt;Page&gt;
+        &lt;InteractiveHeight&gt;11in&lt;/InteractiveHeight&gt;
+        &lt;InteractiveWidth&gt;8.5in&lt;/InteractiveWidth&gt;
+        &lt;LeftMargin&gt;0.5in&lt;/LeftMargin&gt;
+        &lt;RightMargin&gt;0.5in&lt;/RightMargin&gt;
+        &lt;TopMargin&gt;1in&lt;/TopMargin&gt;
+        &lt;BottomMargin&gt;1in&lt;/BottomMargin&gt;
+        &lt;Style /&gt;
+      &lt;/Page&gt;
+    &lt;/ReportSection&gt;
+  &lt;/ReportSections&gt;
+  &lt;ReportParameters&gt;
+    &lt;ReportParameter Name="AX_PartitionKey"&gt;
+      &lt;DataType&gt;String&lt;/DataType&gt;
+      &lt;Nullable&gt;true&lt;/Nullable&gt;
+      &lt;AllowBlank&gt;true&lt;/AllowBlank&gt;
+      &lt;Prompt&gt;AX_PartitionKey&lt;/Prompt&gt;
+      &lt;Hidden&gt;true&lt;/Hidden&gt;
+      
+    &lt;/ReportParameter&gt;
+    &lt;ReportParameter Name="AX_CompanyName"&gt;
+      &lt;DataType&gt;String&lt;/DataType&gt;
+      &lt;Prompt&gt;AX_CompanyName&lt;/Prompt&gt;
+      &lt;Hidden&gt;true&lt;/Hidden&gt;
+      
+    &lt;/ReportParameter&gt;
+    &lt;ReportParameter Name="AX_UserContext"&gt;
+      &lt;DataType&gt;String&lt;/DataType&gt;
+      &lt;Nullable&gt;true&lt;/Nullable&gt;
+      &lt;AllowBlank&gt;true&lt;/AllowBlank&gt;
+      &lt;Prompt&gt;AX_UserContext&lt;/Prompt&gt;
+      &lt;Hidden&gt;true&lt;/Hidden&gt;
+      
+    &lt;/ReportParameter&gt;
+    &lt;ReportParameter Name="AX_RenderingCulture"&gt;
+      &lt;DataType&gt;String&lt;/DataType&gt;
+      &lt;Nullable&gt;true&lt;/Nullable&gt;
+      &lt;AllowBlank&gt;true&lt;/AllowBlank&gt;
+      &lt;Prompt&gt;AX_RenderingCulture&lt;/Prompt&gt;
+      &lt;Hidden&gt;true&lt;/Hidden&gt;
+      
+    &lt;/ReportParameter&gt;
+    &lt;ReportParameter Name="AX_ReportContext"&gt;
+      &lt;DataType&gt;String&lt;/DataType&gt;
+      &lt;Nullable&gt;true&lt;/Nullable&gt;
+      &lt;AllowBlank&gt;true&lt;/AllowBlank&gt;
+      &lt;Prompt&gt;AX_ReportContext&lt;/Prompt&gt;
+      &lt;Hidden&gt;true&lt;/Hidden&gt;
+      &lt;UsedInQuery&gt;True&lt;/UsedInQuery&gt;
+    &lt;/ReportParameter&gt;
+    &lt;ReportParameter Name="AX_RdpPreProcessedId"&gt;
+      &lt;DataType&gt;String&lt;/DataType&gt;
+      &lt;Nullable&gt;true&lt;/Nullable&gt;
+      &lt;AllowBlank&gt;true&lt;/AllowBlank&gt;
+      &lt;Prompt&gt;AX_RdpPreProcessedId&lt;/Prompt&gt;
+      &lt;Hidden&gt;true&lt;/Hidden&gt;
+      
+    &lt;/ReportParameter&gt;
+  &lt;/ReportParameters&gt;
+  &lt;ReportParametersLayout&gt;
+    &lt;GridLayoutDefinition&gt;
+      &lt;NumberOfColumns&gt;6&lt;/NumberOfColumns&gt;
+      &lt;NumberOfRows&gt;1&lt;/NumberOfRows&gt;
+      &lt;CellDefinitions&gt;
+        &lt;CellDefinition&gt;
+          &lt;ColumnIndex&gt;0&lt;/ColumnIndex&gt;
+          &lt;RowIndex&gt;0&lt;/RowIndex&gt;
+          &lt;ParameterName&gt;AX_PartitionKey&lt;/ParameterName&gt;
+        &lt;/CellDefinition&gt;
+        &lt;CellDefinition&gt;
+          &lt;ColumnIndex&gt;1&lt;/ColumnIndex&gt;
+          &lt;RowIndex&gt;0&lt;/RowIndex&gt;
+          &lt;ParameterName&gt;AX_CompanyName&lt;/ParameterName&gt;
+        &lt;/CellDefinition&gt;
+        &lt;CellDefinition&gt;
+          &lt;ColumnIndex&gt;2&lt;/ColumnIndex&gt;
+          &lt;RowIndex&gt;0&lt;/RowIndex&gt;
+          &lt;ParameterName&gt;AX_UserContext&lt;/ParameterName&gt;
+        &lt;/CellDefinition&gt;
+        &lt;CellDefinition&gt;
+          &lt;ColumnIndex&gt;3&lt;/ColumnIndex&gt;
+          &lt;RowIndex&gt;0&lt;/RowIndex&gt;
+          &lt;ParameterName&gt;AX_RenderingCulture&lt;/ParameterName&gt;
+        &lt;/CellDefinition&gt;
+        &lt;CellDefinition&gt;
+          &lt;ColumnIndex&gt;4&lt;/ColumnIndex&gt;
+          &lt;RowIndex&gt;0&lt;/RowIndex&gt;
+          &lt;ParameterName&gt;AX_ReportContext&lt;/ParameterName&gt;
+        &lt;/CellDefinition&gt;
+        &lt;CellDefinition&gt;
+          &lt;ColumnIndex&gt;5&lt;/ColumnIndex&gt;
+          &lt;RowIndex&gt;0&lt;/RowIndex&gt;
+          &lt;ParameterName&gt;AX_RdpPreProcessedId&lt;/ParameterName&gt;
+        &lt;/CellDefinition&gt;
+      &lt;/CellDefinitions&gt;
+    &lt;/GridLayoutDefinition&gt;
+  &lt;/ReportParametersLayout&gt;
+  &lt;Language&gt;en-US&lt;/Language&gt;
+  &lt;rd:ReportUnitType&gt;Inch&lt;/rd:ReportUnitType&gt;
+  &lt;rd:ReportID&gt;a1b2c3d4-1234-5678-abcd-ef1234567890&lt;/rd:ReportID&gt;
+&lt;/Report&gt;</Text>
+      <DisableIndividualTransformation />
+    </AxReportDesign>
+  </Designs>
+  <EmbeddedImages />
+</AxReport>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>ABSExcessObsoleteController</Name>
+  <SourceCode>
+    <Declaration><![CDATA[
+class ABSExcessObsoleteController extends SysOperationServiceController
+{
+}
+    ]]></Declaration>
+    <Methods>
+      <Method>
+        <Name>main</Name>
+        <Source><![CDATA[
+public static void main(Args _args)
+{
+    ABSExcessObsoleteController controller = new ABSExcessObsoleteController(
+        classStr(ABSExcessObsoleteService),
+        methodStr(ABSExcessObsoleteService, run),
+        SysOperationExecutionMode::ReliableAsynchronous);
+    controller.parmArgs(_args);
+    controller.startOperation();
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>caption</Name>
+        <Source><![CDATA[
+public ClassDescription caption()
+{
+    return "@ABS:ABSEOBatchJobCaption";
+}
+        ]]></Source>
+      </Method>
+    </Methods>
+  </SourceCode>
+</AxClass>

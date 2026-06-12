@@ -1,0 +1,470 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>ABSInventParametersEventHandler</Name>
+  <SourceCode>
+    <Declaration><![CDATA[
+class ABSInventParametersEventHandler
+{
+}
+    ]]></Declaration>
+    <Methods>
+      <Method>
+        <Name>InventParameters_OnInitialized</Name>
+        <Source><![CDATA[
+[FormEventHandler(formStr(InventParameters), FormEventType::Initialized)]
+public static void InventParameters_OnInitialized(xFormRun sender, FormEventArgs e)
+{
+    ABSMRPAssessmentCheckConfig::seedDefaults();
+    ABSInventParametersEventHandler::loadCheckCodeToggle(sender, 'ABSCheckCodePC001Enabled', 'PC-001');
+    ABSInventParametersEventHandler::loadCheckCodeToggle(sender, 'ABSCheckCodePC002Enabled', 'PC-002');
+    ABSInventParametersEventHandler::loadCheckCodeToggle(sender, 'ABSCheckCodePC003Enabled', 'PC-003');
+    ABSInventParametersEventHandler::loadCheckCodeToggle(sender, 'ABSCheckCodePC005Enabled', 'PC-005');
+    ABSInventParametersEventHandler::loadCheckCodeToggle(sender, 'ABSCheckCodeDQ001Enabled', 'DQ-001');
+    ABSInventParametersEventHandler::loadCheckCodeToggle(sender, 'ABSCheckCodeDQ002Enabled', 'DQ-002');
+    ABSInventParametersEventHandler::loadCheckCodeToggle(sender, 'ABSCheckCodeDQ004Enabled', 'DQ-004');
+    ABSInventParametersEventHandler::loadCheckCodeToggle(sender, 'ABSCheckCodeDQ005Enabled', 'DQ-005');
+    ABSInventParametersEventHandler::loadCheckCodeToggle(sender, 'ABSCheckCodeDQ006Enabled', 'DQ-006');
+    ABSInventParametersEventHandler::loadCheckCodeToggle(sender, 'ABSCheckCodeDQ007Enabled', 'DQ-007');
+    ABSInventParametersEventHandler::loadCheckCodeToggle(sender, 'ABSCheckCodeDQ008Enabled', 'DQ-008');
+    ABSInventParametersEventHandler::loadCheckCodeToggle(sender, 'ABSCheckCodeDQ009Enabled', 'DQ-009');
+    ABSInventParametersEventHandler::loadCheckCodeToggle(sender, 'ABSCheckCodeSS001Enabled', 'SS-001');
+    ABSInventParametersEventHandler::loadCheckCodeToggle(sender, 'ABSCheckCodeSS002Enabled', 'SS-002');
+    ABSInventParametersEventHandler::loadCheckCodeToggle(sender, 'ABSCheckCodeSS003Enabled', 'SS-003');
+    ABSInventParametersEventHandler::loadCheckCodeToggle(sender, 'ABSCheckCodeSS004Enabled', 'SS-004');
+    ABSInventParametersEventHandler::loadCheckCodeToggle(sender, 'ABSCheckCodeCV001Enabled', 'CV-001');
+    ABSInventParametersEventHandler::loadCheckCodeToggle(sender, 'ABSCheckCodeCV002Enabled', 'CV-002');
+    ABSInventParametersEventHandler::loadCheckCodeToggle(sender, 'ABSCheckCodeCV003Enabled', 'CV-003');
+    ABSInventParametersEventHandler::loadCheckCodeToggle(sender, 'ABSCheckCodeCV004Enabled', 'CV-004');
+    ABSInventParametersEventHandler::loadCheckCodeToggle(sender, 'ABSCheckCodePR001Enabled', 'PR-001');
+    ABSInventParametersEventHandler::loadCheckCodeToggle(sender, 'ABSCheckCodePR002Enabled', 'PR-002');
+    ABSInventParametersEventHandler::loadCheckCodeToggle(sender, 'ABSCheckCodePR003Enabled', 'PR-003');
+    ABSInventParametersEventHandler::loadCheckCodeToggle(sender, 'ABSCheckCodeFW001Enabled', 'FW-001');
+    ABSInventParametersEventHandler::loadCheckCodeToggle(sender, 'ABSCheckCodeFW002Enabled', 'FW-002');
+    ABSInventParametersEventHandler::loadCheckCodeToggle(sender, 'ABSCheckCodeFW003Enabled', 'FW-003');
+    ABSInventParametersEventHandler::loadCheckCodeToggle(sender, 'ABSCheckCodeBR001Enabled', 'BR-001');
+    ABSInventParametersEventHandler::loadCheckCodeToggle(sender, 'ABSCheckCodeBR002Enabled', 'BR-002');
+    ABSInventParametersEventHandler::loadCheckCodeToggle(sender, 'ABSCheckCodeBR003Enabled', 'BR-003');
+    ABSInventParametersEventHandler::loadCheckCodeToggle(sender, 'ABSCheckCodePB001Enabled', 'PB-001');
+    ABSInventParametersEventHandler::loadCheckCodeToggle(sender, 'ABSCheckCodePB002Enabled', 'PB-002');
+    ABSInventParametersEventHandler::loadCheckCodeToggle(sender, 'ABSCheckCodePB003Enabled', 'PB-003');
+    ABSInventParametersEventHandler::loadCheckCodeToggle(sender, 'ABSCheckCodePO001Enabled', 'PO-001');
+    ABSInventParametersEventHandler::loadCheckCodeToggle(sender, 'ABSCheckCodePO002Enabled', 'PO-002');
+    ABSInventParametersEventHandler::loadCheckCodeToggle(sender, 'ABSCheckCodePO003Enabled', 'PO-003');
+    ABSInventParametersEventHandler::loadCheckCodeToggle(sender, 'ABSCheckCodePO004Enabled', 'PO-004');
+    ABSInventParametersEventHandler::loadCheckCodeToggle(sender, 'ABSCheckCodePO005Enabled', 'PO-005');
+    ABSInventParametersEventHandler::loadCheckCodeToggle(sender, 'ABSCheckCodePO006Enabled', 'PO-006');
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>loadCheckCodeToggle</Name>
+        <Source><![CDATA[
+private static void loadCheckCodeToggle(xFormRun _formRun, str _controlName, ABSMRPCheckCode _checkCode)
+{
+    FormCheckBoxControl checkBoxControl = _formRun.design().controlName(_controlName) as FormCheckBoxControl;
+
+    if (checkBoxControl)
+    {
+        checkBoxControl.value(ABSMRPAssessmentCheckConfig::getEnabled(_checkCode));
+    }
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>saveCheckCodeToggle</Name>
+        <Source><![CDATA[
+private static void saveCheckCodeToggle(FormControl _sender, ABSMRPCheckCode _checkCode)
+{
+    FormCheckBoxControl checkBoxControl = _sender as FormCheckBoxControl;
+
+    if (checkBoxControl)
+    {
+        ABSMRPAssessmentCheckConfig::setEnabled(_checkCode, checkBoxControl.value() ? NoYes::Yes : NoYes::No);
+    }
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>ABSCheckCodePC001Enabled_OnModified</Name>
+        <Source><![CDATA[
+[FormControlEventHandler(formControlStr(InventParameters, ABSCheckCodePC001Enabled), FormControlEventType::Modified)]
+public static void ABSCheckCodePC001Enabled_OnModified(FormControl sender, FormControlEventArgs e)
+{
+    ABSInventParametersEventHandler::saveCheckCodeToggle(sender, 'PC-001');
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>ABSCheckCodePC002Enabled_OnModified</Name>
+        <Source><![CDATA[
+[FormControlEventHandler(formControlStr(InventParameters, ABSCheckCodePC002Enabled), FormControlEventType::Modified)]
+public static void ABSCheckCodePC002Enabled_OnModified(FormControl sender, FormControlEventArgs e)
+{
+    ABSInventParametersEventHandler::saveCheckCodeToggle(sender, 'PC-002');
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>ABSCheckCodePC003Enabled_OnModified</Name>
+        <Source><![CDATA[
+[FormControlEventHandler(formControlStr(InventParameters, ABSCheckCodePC003Enabled), FormControlEventType::Modified)]
+public static void ABSCheckCodePC003Enabled_OnModified(FormControl sender, FormControlEventArgs e)
+{
+    ABSInventParametersEventHandler::saveCheckCodeToggle(sender, 'PC-003');
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>ABSCheckCodePC005Enabled_OnModified</Name>
+        <Source><![CDATA[
+[FormControlEventHandler(formControlStr(InventParameters, ABSCheckCodePC005Enabled), FormControlEventType::Modified)]
+public static void ABSCheckCodePC005Enabled_OnModified(FormControl sender, FormControlEventArgs e)
+{
+    ABSInventParametersEventHandler::saveCheckCodeToggle(sender, 'PC-005');
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>ABSCheckCodeDQ001Enabled_OnModified</Name>
+        <Source><![CDATA[
+[FormControlEventHandler(formControlStr(InventParameters, ABSCheckCodeDQ001Enabled), FormControlEventType::Modified)]
+public static void ABSCheckCodeDQ001Enabled_OnModified(FormControl sender, FormControlEventArgs e)
+{
+    ABSInventParametersEventHandler::saveCheckCodeToggle(sender, 'DQ-001');
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>ABSCheckCodeDQ002Enabled_OnModified</Name>
+        <Source><![CDATA[
+[FormControlEventHandler(formControlStr(InventParameters, ABSCheckCodeDQ002Enabled), FormControlEventType::Modified)]
+public static void ABSCheckCodeDQ002Enabled_OnModified(FormControl sender, FormControlEventArgs e)
+{
+    ABSInventParametersEventHandler::saveCheckCodeToggle(sender, 'DQ-002');
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>ABSCheckCodeDQ004Enabled_OnModified</Name>
+        <Source><![CDATA[
+[FormControlEventHandler(formControlStr(InventParameters, ABSCheckCodeDQ004Enabled), FormControlEventType::Modified)]
+public static void ABSCheckCodeDQ004Enabled_OnModified(FormControl sender, FormControlEventArgs e)
+{
+    ABSInventParametersEventHandler::saveCheckCodeToggle(sender, 'DQ-004');
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>ABSCheckCodeDQ005Enabled_OnModified</Name>
+        <Source><![CDATA[
+[FormControlEventHandler(formControlStr(InventParameters, ABSCheckCodeDQ005Enabled), FormControlEventType::Modified)]
+public static void ABSCheckCodeDQ005Enabled_OnModified(FormControl sender, FormControlEventArgs e)
+{
+    ABSInventParametersEventHandler::saveCheckCodeToggle(sender, 'DQ-005');
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>ABSCheckCodeDQ006Enabled_OnModified</Name>
+        <Source><![CDATA[
+[FormControlEventHandler(formControlStr(InventParameters, ABSCheckCodeDQ006Enabled), FormControlEventType::Modified)]
+public static void ABSCheckCodeDQ006Enabled_OnModified(FormControl sender, FormControlEventArgs e)
+{
+    ABSInventParametersEventHandler::saveCheckCodeToggle(sender, 'DQ-006');
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>ABSCheckCodeDQ007Enabled_OnModified</Name>
+        <Source><![CDATA[
+[FormControlEventHandler(formControlStr(InventParameters, ABSCheckCodeDQ007Enabled), FormControlEventType::Modified)]
+public static void ABSCheckCodeDQ007Enabled_OnModified(FormControl sender, FormControlEventArgs e)
+{
+    ABSInventParametersEventHandler::saveCheckCodeToggle(sender, 'DQ-007');
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>ABSCheckCodeDQ008Enabled_OnModified</Name>
+        <Source><![CDATA[
+[FormControlEventHandler(formControlStr(InventParameters, ABSCheckCodeDQ008Enabled), FormControlEventType::Modified)]
+public static void ABSCheckCodeDQ008Enabled_OnModified(FormControl sender, FormControlEventArgs e)
+{
+    ABSInventParametersEventHandler::saveCheckCodeToggle(sender, 'DQ-008');
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>ABSCheckCodeDQ009Enabled_OnModified</Name>
+        <Source><![CDATA[
+[FormControlEventHandler(formControlStr(InventParameters, ABSCheckCodeDQ009Enabled), FormControlEventType::Modified)]
+public static void ABSCheckCodeDQ009Enabled_OnModified(FormControl sender, FormControlEventArgs e)
+{
+    ABSInventParametersEventHandler::saveCheckCodeToggle(sender, 'DQ-009');
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>ABSCheckCodeSS001Enabled_OnModified</Name>
+        <Source><![CDATA[
+[FormControlEventHandler(formControlStr(InventParameters, ABSCheckCodeSS001Enabled), FormControlEventType::Modified)]
+public static void ABSCheckCodeSS001Enabled_OnModified(FormControl sender, FormControlEventArgs e)
+{
+    ABSInventParametersEventHandler::saveCheckCodeToggle(sender, 'SS-001');
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>ABSCheckCodeSS002Enabled_OnModified</Name>
+        <Source><![CDATA[
+[FormControlEventHandler(formControlStr(InventParameters, ABSCheckCodeSS002Enabled), FormControlEventType::Modified)]
+public static void ABSCheckCodeSS002Enabled_OnModified(FormControl sender, FormControlEventArgs e)
+{
+    ABSInventParametersEventHandler::saveCheckCodeToggle(sender, 'SS-002');
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>ABSCheckCodeSS003Enabled_OnModified</Name>
+        <Source><![CDATA[
+[FormControlEventHandler(formControlStr(InventParameters, ABSCheckCodeSS003Enabled), FormControlEventType::Modified)]
+public static void ABSCheckCodeSS003Enabled_OnModified(FormControl sender, FormControlEventArgs e)
+{
+    ABSInventParametersEventHandler::saveCheckCodeToggle(sender, 'SS-003');
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>ABSCheckCodeSS004Enabled_OnModified</Name>
+        <Source><![CDATA[
+[FormControlEventHandler(formControlStr(InventParameters, ABSCheckCodeSS004Enabled), FormControlEventType::Modified)]
+public static void ABSCheckCodeSS004Enabled_OnModified(FormControl sender, FormControlEventArgs e)
+{
+    ABSInventParametersEventHandler::saveCheckCodeToggle(sender, 'SS-004');
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>ABSCheckCodeCV001Enabled_OnModified</Name>
+        <Source><![CDATA[
+[FormControlEventHandler(formControlStr(InventParameters, ABSCheckCodeCV001Enabled), FormControlEventType::Modified)]
+public static void ABSCheckCodeCV001Enabled_OnModified(FormControl sender, FormControlEventArgs e)
+{
+    ABSInventParametersEventHandler::saveCheckCodeToggle(sender, 'CV-001');
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>ABSCheckCodeCV002Enabled_OnModified</Name>
+        <Source><![CDATA[
+[FormControlEventHandler(formControlStr(InventParameters, ABSCheckCodeCV002Enabled), FormControlEventType::Modified)]
+public static void ABSCheckCodeCV002Enabled_OnModified(FormControl sender, FormControlEventArgs e)
+{
+    ABSInventParametersEventHandler::saveCheckCodeToggle(sender, 'CV-002');
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>ABSCheckCodeCV003Enabled_OnModified</Name>
+        <Source><![CDATA[
+[FormControlEventHandler(formControlStr(InventParameters, ABSCheckCodeCV003Enabled), FormControlEventType::Modified)]
+public static void ABSCheckCodeCV003Enabled_OnModified(FormControl sender, FormControlEventArgs e)
+{
+    ABSInventParametersEventHandler::saveCheckCodeToggle(sender, 'CV-003');
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>ABSCheckCodeCV004Enabled_OnModified</Name>
+        <Source><![CDATA[
+[FormControlEventHandler(formControlStr(InventParameters, ABSCheckCodeCV004Enabled), FormControlEventType::Modified)]
+public static void ABSCheckCodeCV004Enabled_OnModified(FormControl sender, FormControlEventArgs e)
+{
+    ABSInventParametersEventHandler::saveCheckCodeToggle(sender, 'CV-004');
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>ABSCheckCodePR001Enabled_OnModified</Name>
+        <Source><![CDATA[
+[FormControlEventHandler(formControlStr(InventParameters, ABSCheckCodePR001Enabled), FormControlEventType::Modified)]
+public static void ABSCheckCodePR001Enabled_OnModified(FormControl sender, FormControlEventArgs e)
+{
+    ABSInventParametersEventHandler::saveCheckCodeToggle(sender, 'PR-001');
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>ABSCheckCodePR002Enabled_OnModified</Name>
+        <Source><![CDATA[
+[FormControlEventHandler(formControlStr(InventParameters, ABSCheckCodePR002Enabled), FormControlEventType::Modified)]
+public static void ABSCheckCodePR002Enabled_OnModified(FormControl sender, FormControlEventArgs e)
+{
+    ABSInventParametersEventHandler::saveCheckCodeToggle(sender, 'PR-002');
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>ABSCheckCodePR003Enabled_OnModified</Name>
+        <Source><![CDATA[
+[FormControlEventHandler(formControlStr(InventParameters, ABSCheckCodePR003Enabled), FormControlEventType::Modified)]
+public static void ABSCheckCodePR003Enabled_OnModified(FormControl sender, FormControlEventArgs e)
+{
+    ABSInventParametersEventHandler::saveCheckCodeToggle(sender, 'PR-003');
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>ABSCheckCodeFW001Enabled_OnModified</Name>
+        <Source><![CDATA[
+[FormControlEventHandler(formControlStr(InventParameters, ABSCheckCodeFW001Enabled), FormControlEventType::Modified)]
+public static void ABSCheckCodeFW001Enabled_OnModified(FormControl sender, FormControlEventArgs e)
+{
+    ABSInventParametersEventHandler::saveCheckCodeToggle(sender, 'FW-001');
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>ABSCheckCodeFW002Enabled_OnModified</Name>
+        <Source><![CDATA[
+[FormControlEventHandler(formControlStr(InventParameters, ABSCheckCodeFW002Enabled), FormControlEventType::Modified)]
+public static void ABSCheckCodeFW002Enabled_OnModified(FormControl sender, FormControlEventArgs e)
+{
+    ABSInventParametersEventHandler::saveCheckCodeToggle(sender, 'FW-002');
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>ABSCheckCodeFW003Enabled_OnModified</Name>
+        <Source><![CDATA[
+[FormControlEventHandler(formControlStr(InventParameters, ABSCheckCodeFW003Enabled), FormControlEventType::Modified)]
+public static void ABSCheckCodeFW003Enabled_OnModified(FormControl sender, FormControlEventArgs e)
+{
+    ABSInventParametersEventHandler::saveCheckCodeToggle(sender, 'FW-003');
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>ABSCheckCodeBR001Enabled_OnModified</Name>
+        <Source><![CDATA[
+[FormControlEventHandler(formControlStr(InventParameters, ABSCheckCodeBR001Enabled), FormControlEventType::Modified)]
+public static void ABSCheckCodeBR001Enabled_OnModified(FormControl sender, FormControlEventArgs e)
+{
+    ABSInventParametersEventHandler::saveCheckCodeToggle(sender, 'BR-001');
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>ABSCheckCodeBR002Enabled_OnModified</Name>
+        <Source><![CDATA[
+[FormControlEventHandler(formControlStr(InventParameters, ABSCheckCodeBR002Enabled), FormControlEventType::Modified)]
+public static void ABSCheckCodeBR002Enabled_OnModified(FormControl sender, FormControlEventArgs e)
+{
+    ABSInventParametersEventHandler::saveCheckCodeToggle(sender, 'BR-002');
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>ABSCheckCodeBR003Enabled_OnModified</Name>
+        <Source><![CDATA[
+[FormControlEventHandler(formControlStr(InventParameters, ABSCheckCodeBR003Enabled), FormControlEventType::Modified)]
+public static void ABSCheckCodeBR003Enabled_OnModified(FormControl sender, FormControlEventArgs e)
+{
+    ABSInventParametersEventHandler::saveCheckCodeToggle(sender, 'BR-003');
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>ABSCheckCodePB001Enabled_OnModified</Name>
+        <Source><![CDATA[
+[FormControlEventHandler(formControlStr(InventParameters, ABSCheckCodePB001Enabled), FormControlEventType::Modified)]
+public static void ABSCheckCodePB001Enabled_OnModified(FormControl sender, FormControlEventArgs e)
+{
+    ABSInventParametersEventHandler::saveCheckCodeToggle(sender, 'PB-001');
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>ABSCheckCodePB002Enabled_OnModified</Name>
+        <Source><![CDATA[
+[FormControlEventHandler(formControlStr(InventParameters, ABSCheckCodePB002Enabled), FormControlEventType::Modified)]
+public static void ABSCheckCodePB002Enabled_OnModified(FormControl sender, FormControlEventArgs e)
+{
+    ABSInventParametersEventHandler::saveCheckCodeToggle(sender, 'PB-002');
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>ABSCheckCodePB003Enabled_OnModified</Name>
+        <Source><![CDATA[
+[FormControlEventHandler(formControlStr(InventParameters, ABSCheckCodePB003Enabled), FormControlEventType::Modified)]
+public static void ABSCheckCodePB003Enabled_OnModified(FormControl sender, FormControlEventArgs e)
+{
+    ABSInventParametersEventHandler::saveCheckCodeToggle(sender, 'PB-003');
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>ABSCheckCodePO001Enabled_OnModified</Name>
+        <Source><![CDATA[
+[FormControlEventHandler(formControlStr(InventParameters, ABSCheckCodePO001Enabled), FormControlEventType::Modified)]
+public static void ABSCheckCodePO001Enabled_OnModified(FormControl sender, FormControlEventArgs e)
+{
+    ABSInventParametersEventHandler::saveCheckCodeToggle(sender, 'PO-001');
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>ABSCheckCodePO002Enabled_OnModified</Name>
+        <Source><![CDATA[
+[FormControlEventHandler(formControlStr(InventParameters, ABSCheckCodePO002Enabled), FormControlEventType::Modified)]
+public static void ABSCheckCodePO002Enabled_OnModified(FormControl sender, FormControlEventArgs e)
+{
+    ABSInventParametersEventHandler::saveCheckCodeToggle(sender, 'PO-002');
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>ABSCheckCodePO003Enabled_OnModified</Name>
+        <Source><![CDATA[
+[FormControlEventHandler(formControlStr(InventParameters, ABSCheckCodePO003Enabled), FormControlEventType::Modified)]
+public static void ABSCheckCodePO003Enabled_OnModified(FormControl sender, FormControlEventArgs e)
+{
+    ABSInventParametersEventHandler::saveCheckCodeToggle(sender, 'PO-003');
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>ABSCheckCodePO004Enabled_OnModified</Name>
+        <Source><![CDATA[
+[FormControlEventHandler(formControlStr(InventParameters, ABSCheckCodePO004Enabled), FormControlEventType::Modified)]
+public static void ABSCheckCodePO004Enabled_OnModified(FormControl sender, FormControlEventArgs e)
+{
+    ABSInventParametersEventHandler::saveCheckCodeToggle(sender, 'PO-004');
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>ABSCheckCodePO005Enabled_OnModified</Name>
+        <Source><![CDATA[
+[FormControlEventHandler(formControlStr(InventParameters, ABSCheckCodePO005Enabled), FormControlEventType::Modified)]
+public static void ABSCheckCodePO005Enabled_OnModified(FormControl sender, FormControlEventArgs e)
+{
+    ABSInventParametersEventHandler::saveCheckCodeToggle(sender, 'PO-005');
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>ABSCheckCodePO006Enabled_OnModified</Name>
+        <Source><![CDATA[
+[FormControlEventHandler(formControlStr(InventParameters, ABSCheckCodePO006Enabled), FormControlEventType::Modified)]
+public static void ABSCheckCodePO006Enabled_OnModified(FormControl sender, FormControlEventArgs e)
+{
+    ABSInventParametersEventHandler::saveCheckCodeToggle(sender, 'PO-006');
+}
+        ]]></Source>
+      </Method>
+    </Methods>
+  </SourceCode>
+</AxClass>
+

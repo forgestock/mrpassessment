@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>ABSABCXYZContract</Name>
+  <SourceCode>
+    <Declaration><![CDATA[
+[DataContractAttribute]
+class ABSABCXYZContract
+{
+    InventSiteId    siteId;
+    TransDate       fromDate;
+    TransDate       toDate;
+    boolean         deleteAndRegenerate;
+}
+    ]]></Declaration>
+    <Methods>
+      <Method>
+        <Name>parmSiteId</Name>
+        <Source><![CDATA[
+[DataMemberAttribute('SiteId'),
+ SysOperationLabelAttribute(literalStr("@ABS:Site")),
+ SysOperationDisplayOrderAttribute('1')]
+public InventSiteId parmSiteId(InventSiteId _siteId = siteId)
+{
+    siteId = _siteId;
+    return siteId;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>parmFromDate</Name>
+        <Source><![CDATA[
+[DataMemberAttribute('FromDate'),
+ SysOperationLabelAttribute(literalStr("@ABS:FromDate")),
+ SysOperationDisplayOrderAttribute('2')]
+public TransDate parmFromDate(TransDate _fromDate = fromDate)
+{
+    fromDate = _fromDate;
+    return fromDate;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>parmToDate</Name>
+        <Source><![CDATA[
+[DataMemberAttribute('ToDate'),
+ SysOperationLabelAttribute(literalStr("@ABS:ToDate")),
+ SysOperationDisplayOrderAttribute('3')]
+public TransDate parmToDate(TransDate _toDate = toDate)
+{
+    toDate = _toDate;
+    return toDate;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>parmDeleteAndRegenerate</Name>
+        <Source><![CDATA[
+[DataMemberAttribute('DeleteAndRegenerate'),
+ SysOperationLabelAttribute(literalStr("@ABS:DeleteAndRegenerate")),
+ SysOperationDisplayOrderAttribute('4')]
+public boolean parmDeleteAndRegenerate(boolean _v = deleteAndRegenerate)
+{
+    deleteAndRegenerate = _v;
+    return deleteAndRegenerate;
+}
+        ]]></Source>
+      </Method>
+    </Methods>
+  </SourceCode>
+</AxClass>

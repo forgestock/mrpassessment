@@ -1,0 +1,511 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>ABSMRPExceptionEngine</Name>
+  <SourceCode>
+    <Declaration><![CDATA[
+/// <summary>
+/// Detects MRP exceptions for a given plan and site, enriched with ABC/XYZ context.
+/// Clears Open exceptions for the plan/site then regenerates from current MRP data.
+/// </summary>
+class ABSMRPExceptionEngine
+{
+    ReqPlanId       planId;
+    InventSiteId    siteId;
+    RefRecId        planVersionRecId;
+}
+    ]]></Declaration>
+    <Methods>
+      <Method>
+        <Name>parmPlanId</Name>
+        <Source><![CDATA[
+public ReqPlanId parmPlanId(ReqPlanId _planId = planId)
+{
+    planId = _planId;
+    return planId;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>parmSiteId</Name>
+        <Source><![CDATA[
+public InventSiteId parmSiteId(InventSiteId _siteId = siteId)
+{
+    siteId = _siteId;
+    return siteId;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>newParameters</Name>
+        <Source><![CDATA[
+public static ABSMRPExceptionEngine newParameters(ReqPlanId _planId, InventSiteId _siteId)
+{
+    ABSMRPExceptionEngine engine = new ABSMRPExceptionEngine();
+
+    engine.parmPlanId(_planId);
+    engine.parmSiteId(_siteId);
+
+    return engine;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>validate</Name>
+        <Source><![CDATA[
+public boolean validate()
+{
+    boolean ret = true;
+
+    if (!planId)
+    {
+        ret = checkFailed("@ABS:MRPEngineValidatePlanId");
+    }
+    if (!siteId)
+    {
+        ret = checkFailed("@ABS:MRPEngineValidateSiteId");
+    }
+
+    return ret;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>run</Name>
+        <Source><![CDATA[
+public void run()
+{
+    ReqPlanVersion reqPlanVersion;
+
+    if (!this.validate())
+    {
+        return;
+    }
+
+    // ReqPO records are keyed by ReqPlanVersion.RecId, not directly by plan ID.
+    select firstonly RecId from reqPlanVersion
+        where reqPlanVersion.ReqPlanId         == planId
+           && reqPlanVersion.ReqPlanDataAreaId == curExt()
+           && reqPlanVersion.Active            == NoYes::Yes;
+
+    if (!reqPlanVersion.RecId)
+    {
+        checkFailed("@ABS:MRPEngineNoPlanVersion");
+        return;
+    }
+
+    planVersionRecId = reqPlanVersion.RecId;
+
+    ttsbegin;
+
+    this.clearOpenExceptions();
+    this.detectOverdueOrders();
+    this.detectSafetyStockBreach();
+    this.detectLeadTimeViolations();
+    // K2: excess inventory is now owned by the free Excess & Obsolete cockpit
+    // (valued, aged, with dispositions). The ExcessInventory exception type is no
+    // longer generated here; its enum value is retained for historical rows.
+    this.detectCapacityOverload();
+
+    ttscommit;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>clearOpenExceptions</Name>
+        <Source><![CDATA[
+private void clearOpenExceptions()
+{
+    ABSMRPException exceptionRec;
+
+    delete_from exceptionRec
+        where exceptionRec.PlanId  == planId
+           && exceptionRec.SiteId  == siteId
+           && exceptionRec.Status  == ABSMRPExceptionStatus::Open;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>calcSeverity</Name>
+        <Source><![CDATA[
+public ABSMRPExceptionSeverity calcSeverity(
+    ABSMRPExceptionType     _type,
+    int                     _days,
+    ABSABCClassification    _abcClass)
+{
+    switch (_type)
+    {
+        case ABSMRPExceptionType::OverdueOrder:
+            if (_days > ABSMRPExceptionPolicy::overdueHighDays())   { return ABSMRPExceptionSeverity::High; }
+            if (_days > ABSMRPExceptionPolicy::overdueMediumDays()) { return ABSMRPExceptionSeverity::Medium; }
+            return ABSMRPExceptionSeverity::Low;
+
+        case ABSMRPExceptionType::SafetyStockBreach:
+        case ABSMRPExceptionType::LeadTimeViolation:
+            if (_abcClass == ABSABCClassification::A) { return ABSMRPExceptionSeverity::High; }
+            if (_abcClass == ABSABCClassification::B) { return ABSMRPExceptionSeverity::Medium; }
+            return ABSMRPExceptionSeverity::Low;
+
+        case ABSMRPExceptionType::ExcessInventory:
+            // Excess stock on A-class items ties up the most capital — treat as High (Hoppe ch.3.4.1 Fig 3.24).
+            if (_abcClass == ABSABCClassification::A) { return ABSMRPExceptionSeverity::High; }
+            if (_abcClass == ABSABCClassification::B) { return ABSMRPExceptionSeverity::Medium; }
+            return ABSMRPExceptionSeverity::Low;
+
+        case ABSMRPExceptionType::CapacityOverload:
+            // R3: "Oversized order" (an order > N months of demand) is a lot-sizing/overstock
+            // risk. Score it through the same ABC-blended logic as the other types instead of
+            // an unconditional High, so a C-class oversized order doesn't outrank an A-class one.
+            if (_abcClass == ABSABCClassification::A) { return ABSMRPExceptionSeverity::High; }
+            if (_abcClass == ABSABCClassification::B) { return ABSMRPExceptionSeverity::Medium; }
+            return ABSMRPExceptionSeverity::Low;
+
+        default:
+            return ABSMRPExceptionSeverity::Low;
+    }
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>calcPriorityScore</Name>
+        <Source><![CDATA[
+public real calcPriorityScore(ABSMRPExceptionSeverity _severity, ABSABCClassification _abcClass, ABSXYZClassification _xyzClass)
+{
+    int severityScore;
+    int abcScore;
+    int xyzScore;
+
+    switch (_severity)
+    {
+        case ABSMRPExceptionSeverity::High:   severityScore = 3; break;
+        case ABSMRPExceptionSeverity::Medium: severityScore = 2; break;
+        default:                              severityScore = 1; break;
+    }
+
+    switch (_abcClass)
+    {
+        case ABSABCClassification::A: abcScore = 3; break;
+        case ABSABCClassification::B: abcScore = 2; break;
+        default:                      abcScore = 1; break;
+    }
+
+    // Z items require the most manual control overhead (Hoppe ch.3.4.1 Fig 3.24).
+    // AZ items surface highest — unpredictable high-value stock needs planner attention.
+    switch (_xyzClass)
+    {
+        case ABSXYZClassification::Z: xyzScore = 3; break;
+        case ABSXYZClassification::Y: xyzScore = 2; break;
+        default:                      xyzScore = 1; break;
+    }
+
+    return severityScore * abcScore * xyzScore;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>writeException</Name>
+        <Source><![CDATA[
+private void writeException(
+    ItemId                  _itemId,
+    ABSMRPExceptionType     _type,
+    TransDate               _requirementDate,
+    InventQty               _exceptionQty,
+    int                     _exceptionDays,
+    ABSMRPRecommendation    _suggestedAction,
+    RefRecId                _reqPORecId,
+    ABSABCClassification    _abcClass,
+    ABSXYZClassification    _xyzClass)
+{
+    ABSMRPException         exceptionRec;
+    ABSMRPExceptionSeverity severity = this.calcSeverity(_type, _exceptionDays, _abcClass);
+
+    // R1 + E1: the alternate key (PlanId+ItemId+SiteId+ExceptionType+ReqPORecId+RequirementDate)
+    // may already exist from a prior run.
+    //  - clearOpenExceptions() already removed Open rows, so an existing row here is one a
+    //    planner has Confirmed or Dismissed: preserve their status/audit and skip (re-inserting
+    //    the key would raise DuplicateKeyException and roll back the whole detection).
+    //  - BUT if for any reason an Open row still carries this key, UPDATE its quantitative
+    //    fields (days, qty, severity, priority) so a worsening condition is reflected rather
+    //    than frozen at the first-detected values.
+    select firstonly forUpdate exceptionRec
+        where exceptionRec.PlanId          == planId
+           && exceptionRec.ItemId          == _itemId
+           && exceptionRec.SiteId          == siteId
+           && exceptionRec.ExceptionType   == _type
+           && exceptionRec.ReqPORecId      == _reqPORecId
+           && exceptionRec.RequirementDate == _requirementDate;
+
+    if (exceptionRec.RecId)
+    {
+        if (exceptionRec.Status == ABSMRPExceptionStatus::Open)
+        {
+            exceptionRec.Severity        = severity;
+            exceptionRec.ExceptionQty    = _exceptionQty;
+            exceptionRec.ExceptionDays   = _exceptionDays;
+            exceptionRec.SuggestedAction = _suggestedAction;
+            exceptionRec.ABCClass        = _abcClass;
+            exceptionRec.XYZClass        = _xyzClass;
+            exceptionRec.PriorityScore   = this.calcPriorityScore(severity, _abcClass, _xyzClass);
+            exceptionRec.update();
+        }
+        // Confirmed/Dismissed: leave the planner's row untouched.
+        return;
+    }
+
+    exceptionRec.clear();
+    exceptionRec.PlanId          = planId;
+    exceptionRec.ItemId          = _itemId;
+    exceptionRec.SiteId          = siteId;
+    exceptionRec.ReqPORecId      = _reqPORecId;
+    exceptionRec.ExceptionType   = _type;
+    exceptionRec.TypeName        = SysDictEnum::newName(enumStr(ABSMRPExceptionType)).value2Label(enum2int(_type));
+    exceptionRec.ExceptionCount  = 1;
+    exceptionRec.Severity        = severity;
+    exceptionRec.RequirementDate = _requirementDate;
+    exceptionRec.ExceptionQty    = _exceptionQty;
+    exceptionRec.ExceptionDays   = _exceptionDays;
+    exceptionRec.SuggestedAction = _suggestedAction;
+    exceptionRec.ABCClass        = _abcClass;
+    exceptionRec.XYZClass        = _xyzClass;
+    exceptionRec.PriorityScore   = this.calcPriorityScore(severity, _abcClass, _xyzClass);
+    exceptionRec.insert();
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>exceptionExists</Name>
+        <Source><![CDATA[
+// Returns true when a row already exists for the unique alternate key
+// (PlanId+ItemId+SiteId+ExceptionType+ReqPORecId+RequirementDate), regardless of status.
+// Retained as a helper; writeException() now does its own forUpdate lookup so it can
+// update an Open row's quantitative fields (R1) rather than only skip on existence.
+private boolean exceptionExists(
+    ItemId              _itemId,
+    ABSMRPExceptionType _type,
+    TransDate           _requirementDate,
+    RefRecId            _reqPORecId)
+{
+    ABSMRPException exceptionRec;
+
+    select firstonly RecId from exceptionRec
+        where exceptionRec.PlanId          == planId
+           && exceptionRec.ItemId          == _itemId
+           && exceptionRec.SiteId          == siteId
+           && exceptionRec.ExceptionType   == _type
+           && exceptionRec.ReqPORecId      == _reqPORecId
+           && exceptionRec.RequirementDate == _requirementDate;
+
+    return exceptionRec.RecId != 0;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>detectOverdueOrders</Name>
+        <Source><![CDATA[
+private void detectOverdueOrders()
+{
+    ReqPO           reqPO;
+    InventDim       inventDim;
+    ABSItemABCXYZ   abcxyz;
+    int             daysLate;
+
+    while select reqPO
+        where reqPO.PlanVersion == planVersionRecId
+           && reqPO.RefType     == ReqRefType::Purch
+           && reqPO.ReqDate     <  DateTimeUtil::getToday(DateTimeUtil::getUserPreferredTimeZone())
+           && reqPO.Qty         >  0
+        join inventDim
+            where inventDim.inventDimId  == reqPO.CovInventDimId
+               && inventDim.InventSiteId == siteId
+    {
+        daysLate = DateTimeUtil::getToday(DateTimeUtil::getUserPreferredTimeZone()) - reqPO.ReqDate;
+
+        select firstonly abcxyz
+            where abcxyz.ItemId == reqPO.ItemId
+               && abcxyz.SiteId == siteId;
+
+        this.writeException(
+            reqPO.ItemId,
+            ABSMRPExceptionType::OverdueOrder,
+            reqPO.ReqDate,
+            reqPO.Qty,
+            daysLate,
+            "@ABS:MRPSuggestedExpeditePO",
+            reqPO.RecId,
+            abcxyz.RecId ? abcxyz.ABCClass : ABSABCClassification::C,
+            abcxyz.RecId ? abcxyz.XYZClass : ABSXYZClassification::Z);
+    }
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>detectSafetyStockBreach</Name>
+        <Source><![CDATA[
+private void detectSafetyStockBreach()
+{
+    ABSItemABCXYZ   abcxyz;
+    InventSum       inventSum;
+    InventDim       inventDim;
+    ReqItemTable    reqItemTable;
+    InventDim       covDim;
+    real            physicalTotal;
+    real            minTotal;
+    InventQty       shortage;
+
+    while select abcxyz
+        where abcxyz.SiteId == siteId
+    {
+        // E3: MinInventOnhand = safety stock from item coverage. Aggregate across the
+        // coverage records whose dimension resolves to THIS site (CovInventDimId -> site),
+        // rather than picking an arbitrary firstonly row that may belong to another site.
+        select sum(MinInventOnhand) from reqItemTable
+            where reqItemTable.ItemId == abcxyz.ItemId
+            join covDim
+                where covDim.InventDimId  == reqItemTable.CovInventDimId
+                   && covDim.InventSiteId == siteId;
+
+        minTotal = reqItemTable.MinInventOnhand;
+
+        if (minTotal <= 0)
+        {
+            continue;
+        }
+
+        // Sum PhysicalInvent across all dimension combinations for this item/site.
+        select sum(PhysicalInvent) from inventSum
+            where inventSum.ItemId == abcxyz.ItemId
+            join inventDim
+                where inventDim.inventDimId  == inventSum.InventDimId
+                   && inventDim.InventSiteId == siteId;
+
+        physicalTotal = inventSum.PhysicalInvent;
+
+        if (physicalTotal < minTotal)
+        {
+            shortage = minTotal - physicalTotal;
+
+            this.writeException(
+                abcxyz.ItemId,
+                ABSMRPExceptionType::SafetyStockBreach,
+                DateTimeUtil::getToday(DateTimeUtil::getUserPreferredTimeZone()),
+                shortage,
+                0,
+                "@ABS:MRPSuggestedRaisePO",
+                0,
+                abcxyz.ABCClass,
+                abcxyz.XYZClass);
+        }
+    }
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>detectLeadTimeViolations</Name>
+        <Source><![CDATA[
+private void detectLeadTimeViolations()
+{
+    ReqPO           reqPO;
+    InventDim       inventDim;
+    ReqItemTable    reqItemTable;
+    InventDim       covDim;
+    ABSItemABCXYZ   abcxyz;
+    int             daysRemaining;
+    int             leadTimeDays;
+    int             shortfall;
+
+    while select reqPO
+        where reqPO.PlanVersion == planVersionRecId
+           && reqPO.RefType     == ReqRefType::Purch
+           && reqPO.Qty         >  0
+        join inventDim
+            where inventDim.inventDimId  == reqPO.CovInventDimId
+               && inventDim.InventSiteId == siteId
+    {
+        // E2: LeadTimePurchase is only binding when its per-item override is active;
+        // otherwise the value is not in effect. Scope the coverage lookup to THIS site
+        // (CovInventDimId -> site) so another site's override is not applied here.
+        select firstonly reqItemTable
+            where reqItemTable.ItemId                == reqPO.ItemId
+               && reqItemTable.LeadTimePurchaseActive == NoYes::Yes
+               && reqItemTable.LeadTimePurchase       >  0
+            join covDim
+                where covDim.InventDimId  == reqItemTable.CovInventDimId
+                   && covDim.InventSiteId == siteId;
+
+        if (!reqItemTable.RecId)
+        {
+            continue;
+        }
+
+        daysRemaining = reqPO.ReqDate - DateTimeUtil::getToday(DateTimeUtil::getUserPreferredTimeZone());
+        leadTimeDays  = reqItemTable.LeadTimePurchase;
+
+        if (daysRemaining >= 0 && daysRemaining < leadTimeDays)
+        {
+            shortfall = leadTimeDays - daysRemaining;
+
+            select firstonly abcxyz
+                where abcxyz.ItemId == reqPO.ItemId
+                   && abcxyz.SiteId == siteId;
+
+            this.writeException(
+                reqPO.ItemId,
+                ABSMRPExceptionType::LeadTimeViolation,
+                reqPO.ReqDate,
+                reqPO.Qty,
+                shortfall,
+                "@ABS:MRPSuggestedPlaceOrder",
+                reqPO.RecId,
+                abcxyz.RecId ? abcxyz.ABCClass : ABSABCClassification::C,
+                abcxyz.RecId ? abcxyz.XYZClass : ABSXYZClassification::Z);
+        }
+    }
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>detectCapacityOverload</Name>
+        <Source><![CDATA[
+// Detects planned orders where a single order quantity exceeds a configurable number of
+// months of average demand (R4: ABSMRPExceptionPolicy::oversizedOrderMonths, default 3),
+// tying up working capital and straining storage. A split order is recommended.
+private void detectCapacityOverload()
+{
+    ReqPO           reqPO;
+    InventDim       inventDim;
+    ABSItemABCXYZ   abcxyz;
+    int             oversizedMonths = ABSMRPExceptionPolicy::oversizedOrderMonths();
+
+    while select reqPO
+        where reqPO.PlanVersion == planVersionRecId
+           && reqPO.RefType     == ReqRefType::Purch
+           && reqPO.Qty         >  0
+        join inventDim
+            where inventDim.inventDimId  == reqPO.CovInventDimId
+               && inventDim.InventSiteId == siteId
+    {
+        select firstonly abcxyz
+            where abcxyz.ItemId == reqPO.ItemId
+               && abcxyz.SiteId == siteId;
+
+        // Flag when a single planned order covers more than N months of average demand.
+        if (abcxyz.RecId && abcxyz.DemandMean > 0
+            && reqPO.Qty > (abcxyz.DemandMean * oversizedMonths))
+        {
+            this.writeException(
+                reqPO.ItemId,
+                ABSMRPExceptionType::CapacityOverload,
+                reqPO.ReqDate,
+                reqPO.Qty,
+                0,
+                "@ABS:MRPSuggestedSplitOrder",
+                reqPO.RecId,
+                abcxyz.ABCClass,
+                abcxyz.XYZClass);
+        }
+    }
+}
+        ]]></Source>
+      </Method>
+    </Methods>
+  </SourceCode>
+</AxClass>

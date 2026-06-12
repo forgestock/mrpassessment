@@ -1,0 +1,189 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AxTable xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ABSMRPAssessmentDetail</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+public class ABSMRPAssessmentDetail extends common
+{
+}
+    
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>findByRunCheckItem</Name>
+				<Source><![CDATA[
+public static ABSMRPAssessmentDetail findByRunCheckItem(
+    ABSMRPAssessmentRunId _runId,
+    ABSMRPCheckCode       _checkCode,
+    ItemId                _itemId,
+    InventSiteId          _siteId,
+    boolean               _forUpdate = false)
+{
+    ABSMRPAssessmentDetail ret;
+
+    ret.selectForUpdate(_forUpdate);
+
+    select firstonly ret
+        where ret.RunId     == _runId
+           && ret.CheckCode == _checkCode
+           && ret.ItemId    == _itemId
+           && ret.SiteId    == _siteId;
+
+    return ret;
+}
+        
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+	<DeveloperDocumentation>@ABS:ABSMRPAssessmentDetailDeveloperDocumentation</DeveloperDocumentation>
+	<Label>@ABS:ABSMRPAssessmentDetail</Label>
+	<TableGroup>WorksheetLine</TableGroup>
+	<TitleField1>CheckCode</TitleField1>
+	<TitleField2>ItemId</TitleField2>
+	<ClusteredIndex>RunCheckItemSiteIdx</ClusteredIndex>
+	<DeleteActions />
+	<FieldGroups>
+		<AxTableFieldGroup>
+			<Name>AutoReport</Name>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>RunId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>CheckCode</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>ItemId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>SiteId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>ABCClass</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>XYZClass</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>PriorityScore</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>CompoundedRisk</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>DetailNote</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+	</FieldGroups>
+	<Fields>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>RunId</Name>
+			<ExtendedDataType>ABSMRPAssessmentRunId</ExtendedDataType>
+			<Mandatory>Yes</Mandatory>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>CheckCode</Name>
+			<ExtendedDataType>ABSMRPCheckCode</ExtendedDataType>
+			<Mandatory>Yes</Mandatory>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ItemId</Name>
+			<ExtendedDataType>ItemId</ExtendedDataType>
+			<Mandatory>Yes</Mandatory>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>SiteId</Name>
+			<ExtendedDataType>InventSiteId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldEnum">
+			<Name>ABCClass</Name>
+			<EnumType>ABSABCClassification</EnumType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldEnum">
+			<Name>XYZClass</Name>
+			<EnumType>ABSXYZClassification</EnumType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldInt">
+			<Name>PriorityScore</Name>
+			<Label>@ABS:PriorityScore</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldEnum">
+			<Name>CompoundedRisk</Name>
+			<EnumType>NoYes</EnumType>
+			<Label>@ABS:CompoundedRisk</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>DetailNote</Name>
+			<ExtendedDataType>Description</ExtendedDataType>
+			<Label>@ABS:DetailNote</Label>
+		</AxTableField>
+	</Fields>
+	<FullTextIndexes />
+	<Indexes>
+		<AxTableIndex>
+			<Name>RunCheckItemSiteIdx</Name>
+			<AllowDuplicates>Yes</AllowDuplicates>
+			<Fields>
+				<AxTableIndexField>
+					<DataField>RunId</DataField>
+				</AxTableIndexField>
+				<AxTableIndexField>
+					<DataField>CheckCode</DataField>
+				</AxTableIndexField>
+				<AxTableIndexField>
+					<DataField>ItemId</DataField>
+				</AxTableIndexField>
+				<AxTableIndexField>
+					<DataField>SiteId</DataField>
+				</AxTableIndexField>
+			</Fields>
+		</AxTableIndex>
+		<AxTableIndex>
+			<Name>RunCheckIdx</Name>
+			<AllowDuplicates>Yes</AllowDuplicates>
+			<Fields>
+				<AxTableIndexField>
+					<DataField>RunId</DataField>
+				</AxTableIndexField>
+				<AxTableIndexField>
+					<DataField>CheckCode</DataField>
+				</AxTableIndexField>
+			</Fields>
+		</AxTableIndex>
+	</Indexes>
+	<Mappings />
+	<Relations>
+		<AxTableRelation>
+			<Name>ABSMRPAssessmentResult</Name>
+			<Cardinality>ZeroMore</Cardinality>
+			<RelatedTable>ABSMRPAssessmentResult</RelatedTable>
+			<RelatedTableCardinality>ZeroOne</RelatedTableCardinality>
+			<Constraints>
+				<AxTableRelationConstraint xmlns=""
+					i:type="AxTableRelationConstraintField">
+					<Name>RunId</Name>
+					<Field>RunId</Field>
+					<RelatedField>RunId</RelatedField>
+				</AxTableRelationConstraint>
+				<AxTableRelationConstraint xmlns=""
+					i:type="AxTableRelationConstraintField">
+					<Name>CheckCode</Name>
+					<Field>CheckCode</Field>
+					<RelatedField>CheckCode</RelatedField>
+				</AxTableRelationConstraint>
+			</Constraints>
+		</AxTableRelation>
+	</Relations>
+	<StateMachines />
+</AxTable>

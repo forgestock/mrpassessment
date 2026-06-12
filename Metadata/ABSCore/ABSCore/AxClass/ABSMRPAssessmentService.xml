@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ABSMRPAssessmentService</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+class ABSMRPAssessmentService extends SysOperationServiceBase
+{
+        }
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>run</Name>
+				<Source><![CDATA[
+public void run(ABSMRPAssessmentContract _contract)
+{
+    ABSMRPAssessmentEngine lastEngine;
+
+    if (_contract.parmPlanId())
+    {
+        info(strFmt("@ABS:ABSMRPAssessmentStartingPlan",
+            _contract.parmPlanId()));
+
+        lastEngine = new ABSMRPAssessmentEngine();
+        lastEngine.parmContract(_contract);
+        lastEngine.init();
+        lastEngine.runAllChecks();
+    }
+    else
+    {
+        ReqPlan reqPlan;
+        int     planCount;
+        int     planIdx;
+
+        while select count(RecId) from reqPlan
+        {
+            planCount = any2Int(reqPlan.RecId);
+        }
+
+        info(strFmt("@ABS:ABSMRPAssessmentStartingAllPlans", planCount));
+
+        while select ReqPlanId from reqPlan
+        {
+            planIdx++;
+            _contract.parmPlanId(reqPlan.ReqPlanId);
+            info(strFmt("@ABS:ABSMRPAssessmentProcessingPlan", planIdx, planCount, reqPlan.ReqPlanId));
+            lastEngine = new ABSMRPAssessmentEngine();
+            lastEngine.parmContract(_contract);
+            lastEngine.init();
+            lastEngine.runAllChecks();
+        }
+        _contract.parmPlanId('');
+    }
+
+    if (lastEngine && _contract.parmDeletePreviousRunsDays() > 0)
+    {
+        lastEngine.deletePreviousRuns(_contract.parmDeletePreviousRunsDays());
+    }
+}
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

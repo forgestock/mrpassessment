@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AxSecurityDuty xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ABSInventoryOptimizerWorkspaceView</Name>
+	<Label>@ABS:ABSInventoryOptimizerWorkspaceViewDuty</Label>
+	<Privileges>
+		<AxSecurityPrivilegeReference>
+			<Name>ABSInventoryOptimizerWorkspaceView</Name>
+		</AxSecurityPrivilegeReference>
+		<AxSecurityPrivilegeReference>
+			<Name>ABSMRPAssessmentRunEntityView</Name>
+		</AxSecurityPrivilegeReference>
+		<AxSecurityPrivilegeReference>
+			<Name>ABSMRPAssessmentResultEntityView</Name>
+		</AxSecurityPrivilegeReference>
+		<AxSecurityPrivilegeReference>
+			<Name>ABSMRPAssessmentDetailEntityView</Name>
+		</AxSecurityPrivilegeReference>
+		<AxSecurityPrivilegeReference>
+			<Name>ABSExcessObsoleteView</Name>
+		</AxSecurityPrivilegeReference>
+	</Privileges>
+</AxSecurityDuty>

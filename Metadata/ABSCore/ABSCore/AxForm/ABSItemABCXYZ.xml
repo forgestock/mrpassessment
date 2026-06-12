@@ -1,0 +1,1066 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AxForm xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="Microsoft.Dynamics.AX.Metadata.V6">
+	<Name>ABSItemABCXYZ</Name>
+	<SourceCode>
+		<Methods xmlns="">
+			<Method>
+				<Name>classDeclaration</Name>
+				<Source><![CDATA[
+[Form]
+public class ABSItemABCXYZ extends FormRun
+{
+    // Hidden query ranges used by ABC/XYZ filter buttons
+    QueryBuildRange qbrABC;
+    QueryBuildRange qbrXYZ;
+}
+]]></Source>
+			</Method>
+			<Method>
+				<Name>init</Name>
+				<Source><![CDATA[
+public void init()
+{
+    QueryBuildDataSource qbds;
+    QueryBuildRange existingRange;
+    int i;
+
+    super();
+
+    qbds = ABSItemABCXYZ_ds.query().dataSourceNo(1);
+
+	// Default sort: ABC class → XYZ class → sales amount descending
+	this.applySortDefault();
+
+    // When navigated from a workspace tile the platform merges the menu item's query
+    // into the datasource during super(). Take ownership of those ranges and make them
+    // hidden so the ABC/XYZ filter buttons control them consistently.
+    for (i = 1; i <= qbds.rangeCount(); i++)
+    {
+        existingRange = qbds.range(i);
+        if (existingRange.field() == fieldNum(ABSItemABCXYZ, ABCClass) && qbrABC == null)
+        {
+            qbrABC = existingRange;
+            qbrABC.status(RangeStatus::Hidden);
+        }
+        else if (existingRange.field() == fieldNum(ABSItemABCXYZ, XYZClass) && qbrXYZ == null)
+        {
+            qbrXYZ = existingRange;
+            qbrXYZ.status(RangeStatus::Hidden);
+        }
+    }
+
+    // If not already present (generic navigation), add new hidden ranges
+    if (qbrABC == null)
+    {
+        qbrABC = qbds.addRange(fieldNum(ABSItemABCXYZ, ABCClass));
+        qbrABC.status(RangeStatus::Hidden);
+    }
+    if (qbrXYZ == null)
+    {
+        qbrXYZ = qbds.addRange(fieldNum(ABSItemABCXYZ, XYZClass));
+        qbrXYZ.status(RangeStatus::Hidden);
+    }
+
+    if (ParetoChart)
+    {
+        ParetoChart.update();
+    }
+}
+]]></Source>
+			</Method>
+			<Method>
+				<Name>applySortDefault</Name>
+				<Source><![CDATA[
+private void applySortDefault()
+{
+	QueryBuildDataSource qbds = ABSItemABCXYZ_ds.query().dataSourceNo(1);
+
+	qbds.sortClear();
+	qbds.addSortField(fieldNum(ABSItemABCXYZ, ABCClass));
+	qbds.addSortField(fieldNum(ABSItemABCXYZ, XYZClass));
+	qbds.addSortField(fieldNum(ABSItemABCXYZ, SalesAmt12M), SortOrder::Descending);
+}
+]]></Source>
+			</Method>
+			<Method>
+				<Name>applySortBySalesAmount</Name>
+				<Source><![CDATA[
+private void applySortBySalesAmount()
+{
+	QueryBuildDataSource qbds = ABSItemABCXYZ_ds.query().dataSourceNo(1);
+
+	qbds.sortClear();
+	qbds.addSortField(fieldNum(ABSItemABCXYZ, SalesAmt12M), SortOrder::Descending);
+	qbds.addSortField(fieldNum(ABSItemABCXYZ, ABCClass));
+	qbds.addSortField(fieldNum(ABSItemABCXYZ, XYZClass));
+}
+]]></Source>
+			</Method>
+			<Method>
+				<Name>applySortByCriticality</Name>
+				<Source><![CDATA[
+private void applySortByCriticality()
+{
+	QueryBuildDataSource qbds = ABSItemABCXYZ_ds.query().dataSourceNo(1);
+
+	// Use overstock risk and demand variability as a severity proxy.
+	qbds.sortClear();
+	qbds.addSortField(fieldNum(ABSItemABCXYZ, RangeOfCoverage), SortOrder::Descending);
+	qbds.addSortField(fieldNum(ABSItemABCXYZ, DemandCV), SortOrder::Descending);
+	qbds.addSortField(fieldNum(ABSItemABCXYZ, SalesAmt12M), SortOrder::Descending);
+}
+]]></Source>
+			</Method>
+			<Method>
+				<Name>buildParetoSeries</Name>
+				<Source><![CDATA[
+/// Rebuilds the Pareto percentile series from the grid's CURRENT filter.
+/// Ranks items by usage value descending and emits ~100 points
+/// (x = % of items, y = cumulative % of usage value), immune to grid sort order.
+private void buildParetoSeries(ABSItemABCXYZParetoData _cursor)
+{
+    ABSItemABCXYZ           src;
+    Query                   q;
+    QueryRun                qr;
+    QueryBuildDataSource    qbds;
+    real                    totalValue, running;
+    int64                   n, rank;
+    int                     pct, lastPct;
+
+    delete_from _cursor;
+
+    // Clone the grid's current query (keeps ABC/XYZ + quick-filter ranges), ranked by value desc.
+    q = new Query(ABSItemABCXYZ_ds.queryRun().query());
+    qbds = q.dataSourceTable(tableNum(ABSItemABCXYZ));
+    qbds.sortClear();
+    qbds.addSortField(fieldNum(ABSItemABCXYZ, SalesAmt12M), SortOrder::Descending);
+
+    // Pass 1: total usage value + item count over the filtered set.
+    // Only items WITH usage value participate: the completeness sweep classifies
+    // every no-history item as C/Z with SalesAmt12M = 0, and there are typically
+    // thousands of them. Including them makes n huge so the few value-bearing items
+    // all collapse into the first percentile bucket — the curve renders flat at ~100%.
+    qr = new QueryRun(q);
+    while (qr.next())
+    {
+        src = qr.get(tableNum(ABSItemABCXYZ));
+        if (src.SalesAmt12M <= 0)
+            continue;
+        totalValue += src.SalesAmt12M;
+        n++;
+    }
+
+    if (n == 0 || totalValue <= 0)
+        return;
+
+    // Pass 2: accumulate, emit one point per integer percentile of items (~100 points).
+    qr = new QueryRun(q);
+    lastPct = 0;
+    rank = 0;
+    while (qr.next())
+    {
+        src = qr.get(tableNum(ABSItemABCXYZ));
+        if (src.SalesAmt12M <= 0)
+            continue;
+        rank++;
+        running += src.SalesAmt12M;
+        pct = int642int((rank * 100) div n);
+        if (pct != lastPct)
+        {
+            _cursor.clear();
+            _cursor.ItemPct            = pct;
+            // Zero-padded string category: SysChart auto-sorts a numeric category
+            // field descending (axis rendered 97..1). A string category is plotted
+            // in data-source order; zero-padding to 3 digits keeps it ascending under
+            // any lexical sort, so the x-axis reads 001..100 left-to-right.
+            _cursor.ItemPctLabel       = substr('000', 1, 3 - strLen(int2str(pct))) + int2str(pct);
+            _cursor.CumulativeValuePct = (running / totalValue) * 100;
+            _cursor.Ref80              = 80;
+            _cursor.Ref95              = 95;
+            _cursor.insert();
+            lastPct = pct;
+        }
+    }
+}
+]]></Source>
+			</Method>
+		</Methods>
+		<DataSources xmlns="">
+			<DataSource>
+				<Name>ABSItemABCXYZ</Name>
+				<Methods>
+					<Method>
+						<Name>displayOption</Name>
+						<Source><![CDATA[
+    public void displayOption(Common _record, FormRowDisplayOption _options)
+    {
+        ABSItemABCXYZ     row = _record;
+        ABSExcessObsolete eo;
+
+        // K3: colour the row by the Excess & Obsolete aging bucket (single source of
+        // truth shared with the E&O cockpit), instead of a local RangeOfCoverage band
+        // that could disagree with the cockpit. The cockpit owns the excess-side story;
+        // this just surfaces its verdict next to the classification.
+        select firstonly AgingBucket from eo
+            where eo.ItemId == row.ItemId
+               && eo.SiteId == row.SiteId;
+
+        switch (eo.AgingBucket)
+        {
+            case ABSEOAgingBucket::Dead:     _options.backColor(ABSUIColors::critical()); break;
+            case ABSEOAgingBucket::Dormant:  _options.backColor(ABSUIColors::warning());  break;
+            case ABSEOAgingBucket::VerySlow: _options.backColor(ABSUIColors::caution());  break;
+        }
+
+        super(_record, _options);
+    }
+]]></Source>
+					</Method>
+					<Method>
+						<Name>executeQuery</Name>
+						<Source><![CDATA[
+    public void executeQuery()
+    {
+        super();
+        element.buildParetoSeries(ABSItemABCXYZParetoData);
+        ABSItemABCXYZParetoData_ds.research();
+        if (ParetoChart)
+        {
+            ParetoChart.update();
+        }
+    }
+]]></Source>
+					</Method>
+				</Methods>
+			</DataSource>
+			<DataSource>
+				<Name>ABSItemABCXYZParetoData</Name>
+				<Methods>
+					<Method>
+						<Name>init</Name>
+						<Source><![CDATA[
+    /// The series is built in percentile order, but an InMemory data source
+    /// without an explicit sort returns rows in undefined order, and SysChart
+    /// auto-sorts a NUMERIC category descending (axis rendered 97..1). The chart
+    /// category is a zero-padded STRING (ItemPctLabel) plotted in data-source order;
+    /// sort it ascending so the x-axis reads 001..100 left-to-right.
+    public void init()
+    {
+        super();
+        this.query().dataSourceTable(tableNum(ABSItemABCXYZParetoData))
+            .addSortField(fieldNum(ABSItemABCXYZParetoData, ItemPctLabel), SortOrder::Ascending);
+    }
+]]></Source>
+					</Method>
+				</Methods>
+			</DataSource>
+		</DataSources>
+		<DataControls xmlns="">
+			<Control>
+				<Name>RunClassificationBtn</Name>
+				<Type>Button</Type>
+				<Methods>
+					<Method>
+						<Name>clicked</Name>
+						<Source><![CDATA[
+        void clicked()
+        {
+            ABSABCXYZController::main(new Args());
+        }
+    ]]></Source>
+					</Method>
+				</Methods>
+			</Control>
+			<Control>
+				<Name>FilterAllABCBtn</Name>
+				<Type>Button</Type>
+				<Methods>
+					<Method>
+						<Name>clicked</Name>
+						<Source><![CDATA[
+        void clicked()
+        {
+            qbrABC.value('');
+            ABSItemABCXYZ_ds.executeQuery();
+        }
+    ]]></Source>
+					</Method>
+				</Methods>
+			</Control>
+			<Control>
+				<Name>FilterABtn</Name>
+				<Type>Button</Type>
+				<Methods>
+					<Method>
+						<Name>clicked</Name>
+						<Source><![CDATA[
+        void clicked()
+        {
+            qbrABC.value(queryValue(ABSABCClassification::A));
+            ABSItemABCXYZ_ds.executeQuery();
+        }
+    ]]></Source>
+					</Method>
+				</Methods>
+			</Control>
+			<Control>
+				<Name>FilterBBtn</Name>
+				<Type>Button</Type>
+				<Methods>
+					<Method>
+						<Name>clicked</Name>
+						<Source><![CDATA[
+        void clicked()
+        {
+            qbrABC.value(queryValue(ABSABCClassification::B));
+            ABSItemABCXYZ_ds.executeQuery();
+        }
+    ]]></Source>
+					</Method>
+				</Methods>
+			</Control>
+			<Control>
+				<Name>FilterCBtn</Name>
+				<Type>Button</Type>
+				<Methods>
+					<Method>
+						<Name>clicked</Name>
+						<Source><![CDATA[
+        void clicked()
+        {
+            qbrABC.value(queryValue(ABSABCClassification::C));
+            ABSItemABCXYZ_ds.executeQuery();
+        }
+    ]]></Source>
+					</Method>
+				</Methods>
+			</Control>
+			<Control>
+				<Name>FilterAllXYZBtn</Name>
+				<Type>Button</Type>
+				<Methods>
+					<Method>
+						<Name>clicked</Name>
+						<Source><![CDATA[
+        void clicked()
+        {
+            qbrXYZ.value('');
+            ABSItemABCXYZ_ds.executeQuery();
+        }
+    ]]></Source>
+					</Method>
+				</Methods>
+			</Control>
+			<Control>
+				<Name>FilterXBtn</Name>
+				<Type>Button</Type>
+				<Methods>
+					<Method>
+						<Name>clicked</Name>
+						<Source><![CDATA[
+        void clicked()
+        {
+            qbrXYZ.value(queryValue(ABSXYZClassification::X));
+            ABSItemABCXYZ_ds.executeQuery();
+        }
+    ]]></Source>
+					</Method>
+				</Methods>
+			</Control>
+			<Control>
+				<Name>FilterYBtn</Name>
+				<Type>Button</Type>
+				<Methods>
+					<Method>
+						<Name>clicked</Name>
+						<Source><![CDATA[
+        void clicked()
+        {
+            qbrXYZ.value(queryValue(ABSXYZClassification::Y));
+            ABSItemABCXYZ_ds.executeQuery();
+        }
+    ]]></Source>
+					</Method>
+				</Methods>
+			</Control>
+			<Control>
+				<Name>FilterZBtn</Name>
+				<Type>Button</Type>
+				<Methods>
+					<Method>
+						<Name>clicked</Name>
+						<Source><![CDATA[
+        void clicked()
+        {
+            qbrXYZ.value(queryValue(ABSXYZClassification::Z));
+            ABSItemABCXYZ_ds.executeQuery();
+        }
+    ]]></Source>
+					</Method>
+				</Methods>
+			</Control>
+			<Control>
+				<Name>SortDefaultBtn</Name>
+				<Type>Button</Type>
+				<Methods>
+					<Method>
+						<Name>clicked</Name>
+						<Source><![CDATA[
+        void clicked()
+        {
+            element.applySortDefault();
+            ABSItemABCXYZ_ds.executeQuery();
+        }
+    ]]></Source>
+					</Method>
+				</Methods>
+			</Control>
+			<Control>
+				<Name>SortBySalesAmountBtn</Name>
+				<Type>Button</Type>
+				<Methods>
+					<Method>
+						<Name>clicked</Name>
+						<Source><![CDATA[
+        void clicked()
+        {
+            element.applySortBySalesAmount();
+            ABSItemABCXYZ_ds.executeQuery();
+        }
+    ]]></Source>
+					</Method>
+				</Methods>
+			</Control>
+			<Control>
+				<Name>SortByCriticalityBtn</Name>
+				<Type>Button</Type>
+				<Methods>
+					<Method>
+						<Name>clicked</Name>
+						<Source><![CDATA[
+        void clicked()
+        {
+            element.applySortByCriticality();
+            ABSItemABCXYZ_ds.executeQuery();
+        }
+    ]]></Source>
+					</Method>
+				</Methods>
+			</Control>
+		</DataControls>
+		<Members xmlns="" />
+	</SourceCode>
+	<DataSources>
+		<AxFormDataSource xmlns="">
+			<Name>ABSItemABCXYZ</Name>
+			<Table>ABSItemABCXYZ</Table>
+			<Fields>
+				<AxFormDataSourceField>
+					<DataField>ItemId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>SiteId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ABCClass</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>XYZClass</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>SalesAmt12M</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>SalesAmtPct</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>CumulativePct</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>DemandMean</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>DemandStdDev</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>DemandCV</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RangeOfCoverage</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ZeroPeriods</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>CalculatedDate</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>DataAreaId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Partition</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RecId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>TableId</DataField>
+				</AxFormDataSourceField>
+			</Fields>
+			<ReferencedDataSources />
+			<AllowCreate>No</AllowCreate>
+			<AllowDelete>No</AllowDelete>
+			<AllowEdit>No</AllowEdit>
+			<InsertIfEmpty>No</InsertIfEmpty>
+			<DataSourceLinks />
+			<DerivedDataSources />
+		</AxFormDataSource>
+		<AxFormDataSource xmlns="">
+			<Name>ABSItemABCXYZParetoData</Name>
+			<Table>ABSItemABCXYZParetoData</Table>
+			<Fields>
+				<AxFormDataSourceField>
+					<DataField>ItemPct</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>CumulativeValuePct</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Ref80</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Ref95</DataField>
+				</AxFormDataSourceField>
+			</Fields>
+			<ReferencedDataSources />
+			<AllowCreate>No</AllowCreate>
+			<AllowDelete>No</AllowDelete>
+			<AllowEdit>No</AllowEdit>
+			<InsertIfEmpty>No</InsertIfEmpty>
+			<DataSourceLinks />
+			<DerivedDataSources />
+		</AxFormDataSource>
+	</DataSources>
+	<Design>
+		<Caption xmlns="">@ABS:ABSItemABCXYZ</Caption>
+		<Pattern xmlns="">Custom</Pattern>
+		<Style xmlns="">DetailsFormMaster</Style>
+		<Controls xmlns="">
+			<AxFormControl xmlns=""
+				i:type="AxFormActionPaneControl">
+				<Name>ActionPane</Name>
+				<Type>ActionPane</Type>
+				<FormControlExtension
+					i:nil="true" />
+				<Controls>
+					<AxFormControl xmlns=""
+						i:type="AxFormButtonGroupControl">
+						<Name>MaintainGroup</Name>
+						<Type>ButtonGroup</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormButtonControl">
+								<Name>RunClassificationBtn</Name>
+								<Type>Button</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<Text>@ABS:RunClassification</Text>
+							</AxFormControl>
+						</Controls>
+						<Caption>@ABS:RunClassification</Caption>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormButtonGroupControl">
+						<Name>ABCFilterGroup</Name>
+						<Type>ButtonGroup</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormButtonControl">
+								<Name>FilterAllABCBtn</Name>
+								<Type>Button</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<Text>@ABS:FilterAll</Text>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormButtonControl">
+								<Name>FilterABtn</Name>
+								<Type>Button</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<Text>@ABS:ABCClassA</Text>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormButtonControl">
+								<Name>FilterBBtn</Name>
+								<Type>Button</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<Text>@ABS:ABCClassB</Text>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormButtonControl">
+								<Name>FilterCBtn</Name>
+								<Type>Button</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<Text>@ABS:ABCClassC</Text>
+							</AxFormControl>
+						</Controls>
+						<Caption>@ABS:ABCClass</Caption>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormButtonGroupControl">
+						<Name>XYZFilterGroup</Name>
+						<Type>ButtonGroup</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormButtonControl">
+								<Name>FilterAllXYZBtn</Name>
+								<Type>Button</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<Text>@ABS:FilterAll</Text>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormButtonControl">
+								<Name>FilterXBtn</Name>
+								<Type>Button</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<Text>@ABS:XYZClassX</Text>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormButtonControl">
+								<Name>FilterYBtn</Name>
+								<Type>Button</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<Text>@ABS:XYZClassY</Text>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormButtonControl">
+								<Name>FilterZBtn</Name>
+								<Type>Button</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<Text>@ABS:XYZClassZ</Text>
+							</AxFormControl>
+						</Controls>
+						<Caption>@ABS:XYZClass</Caption>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormButtonGroupControl">
+						<Name>SortGroup</Name>
+						<Type>ButtonGroup</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormButtonControl">
+								<Name>SortDefaultBtn</Name>
+								<Type>Button</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<Text>@ABS:ABSSortDefault</Text>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormButtonControl">
+								<Name>SortBySalesAmountBtn</Name>
+								<Type>Button</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<Text>@ABS:ABSSortSalesAmount</Text>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormButtonControl">
+								<Name>SortByCriticalityBtn</Name>
+								<Type>Button</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<Text>@ABS:ABSSortCriticality</Text>
+							</AxFormControl>
+						</Controls>
+						<Caption>@ABS:ABSSortGroup</Caption>
+					</AxFormControl>
+				</Controls>
+			</AxFormControl>
+			<AxFormControl xmlns=""
+				i:type="AxFormGroupControl">
+				<Name>FilterGroup</Name>
+				<Pattern>CustomAndQuickFilters</Pattern>
+				<PatternVersion>1.1</PatternVersion>
+				<Type>Group</Type>
+				<WidthMode>SizeToAvailable</WidthMode>
+				<FormControlExtension
+					i:nil="true" />
+				<Controls>
+					<AxFormControl>
+						<Name>QuickFilter</Name>
+						<FormControlExtension>
+							<Name>QuickFilterControl</Name>
+							<ExtensionComponents />
+							<ExtensionProperties>
+								<AxFormControlExtensionProperty>
+									<Name>targetControlName</Name>
+									<Type>String</Type>
+									<Value>Overview</Value>
+								</AxFormControlExtensionProperty>
+								<AxFormControlExtensionProperty>
+									<Name>placeholderText</Name>
+									<Type>String</Type>
+								</AxFormControlExtensionProperty>
+								<AxFormControlExtensionProperty>
+									<Name>defaultColumnName</Name>
+									<Type>String</Type>
+									<Value>Overview_ItemId</Value>
+								</AxFormControlExtensionProperty>
+							</ExtensionProperties>
+						</FormControlExtension>
+					</AxFormControl>
+				</Controls>
+				<ArrangeMethod>HorizontalLeft</ArrangeMethod>
+				<FrameType>None</FrameType>
+				<Style>CustomFilter</Style>
+				<ViewEditMode>Edit</ViewEditMode>
+			</AxFormControl>
+			<AxFormControl xmlns="" i:type="AxFormGroupControl">
+				<Name>ParetoChartGroup</Name>
+				<Pattern>Custom</Pattern>
+				<Type>Group</Type>
+				<FormControlExtension i:nil="true" />
+				<HeightMode>SizeToContent</HeightMode>
+				<WidthMode>SizeToAvailable</WidthMode>
+				<Controls>
+					<AxFormControl xmlns="" i:type="AxFormContainerControl">
+						<Name>ParetoChart</Name>
+						<AutoDeclaration>Yes</AutoDeclaration>
+						<Type>Container</Type>
+						<Visible>Yes</Visible>
+						<Width>900</Width>
+						<WidthMode>Manual</WidthMode>
+						<Height>320</Height>
+						<HeightMode>Manual</HeightMode>
+						<FormControlExtension>
+							<Name>SysChart</Name>
+							<ExtensionComponents>
+								<AxFormControlExtensionComponent xmlns="" i:type="AxFormControlExtensionComponentComposite">
+									<Name>parmDataSets</Name>
+									<ExtensionComponents>
+										<AxFormControlExtensionComponent xmlns="" i:type="AxFormControlExtensionComponentLeaf">
+											<Name>ParetoDataSet</Name>
+											<ComponentType>SysBuildChartDataSet</ComponentType>
+											<ExtensionProperties>
+												<AxFormControlExtensionProperty>
+													<Name>parmDataSource</Name>
+													<Type>String</Type>
+													<Value>ABSItemABCXYZParetoData</Value>
+												</AxFormControlExtensionProperty>
+												<AxFormControlExtensionProperty>
+													<Name>parmCategoryField</Name>
+													<Type>String</Type>
+													<Value>ItemPctLabel</Value>
+												</AxFormControlExtensionProperty>
+											</ExtensionProperties>
+										</AxFormControlExtensionComponent>
+									</ExtensionComponents>
+								</AxFormControlExtensionComponent>
+								<AxFormControlExtensionComponent xmlns="" i:type="AxFormControlExtensionComponentComposite">
+									<Name>parmMeasures</Name>
+									<ExtensionComponents>
+										<AxFormControlExtensionComponent xmlns="" i:type="AxFormControlExtensionComponentLeaf">
+											<Name>CumulativeValuePct</Name>
+											<ComponentType>SysBuildChartMeasure</ComponentType>
+											<ExtensionProperties>
+												<AxFormControlExtensionProperty>
+													<Name>parmChartType</Name>
+													<Type>Enum</Type>
+													<TypeName>SysChartType</TypeName>
+													<Value>Line</Value>
+												</AxFormControlExtensionProperty>
+												<AxFormControlExtensionProperty>
+													<Name>parmDataSet</Name>
+													<Type>String</Type>
+													<Value>ParetoDataSet</Value>
+												</AxFormControlExtensionProperty>
+												<AxFormControlExtensionProperty>
+													<Name>parmMeasureField</Name>
+													<Type>String</Type>
+													<Value>CumulativeValuePct</Value>
+												</AxFormControlExtensionProperty>
+												<AxFormControlExtensionProperty>
+													<Name>parmTitle</Name>
+													<Type>String</Type>
+													<Value>@ABS:ABSParetoCumulativeValuePct</Value>
+												</AxFormControlExtensionProperty>
+												<AxFormControlExtensionProperty>
+													<Name>parmUseSecondaryYAxis</Name>
+													<Type>Enum</Type>
+													<TypeName>boolean</TypeName>
+													<Value>False</Value>
+												</AxFormControlExtensionProperty>
+											</ExtensionProperties>
+										</AxFormControlExtensionComponent>
+										<AxFormControlExtensionComponent xmlns="" i:type="AxFormControlExtensionComponentLeaf">
+											<Name>Ref80</Name>
+											<ComponentType>SysBuildChartMeasure</ComponentType>
+											<ExtensionProperties>
+												<AxFormControlExtensionProperty>
+													<Name>parmChartType</Name>
+													<Type>Enum</Type>
+													<TypeName>SysChartType</TypeName>
+													<Value>Line</Value>
+												</AxFormControlExtensionProperty>
+												<AxFormControlExtensionProperty>
+													<Name>parmDataSet</Name>
+													<Type>String</Type>
+													<Value>ParetoDataSet</Value>
+												</AxFormControlExtensionProperty>
+												<AxFormControlExtensionProperty>
+													<Name>parmMeasureField</Name>
+													<Type>String</Type>
+													<Value>Ref80</Value>
+												</AxFormControlExtensionProperty>
+												<AxFormControlExtensionProperty>
+													<Name>parmTitle</Name>
+													<Type>String</Type>
+													<Value>@ABS:ABSParetoRef80</Value>
+												</AxFormControlExtensionProperty>
+												<AxFormControlExtensionProperty>
+													<Name>parmUseSecondaryYAxis</Name>
+													<Type>Enum</Type>
+													<TypeName>boolean</TypeName>
+													<Value>False</Value>
+												</AxFormControlExtensionProperty>
+											</ExtensionProperties>
+										</AxFormControlExtensionComponent>
+										<AxFormControlExtensionComponent xmlns="" i:type="AxFormControlExtensionComponentLeaf">
+											<Name>Ref95</Name>
+											<ComponentType>SysBuildChartMeasure</ComponentType>
+											<ExtensionProperties>
+												<AxFormControlExtensionProperty>
+													<Name>parmChartType</Name>
+													<Type>Enum</Type>
+													<TypeName>SysChartType</TypeName>
+													<Value>Line</Value>
+												</AxFormControlExtensionProperty>
+												<AxFormControlExtensionProperty>
+													<Name>parmDataSet</Name>
+													<Type>String</Type>
+													<Value>ParetoDataSet</Value>
+												</AxFormControlExtensionProperty>
+												<AxFormControlExtensionProperty>
+													<Name>parmMeasureField</Name>
+													<Type>String</Type>
+													<Value>Ref95</Value>
+												</AxFormControlExtensionProperty>
+												<AxFormControlExtensionProperty>
+													<Name>parmTitle</Name>
+													<Type>String</Type>
+													<Value>@ABS:ABSParetoRef95</Value>
+												</AxFormControlExtensionProperty>
+												<AxFormControlExtensionProperty>
+													<Name>parmUseSecondaryYAxis</Name>
+													<Type>Enum</Type>
+													<TypeName>boolean</TypeName>
+													<Value>False</Value>
+												</AxFormControlExtensionProperty>
+											</ExtensionProperties>
+										</AxFormControlExtensionComponent>
+									</ExtensionComponents>
+								</AxFormControlExtensionComponent>
+								<AxFormControlExtensionComponent xmlns="" i:type="AxFormControlExtensionComponentComposite">
+									<Name>parmSecondaryYAxes</Name>
+									<ExtensionComponents />
+								</AxFormControlExtensionComponent>
+							</ExtensionComponents>
+							<ExtensionProperties>
+								<AxFormControlExtensionProperty>
+									<Name>parmLegendEnabled</Name>
+									<Type>Enum</Type>
+									<TypeName>boolean</TypeName>
+									<Value>True</Value>
+								</AxFormControlExtensionProperty>
+								<AxFormControlExtensionProperty>
+									<Name>parmLegendPosition</Name>
+									<Type>Enum</Type>
+									<TypeName>SysChartVerticalAlignment</TypeName>
+									<Value>Bottom</Value>
+								</AxFormControlExtensionProperty>
+								<AxFormControlExtensionProperty>
+									<Name>parmText</Name>
+									<Type>String</Type>
+									<Value>@ABS:ABSParetoChartTitle</Value>
+								</AxFormControlExtensionProperty>
+								<AxFormControlExtensionProperty>
+									<Name>parmTitlePosition</Name>
+									<Type>Enum</Type>
+									<TypeName>SysChartVerticalAlignment</TypeName>
+									<Value>Top</Value>
+								</AxFormControlExtensionProperty>
+								<AxFormControlExtensionProperty>
+									<Name>parmXAxisTitle</Name>
+									<Type>String</Type>
+									<Value>@ABS:ABSParetoXAxisTitle</Value>
+								</AxFormControlExtensionProperty>
+								<AxFormControlExtensionProperty>
+									<Name>parmYAxisTitle</Name>
+									<Type>String</Type>
+									<Value>@ABS:ABSParetoYAxisTitle</Value>
+								</AxFormControlExtensionProperty>
+								<AxFormControlExtensionProperty>
+									<Name>parmToolbarEnabled</Name>
+									<Type>Enum</Type>
+									<TypeName>boolean</TypeName>
+									<Value>False</Value>
+								</AxFormControlExtensionProperty>
+								<AxFormControlExtensionProperty>
+									<Name>parmPadMargin</Name>
+									<Type>Int32</Type>
+									<Value>0</Value>
+								</AxFormControlExtensionProperty>
+							</ExtensionProperties>
+						</FormControlExtension>
+						<Controls />
+					</AxFormControl>
+				</Controls>
+				<ArrangeMethod>Vertical</ArrangeMethod>
+			</AxFormControl>
+			<AxFormControl xmlns=""
+				i:type="AxFormGridControl">
+				<Name>Overview</Name>
+				<Type>Grid</Type>
+				<FormControlExtension
+					i:nil="true" />
+				<Controls>
+					<AxFormControl xmlns=""
+						i:type="AxFormStringControl">
+						<Name>Overview_ItemId</Name>
+						<Type>String</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>ItemId</DataField>
+						<DataSource>ABSItemABCXYZ</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormStringControl">
+						<Name>Overview_SiteId</Name>
+						<Type>String</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>SiteId</DataField>
+						<DataSource>ABSItemABCXYZ</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormComboBoxControl">
+						<Name>Overview_ABCClass</Name>
+						<Type>ComboBox</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>ABCClass</DataField>
+						<DataSource>ABSItemABCXYZ</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormComboBoxControl">
+						<Name>Overview_XYZClass</Name>
+						<Type>ComboBox</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>XYZClass</DataField>
+						<DataSource>ABSItemABCXYZ</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormRealControl">
+						<Name>Overview_SalesAmt12M</Name>
+						<Type>Real</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>SalesAmt12M</DataField>
+						<DataSource>ABSItemABCXYZ</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormRealControl">
+						<Name>Overview_SalesAmtPct</Name>
+						<Type>Real</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>SalesAmtPct</DataField>
+						<DataSource>ABSItemABCXYZ</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormRealControl">
+						<Name>Overview_CumulativePct</Name>
+						<Type>Real</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>CumulativePct</DataField>
+						<DataSource>ABSItemABCXYZ</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormRealControl">
+						<Name>Overview_DemandMean</Name>
+						<Type>Real</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>DemandMean</DataField>
+						<DataSource>ABSItemABCXYZ</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormRealControl">
+						<Name>Overview_DemandStdDev</Name>
+						<Type>Real</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>DemandStdDev</DataField>
+						<DataSource>ABSItemABCXYZ</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormRealControl">
+						<Name>Overview_DemandCV</Name>
+						<Type>Real</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>DemandCV</DataField>
+						<DataSource>ABSItemABCXYZ</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormRealControl">
+						<Name>Overview_RangeOfCoverage</Name>
+						<Type>Real</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>RangeOfCoverage</DataField>
+						<DataSource>ABSItemABCXYZ</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormIntegerControl">
+						<Name>Overview_ZeroPeriods</Name>
+						<Type>Integer</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>ZeroPeriods</DataField>
+						<DataSource>ABSItemABCXYZ</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormDateControl">
+						<Name>Overview_CalculatedDate</Name>
+						<Type>Date</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>CalculatedDate</DataField>
+						<DataSource>ABSItemABCXYZ</DataSource>
+					</AxFormControl>
+				</Controls>
+				<DataSource>ABSItemABCXYZ</DataSource>
+				<Style>Tabular</Style>
+			</AxFormControl>
+		</Controls>
+	</Design>
+	<Parts />
+</AxForm>

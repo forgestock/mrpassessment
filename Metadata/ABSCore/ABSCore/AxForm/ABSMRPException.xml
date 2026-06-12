@@ -1,0 +1,1125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxForm xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="Microsoft.Dynamics.AX.Metadata.V6">
+	<Name>ABSMRPException</Name>
+	<SourceCode>
+		<Methods xmlns="">
+			<Method>
+				<Name>classDeclaration</Name>
+				<Source><![CDATA[
+[Form]
+public class ABSMRPException extends FormRun
+{
+    QueryBuildRange     qbrSeverity;
+    QueryBuildRange     qbrType;
+}
+]]></Source>
+			</Method>
+			<Method>
+				<Name>init</Name>
+				<Source><![CDATA[
+public void init()
+{
+    QueryBuildDataSource qbds;
+    QueryBuildRange      qbrStatusFilter;
+    QueryBuildRange      qbrSeverityFilter;
+
+    super();
+
+    // Default sort: highest priority first, then most severe.
+    ABSMRPException_ds.query().dataSourceNo(1).sortClear();
+    ABSMRPException_ds.query().dataSourceNo(1).addSortField(
+        fieldNum(ABSMRPException, PriorityScore), SortOrder::Descending);
+    ABSMRPException_ds.query().dataSourceNo(1).addSortField(
+        fieldNum(ABSMRPException, Severity), SortOrder::Descending);
+
+    // Opened from the workspace "Items needing attention" KPI tile: pre-filter to
+    // the exact set the tile counts — open, high-severity exceptions.
+    if (element.args()
+        && element.args().menuItemName() == menuItemDisplayStr(ABSMRPExceptionAttention))
+    {
+        qbds = ABSMRPException_ds.query().dataSourceNo(1);
+
+        qbrStatusFilter = qbds.addRange(fieldNum(ABSMRPException, Status));
+        qbrStatusFilter.value(queryValue(ABSMRPExceptionStatus::Open));
+        qbrStatusFilter.status(RangeStatus::Hidden);
+
+        qbrSeverityFilter = qbds.addRange(fieldNum(ABSMRPException, Severity));
+        qbrSeverityFilter.value(queryValue(ABSMRPExceptionSeverity::High));
+        qbrSeverityFilter.status(RangeStatus::Hidden);
+    }
+
+    element.buildExceptionSeries(ABSExceptionTypeChartData);
+    ABSExceptionTypeChartData_ds.research();
+
+    if (ExceptionChart)
+    {
+        ExceptionChart.update();
+    }
+}
+]]></Source>
+			</Method>
+			<Method>
+				<Name>buildExceptionSeries</Name>
+				<Source><![CDATA[
+    /// Aggregates OPEN exceptions into a small count-by-type series for the donut,
+    /// instead of binding the chart to the full ABSMRPException row set (which would
+    /// plot one slice per record and flood the legend).
+    public void buildExceptionSeries(ABSExceptionTypeChartData _cursor)
+    {
+        ABSMRPException exception;
+
+        delete_from _cursor;
+
+        while select count(RecId), ExceptionType, TypeName from exception
+            group by exception.ExceptionType, exception.TypeName
+            where exception.Status == ABSMRPExceptionStatus::Open
+        {
+            _cursor.clear();
+            _cursor.TypeName       = exception.TypeName
+                ? exception.TypeName
+                : SysDictEnum::newName(enumStr(ABSMRPExceptionType)).value2Label(enum2int(exception.ExceptionType));
+            _cursor.ExceptionCount = any2int(exception.RecId);
+            _cursor.insert();
+        }
+    }
+]]></Source>
+			</Method>
+		</Methods>
+		<DataSources xmlns="">
+			<DataSource>
+				<Name>ABSMRPException</Name>
+				<Methods>
+					<Method>
+						<Name>displayOption</Name>
+						<Source><![CDATA[
+    public void displayOption(Common _record, FormRowDisplayOption _options)
+    {
+        ABSMRPException exceptionRec = _record;
+        int bgColor;
+
+        switch (exceptionRec.Severity)
+        {
+            case ABSMRPExceptionSeverity::High:
+                bgColor = ABSUIColors::critical();
+                break;
+            case ABSMRPExceptionSeverity::Medium:
+                bgColor = ABSUIColors::caution();
+                break;
+            case ABSMRPExceptionSeverity::Low:
+                bgColor = ABSUIColors::healthy();
+                break;
+            default:
+                super(_record, _options);
+                return;
+        }
+
+        _options.backColor(bgColor);
+        super(_record, _options);
+    }
+]]></Source>
+					</Method>
+				</Methods>
+				<Fields />
+			</DataSource>
+		</DataSources>
+		<DataControls xmlns="">
+			<Control>
+				<Name>ConfirmBtn</Name>
+				<Type>Button</Type>
+				<Methods>
+					<Method>
+						<Name>clicked</Name>
+						<Source><![CDATA[
+        void clicked()
+        {
+            MultiSelectionHelper helper = MultiSelectionHelper::construct();
+            ABSMRPException      exRec;
+            int                 actioned = 0;
+            int                 skipped  = 0;
+
+            helper.parmDatasource(ABSMRPException_ds);
+            exRec = helper.getFirst();
+
+            if (!exRec || !exRec.RecId)
+            {
+                warning("@ABS:ABSSelectExceptionToConfirm");
+                return;
+            }
+
+            // R6: act on every marked row (falls back to the active row when none marked).
+            while (exRec && exRec.RecId)
+            {
+                if (exRec.Status == ABSMRPExceptionStatus::Open)
+                {
+                    exRec.updateStatus(ABSMRPExceptionStatus::Confirmed);
+                    actioned++;
+                }
+                else
+                {
+                    skipped++;
+                }
+                exRec = helper.getNext();
+            }
+
+            ABSMRPException_ds.research(true);
+
+            if (actioned)
+            {
+                info(strFmt("@ABS:ABSExceptionsConfirmed", actioned));
+            }
+            if (skipped)
+            {
+                warning(strFmt("@ABS:ABSExceptionsSkippedNotOpen", skipped));
+            }
+        }
+    
+]]></Source>
+					</Method>
+				</Methods>
+			</Control>
+			<Control>
+				<Name>DismissBtn</Name>
+				<Type>Button</Type>
+				<Methods>
+					<Method>
+						<Name>clicked</Name>
+						<Source><![CDATA[
+        void clicked()
+        {
+            MultiSelectionHelper helper = MultiSelectionHelper::construct();
+            ABSMRPException      exRec;
+            int                 actioned = 0;
+            int                 skipped  = 0;
+
+            helper.parmDatasource(ABSMRPException_ds);
+            exRec = helper.getFirst();
+
+            if (!exRec || !exRec.RecId)
+            {
+                warning("@ABS:ABSSelectExceptionToDismiss");
+                return;
+            }
+
+            // R6: act on every marked row (falls back to the active row when none marked).
+            while (exRec && exRec.RecId)
+            {
+                if (exRec.Status == ABSMRPExceptionStatus::Open)
+                {
+                    exRec.updateStatus(ABSMRPExceptionStatus::Dismissed);
+                    actioned++;
+                }
+                else
+                {
+                    skipped++;
+                }
+                exRec = helper.getNext();
+            }
+
+            ABSMRPException_ds.research(true);
+
+            if (actioned)
+            {
+                info(strFmt("@ABS:ABSExceptionsDismissed", actioned));
+            }
+            if (skipped)
+            {
+                warning(strFmt("@ABS:ABSExceptionsSkippedNotOpen", skipped));
+            }
+        }
+    
+]]></Source>
+					</Method>
+				</Methods>
+			</Control>
+			<Control>
+				<Name>ViewRequirementBtn</Name>
+				<Type>Button</Type>
+				<Methods>
+					<Method>
+						<Name>clicked</Name>
+						<Source><![CDATA[
+        /// R2: one click from the triage decision to the underlying planned order.
+        void clicked()
+        {
+            ABSMRPException exRec = ABSMRPException_ds.cursor();
+            ReqPO           reqPO;
+            Args            args;
+            MenuFunction    mf;
+
+            if (!exRec || !exRec.RecId)
+            {
+                return;
+            }
+
+            // Safety-stock breaches carry no planned order (ReqPORecId == 0).
+            if (!exRec.ReqPORecId)
+            {
+                warning("@ABS:ABSNoRequirementToView");
+                return;
+            }
+
+            select firstonly reqPO
+                where reqPO.RecId == exRec.ReqPORecId;
+            if (!reqPO.RecId)
+            {
+                warning("@ABS:ABSRequirementNotFound");
+                return;
+            }
+
+            args = new Args();
+            args.record(reqPO);
+            mf = new MenuFunction(menuItemDisplayStr(ReqPO), MenuItemType::Display);
+            mf.run(args);
+        }
+    
+]]></Source>
+					</Method>
+				</Methods>
+			</Control>
+			<Control>
+				<Name>RunDetectionBtn</Name>
+				<Type>Button</Type>
+				<Methods>
+					<Method>
+						<Name>clicked</Name>
+						<Source><![CDATA[
+        void clicked()
+        {
+            ABSMRPExceptionController::main(new Args());
+            ABSMRPException_ds.research(true);
+            element.buildExceptionSeries(ABSExceptionTypeChartData);
+            ABSExceptionTypeChartData_ds.research();
+            if (ExceptionChart)
+            {
+                ExceptionChart.update();
+            }
+        }
+    
+]]></Source>
+					</Method>
+				</Methods>
+			</Control>
+		</DataControls>
+		<Members xmlns="" />
+	</SourceCode>
+	<DataSources>
+		<AxFormDataSource xmlns="">
+			<Name>ABSMRPException</Name>
+			<Table>ABSMRPException</Table>
+			<Fields>
+				<AxFormDataSourceField>
+					<DataField>PlanId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ItemId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>SiteId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ReqPORecId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ABCClass</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>XYZClass</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ExceptionType</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>TypeName</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ExceptionCount</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Severity</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RequirementDate</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ExceptionQty</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ExceptionDays</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>PriorityScore</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>SuggestedAction</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Status</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ResolvedBy</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ResolvedDate</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>CreatedDate</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>DataAreaId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Partition</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RecId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>TableId</DataField>
+				</AxFormDataSourceField>
+			</Fields>
+			<ReferencedDataSources />
+			<AllowCreate>No</AllowCreate>
+			<AllowDelete>No</AllowDelete>
+			<AllowEdit>No</AllowEdit>
+			<InsertIfEmpty>No</InsertIfEmpty>
+			<DataSourceLinks />
+			<DerivedDataSources />
+		</AxFormDataSource>
+		<AxFormDataSource xmlns="">
+			<Name>ABSExceptionTypeChartData</Name>
+			<Table>ABSExceptionTypeChartData</Table>
+			<Fields>
+				<AxFormDataSourceField>
+					<DataField>TypeName</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ExceptionCount</DataField>
+				</AxFormDataSourceField>
+			</Fields>
+			<ReferencedDataSources />
+			<AllowCreate>No</AllowCreate>
+			<AllowDelete>No</AllowDelete>
+			<AllowEdit>No</AllowEdit>
+			<InsertIfEmpty>No</InsertIfEmpty>
+			<DataSourceLinks />
+			<DerivedDataSources />
+		</AxFormDataSource>
+	</DataSources>
+	<Design>
+		<Caption xmlns="">@ABS:ABSMRPException</Caption>
+		<DataSource xmlns="">ABSMRPException</DataSource>
+		<Pattern xmlns="">Task</Pattern>
+		<PatternVersion xmlns="">1.2</PatternVersion>
+		<TitleDataSource xmlns="">ABSMRPException</TitleDataSource>
+		<ViewEditMode xmlns="">View</ViewEditMode>
+		<Controls xmlns="">
+			<AxFormControl xmlns=""
+				i:type="AxFormActionPaneControl">
+				<Name>ActionPane</Name>
+				<Type>ActionPane</Type>
+				<FormControlExtension
+					i:nil="true" />
+				<Controls>
+					<AxFormControl xmlns=""
+						i:type="AxFormButtonGroupControl">
+						<Name>ExceptionManagementGroup</Name>
+						<Type>ButtonGroup</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormButtonControl">
+								<Name>ConfirmBtn</Name>
+								<Type>Button</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<Text>@ABS:ConfirmException</Text>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormButtonControl">
+								<Name>DismissBtn</Name>
+								<Type>Button</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<Text>@ABS:DismissException</Text>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormButtonControl">
+								<Name>ViewRequirementBtn</Name>
+								<Type>Button</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<Text>@ABS:ABSViewRequirement</Text>
+							</AxFormControl>
+						</Controls>
+						<ArrangeMethod>Vertical</ArrangeMethod>
+						<DataSource>ABSMRPException</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormButtonGroupControl">
+						<Name>DetectExceptionsGroup</Name>
+						<Type>ButtonGroup</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormButtonControl">
+								<Name>RunDetectionBtn</Name>
+								<Type>Button</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<Text>@ABS:RunExceptionDetection</Text>
+							</AxFormControl>
+						</Controls>
+						<ArrangeMethod>Vertical</ArrangeMethod>
+						<DataSource>ABSMRPException</DataSource>
+					</AxFormControl>
+				</Controls>
+				<AlignChild>No</AlignChild>
+				<AlignChildren>No</AlignChildren>
+				<ArrangeMethod>Vertical</ArrangeMethod>
+			</AxFormControl>
+			<AxFormControl xmlns=""
+				i:type="AxFormTabControl">
+				<Name>MainTab</Name>
+				<Type>Tab</Type>
+				<FormControlExtension
+					i:nil="true" />
+				<Controls>
+					<AxFormControl xmlns=""
+						i:type="AxFormTabPageControl">
+						<Name>TabOverview</Name>
+						<HeightMode>SizeToAvailable</HeightMode>
+						<Pattern>ToolbarList</Pattern>
+						<PatternVersion>1.2</PatternVersion>
+						<Type>TabPage</Type>
+						<WidthMode>SizeToAvailable</WidthMode>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormGridControl">
+								<Name>Overview</Name>
+								<Type>Grid</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<Controls>
+									<AxFormControl xmlns=""
+										i:type="AxFormStringControl">
+										<Name>Overview_PlanId</Name>
+										<Type>String</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>PlanId</DataField>
+										<DataSource>ABSMRPException</DataSource>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormStringControl">
+										<Name>Overview_ItemId</Name>
+										<Type>String</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>ItemId</DataField>
+										<DataSource>ABSMRPException</DataSource>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormStringControl">
+										<Name>Overview_SiteId</Name>
+										<Type>String</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>SiteId</DataField>
+										<DataSource>ABSMRPException</DataSource>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormComboBoxControl">
+										<Name>Overview_ABCClass</Name>
+										<Type>ComboBox</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>ABCClass</DataField>
+										<DataSource>ABSMRPException</DataSource>
+										<Items />
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormComboBoxControl">
+										<Name>Overview_XYZClass</Name>
+										<Type>ComboBox</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>XYZClass</DataField>
+										<DataSource>ABSMRPException</DataSource>
+										<Items />
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormComboBoxControl">
+										<Name>Overview_ExceptionType</Name>
+										<Type>ComboBox</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>ExceptionType</DataField>
+										<DataSource>ABSMRPException</DataSource>
+										<Items />
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormComboBoxControl">
+										<Name>Overview_Severity</Name>
+										<Type>ComboBox</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>Severity</DataField>
+										<DataSource>ABSMRPException</DataSource>
+										<Items />
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormDateControl">
+										<Name>Overview_RequirementDate</Name>
+										<Type>Date</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>RequirementDate</DataField>
+										<DataSource>ABSMRPException</DataSource>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormRealControl">
+										<Name>Overview_ExceptionQty</Name>
+										<Type>Real</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>ExceptionQty</DataField>
+										<DataSource>ABSMRPException</DataSource>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormIntegerControl">
+										<Name>Overview_ExceptionDays</Name>
+										<Type>Integer</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>ExceptionDays</DataField>
+										<DataSource>ABSMRPException</DataSource>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormRealControl">
+										<Name>Overview_PriorityScore</Name>
+										<Type>Real</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>PriorityScore</DataField>
+										<DataSource>ABSMRPException</DataSource>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormComboBoxControl">
+										<Name>Overview_Status</Name>
+										<Type>ComboBox</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>Status</DataField>
+										<DataSource>ABSMRPException</DataSource>
+										<Items />
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormStringControl">
+										<Name>Overview_SuggestedAction</Name>
+										<Type>String</Type>
+										<Width>400</Width>
+										<WidthMode>Manual</WidthMode>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>SuggestedAction</DataField>
+										<DataSource>ABSMRPException</DataSource>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormStringControl">
+										<Name>Overview_ResolvedBy</Name>
+										<Type>String</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>ResolvedBy</DataField>
+										<DataSource>ABSMRPException</DataSource>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormDateControl">
+										<Name>Overview_ResolvedDate</Name>
+										<Type>Date</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>ResolvedDate</DataField>
+										<DataSource>ABSMRPException</DataSource>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormDateControl">
+										<Name>Overview_CreatedDate</Name>
+										<Type>Date</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>CreatedDate</DataField>
+										<DataSource>ABSMRPException</DataSource>
+									</AxFormControl>
+								</Controls>
+								<DataSource>ABSMRPException</DataSource>
+								<Style>Tabular</Style>
+							</AxFormControl>
+						</Controls>
+						<Caption>@ABS:ABSMRPExceptionOverviewTab</Caption>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormTabPageControl">
+						<Name>TabSummary</Name>
+						<Pattern>Custom</Pattern>
+						<Type>TabPage</Type>
+						<WidthMode>SizeToAvailable</WidthMode>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormContainerControl">
+								<Name>ExceptionChart</Name>
+								<AutoDeclaration>Yes</AutoDeclaration>
+								<Type>Container</Type>
+								<Width>700</Width>
+								<WidthMode>Manual</WidthMode>
+								<FormControlExtension>
+									<Name>SysChart</Name>
+									<ExtensionComponents>
+										<AxFormControlExtensionComponent xmlns=""
+											i:type="AxFormControlExtensionComponentComposite">
+											<Name>parmDataSets</Name>
+											<ExtensionComponents>
+												<AxFormControlExtensionComponent xmlns=""
+													i:type="AxFormControlExtensionComponentLeaf">
+													<Name>ExceptionDataSet</Name>
+													<ComponentType>SysBuildChartDataSet</ComponentType>
+													<ExtensionProperties>
+														<AxFormControlExtensionProperty>
+															<Name>parmDataSource</Name>
+															<Type>String</Type>
+															<Value>ABSExceptionTypeChartData</Value>
+														</AxFormControlExtensionProperty>
+														<AxFormControlExtensionProperty>
+															<Name>parmCategoryField</Name>
+															<Type>String</Type>
+															<Value>TypeName</Value>
+														</AxFormControlExtensionProperty>
+														<AxFormControlExtensionProperty>
+															<Name>parmGroupBy</Name>
+															<Type>String</Type>
+														</AxFormControlExtensionProperty>
+													</ExtensionProperties>
+												</AxFormControlExtensionComponent>
+											</ExtensionComponents>
+										</AxFormControlExtensionComponent>
+										<AxFormControlExtensionComponent xmlns=""
+											i:type="AxFormControlExtensionComponentComposite">
+											<Name>parmMeasures</Name>
+											<ExtensionComponents>
+												<AxFormControlExtensionComponent xmlns=""
+													i:type="AxFormControlExtensionComponentLeaf">
+													<Name>ExceptionCount</Name>
+													<ComponentType>SysBuildChartMeasure</ComponentType>
+													<ExtensionProperties>
+														<AxFormControlExtensionProperty>
+															<Name>parmChartType</Name>
+															<Type>Enum</Type>
+															<TypeName>SysChartType</TypeName>
+															<Value>Doughnut</Value>
+														</AxFormControlExtensionProperty>
+														<AxFormControlExtensionProperty>
+															<Name>parmDataSet</Name>
+															<Type>String</Type>
+															<Value>ExceptionDataSet</Value>
+														</AxFormControlExtensionProperty>
+														<AxFormControlExtensionProperty>
+															<Name>parmMeasureField</Name>
+															<Type>String</Type>
+															<Value>ExceptionCount</Value>
+														</AxFormControlExtensionProperty>
+														<AxFormControlExtensionProperty>
+															<Name>parmUseSecondaryYAxis</Name>
+															<Type>Enum</Type>
+															<TypeName>boolean</TypeName>
+															<Value>False</Value>
+														</AxFormControlExtensionProperty>
+														<AxFormControlExtensionProperty>
+															<Name>parmTitle</Name>
+															<Type>String</Type>
+														</AxFormControlExtensionProperty>
+														<AxFormControlExtensionProperty>
+															<Name>parmDataLabels</Name>
+															<Type>Enum</Type>
+															<TypeName>SysChartDataLabels</TypeName>
+														</AxFormControlExtensionProperty>
+														<AxFormControlExtensionProperty>
+															<Name>parmDataLabelsFormat</Name>
+															<Type>String</Type>
+														</AxFormControlExtensionProperty>
+														<AxFormControlExtensionProperty>
+															<Name>parmSecondaryYAxisName</Name>
+															<Type>String</Type>
+														</AxFormControlExtensionProperty>
+														<AxFormControlExtensionProperty>
+															<Name>parmClickMenuItemType</Name>
+															<Type>Enum</Type>
+															<TypeName>MenuItemType</TypeName>
+														</AxFormControlExtensionProperty>
+														<AxFormControlExtensionProperty>
+															<Name>parmClickMenuItemName</Name>
+															<Type>ExtendedDataType</Type>
+															<TypeName>MenuItemName</TypeName>
+														</AxFormControlExtensionProperty>
+														<AxFormControlExtensionProperty>
+															<Name>parmKeyField</Name>
+															<Type>String</Type>
+														</AxFormControlExtensionProperty>
+														<AxFormControlExtensionProperty>
+															<Name>parmParameter1</Name>
+															<Type>String</Type>
+														</AxFormControlExtensionProperty>
+														<AxFormControlExtensionProperty>
+															<Name>parmParameter2</Name>
+															<Type>String</Type>
+														</AxFormControlExtensionProperty>
+														<AxFormControlExtensionProperty>
+															<Name>parmColor</Name>
+															<Type>String</Type>
+														</AxFormControlExtensionProperty>
+													</ExtensionProperties>
+												</AxFormControlExtensionComponent>
+											</ExtensionComponents>
+										</AxFormControlExtensionComponent>
+										<AxFormControlExtensionComponent xmlns=""
+											i:type="AxFormControlExtensionComponentComposite">
+											<Name>parmSecondaryYAxes</Name>
+											<ExtensionComponents />
+										</AxFormControlExtensionComponent>
+									</ExtensionComponents>
+									<ExtensionProperties>
+										<AxFormControlExtensionProperty>
+											<Name>parmLegendEnabled</Name>
+											<Type>Enum</Type>
+											<TypeName>boolean</TypeName>
+											<Value>True</Value>
+										</AxFormControlExtensionProperty>
+										<AxFormControlExtensionProperty>
+											<Name>parmLegendPosition</Name>
+											<Type>Enum</Type>
+											<TypeName>SysChartVerticalAlignment</TypeName>
+											<Value>Bottom</Value>
+										</AxFormControlExtensionProperty>
+										<AxFormControlExtensionProperty>
+											<Name>parmText</Name>
+											<Type>String</Type>
+											<Value>@ABS:ABSMRPExceptionChartTitle</Value>
+										</AxFormControlExtensionProperty>
+										<AxFormControlExtensionProperty>
+											<Name>parmTitlePosition</Name>
+											<Type>Enum</Type>
+											<TypeName>SysChartVerticalAlignment</TypeName>
+											<Value>Top</Value>
+										</AxFormControlExtensionProperty>
+										<AxFormControlExtensionProperty>
+											<Name>parmToolbarEnabled</Name>
+											<Type>Enum</Type>
+											<TypeName>boolean</TypeName>
+											<Value>False</Value>
+										</AxFormControlExtensionProperty>
+										<AxFormControlExtensionProperty>
+											<Name>parmPadMargin</Name>
+											<Type>Int32</Type>
+											<Value>0</Value>
+										</AxFormControlExtensionProperty>
+										<AxFormControlExtensionProperty>
+											<Name>parmLegendAlignment</Name>
+											<Type>Enum</Type>
+											<TypeName>SysChartHorizontalAlignment</TypeName>
+										</AxFormControlExtensionProperty>
+										<AxFormControlExtensionProperty>
+											<Name>parmLegendLayout</Name>
+											<Type>Enum</Type>
+											<TypeName>SysChartLegendLayout</TypeName>
+										</AxFormControlExtensionProperty>
+										<AxFormControlExtensionProperty>
+											<Name>parmTitleAlignment</Name>
+											<Type>Enum</Type>
+											<TypeName>SysChartHorizontalAlignment</TypeName>
+										</AxFormControlExtensionProperty>
+										<AxFormControlExtensionProperty>
+											<Name>parmSerializedButtons</Name>
+											<Type>String</Type>
+										</AxFormControlExtensionProperty>
+										<AxFormControlExtensionProperty>
+											<Name>parmYAxisTitle</Name>
+											<Type>String</Type>
+										</AxFormControlExtensionProperty>
+										<AxFormControlExtensionProperty>
+											<Name>parmYAxisVisible</Name>
+											<Type>Enum</Type>
+											<TypeName>boolean</TypeName>
+											<Value>False</Value>
+										</AxFormControlExtensionProperty>
+										<AxFormControlExtensionProperty>
+											<Name>parmYAxisLabelsHidden</Name>
+											<Type>Enum</Type>
+											<TypeName>boolean</TypeName>
+											<Value>False</Value>
+										</AxFormControlExtensionProperty>
+										<AxFormControlExtensionProperty>
+											<Name>parmYAxisMinValue</Name>
+											<Type>String</Type>
+										</AxFormControlExtensionProperty>
+										<AxFormControlExtensionProperty>
+											<Name>parmYAxisMaxValue</Name>
+											<Type>String</Type>
+										</AxFormControlExtensionProperty>
+										<AxFormControlExtensionProperty>
+											<Name>parmXAxisTitle</Name>
+											<Type>String</Type>
+										</AxFormControlExtensionProperty>
+										<AxFormControlExtensionProperty>
+											<Name>parmClickMenuItemType</Name>
+											<Type>Enum</Type>
+											<TypeName>MenuItemType</TypeName>
+										</AxFormControlExtensionProperty>
+										<AxFormControlExtensionProperty>
+											<Name>parmClickMenuItemName</Name>
+											<Type>ExtendedDataType</Type>
+											<TypeName>MenuItemName</TypeName>
+										</AxFormControlExtensionProperty>
+										<AxFormControlExtensionProperty>
+											<Name>parmInteractionsDisabled</Name>
+											<Type>Enum</Type>
+											<TypeName>boolean</TypeName>
+											<Value>False</Value>
+										</AxFormControlExtensionProperty>
+										<AxFormControlExtensionProperty>
+											<Name>parmZoomLimit</Name>
+											<Type>Enum</Type>
+											<TypeName>SysChartDateTimeInterval</TypeName>
+										</AxFormControlExtensionProperty>
+										<AxFormControlExtensionProperty>
+											<Name>parmCrosshairsEnabled</Name>
+											<Type>Enum</Type>
+											<TypeName>boolean</TypeName>
+											<Value>False</Value>
+										</AxFormControlExtensionProperty>
+										<AxFormControlExtensionProperty>
+											<Name>parmTooltipShared</Name>
+											<Type>Enum</Type>
+											<TypeName>boolean</TypeName>
+											<Value>False</Value>
+										</AxFormControlExtensionProperty>
+										<AxFormControlExtensionProperty>
+											<Name>parmPlotLineEnabled</Name>
+											<Type>Enum</Type>
+											<TypeName>boolean</TypeName>
+											<Value>False</Value>
+										</AxFormControlExtensionProperty>
+									</ExtensionProperties>
+								</FormControlExtension>
+								<Controls />
+							</AxFormControl>
+						</Controls>
+						<Caption>@ABS:ABSMRPExceptionSummaryTab</Caption>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormTabPageControl">
+						<Name>TabDetails</Name>
+						<HeightMode>SizeToAvailable</HeightMode>
+						<Pattern>FieldsFieldGroups</Pattern>
+						<PatternVersion>1.1</PatternVersion>
+						<Type>TabPage</Type>
+						<WidthMode>SizeToAvailable</WidthMode>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormGroupControl">
+								<Name>ClassificationGroup</Name>
+								<Type>Group</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<Controls>
+									<AxFormControl xmlns=""
+										i:type="AxFormStringControl">
+										<Name>Details_PlanId</Name>
+										<Type>String</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>PlanId</DataField>
+										<DataSource>ABSMRPException</DataSource>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormStringControl">
+										<Name>Details_ItemId</Name>
+										<Type>String</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>ItemId</DataField>
+										<DataSource>ABSMRPException</DataSource>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormStringControl">
+										<Name>Details_SiteId</Name>
+										<Type>String</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>SiteId</DataField>
+										<DataSource>ABSMRPException</DataSource>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormComboBoxControl">
+										<Name>Details_ABCClass</Name>
+										<Type>ComboBox</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>ABCClass</DataField>
+										<DataSource>ABSMRPException</DataSource>
+										<Items />
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormComboBoxControl">
+										<Name>Details_XYZClass</Name>
+										<Type>ComboBox</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>XYZClass</DataField>
+										<DataSource>ABSMRPException</DataSource>
+										<Items />
+									</AxFormControl>
+								</Controls>
+								<Caption>@ABS:ABSMRPExceptionGroupClassification</Caption>
+								<DataSource>ABSMRPException</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormGroupControl">
+								<Name>DetailsGroup</Name>
+								<Type>Group</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<Controls>
+									<AxFormControl xmlns=""
+										i:type="AxFormComboBoxControl">
+										<Name>Details_ExceptionType</Name>
+										<Type>ComboBox</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>ExceptionType</DataField>
+										<DataSource>ABSMRPException</DataSource>
+										<Items />
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormComboBoxControl">
+										<Name>Details_Severity</Name>
+										<Type>ComboBox</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>Severity</DataField>
+										<DataSource>ABSMRPException</DataSource>
+										<Items />
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormDateControl">
+										<Name>Details_RequirementDate</Name>
+										<Type>Date</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>RequirementDate</DataField>
+										<DataSource>ABSMRPException</DataSource>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormRealControl">
+										<Name>Details_ExceptionQty</Name>
+										<Type>Real</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>ExceptionQty</DataField>
+										<DataSource>ABSMRPException</DataSource>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormIntegerControl">
+										<Name>Details_ExceptionDays</Name>
+										<Type>Integer</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>ExceptionDays</DataField>
+										<DataSource>ABSMRPException</DataSource>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormRealControl">
+										<Name>Details_PriorityScore</Name>
+										<Type>Real</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>PriorityScore</DataField>
+										<DataSource>ABSMRPException</DataSource>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormStringControl">
+										<Name>Details_SuggestedAction</Name>
+										<Type>String</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>SuggestedAction</DataField>
+										<DataSource>ABSMRPException</DataSource>
+									</AxFormControl>
+								</Controls>
+								<Caption>@ABS:ABSMRPExceptionGroupDetails</Caption>
+								<DataSource>ABSMRPException</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormGroupControl">
+								<Name>ResolutionGroup</Name>
+								<Type>Group</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<Controls>
+									<AxFormControl xmlns=""
+										i:type="AxFormComboBoxControl">
+										<Name>Details_Status</Name>
+										<Type>ComboBox</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>Status</DataField>
+										<DataSource>ABSMRPException</DataSource>
+										<Items />
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormStringControl">
+										<Name>Details_ResolvedBy</Name>
+										<Type>String</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>ResolvedBy</DataField>
+										<DataSource>ABSMRPException</DataSource>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormDateControl">
+										<Name>Details_ResolvedDate</Name>
+										<Type>Date</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>ResolvedDate</DataField>
+										<DataSource>ABSMRPException</DataSource>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormDateControl">
+										<Name>Details_CreatedDate</Name>
+										<Type>Date</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>CreatedDate</DataField>
+										<DataSource>ABSMRPException</DataSource>
+									</AxFormControl>
+								</Controls>
+								<Caption>@ABS:ABSMRPExceptionGroupResolution</Caption>
+								<DataSource>ABSMRPException</DataSource>
+							</AxFormControl>
+						</Controls>
+						<ColumnsMode>Fill</ColumnsMode>
+						<Caption>@ABS:ABSMRPExceptionResolutionTab</Caption>
+					</AxFormControl>
+				</Controls>
+			</AxFormControl>
+		</Controls>
+	</Design>
+	<Parts />
+</AxForm>

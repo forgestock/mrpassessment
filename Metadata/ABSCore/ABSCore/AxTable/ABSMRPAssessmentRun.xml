@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxTable xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>ABSMRPAssessmentRun</Name>
+  <SourceCode>
+    <Declaration><![CDATA[
+public class ABSMRPAssessmentRun extends common
+{
+}
+    ]]></Declaration>
+    <Methods>
+      <Method>
+        <Name>find</Name>
+        <Source><![CDATA[
+public static ABSMRPAssessmentRun find(ABSMRPAssessmentRunId _runId, boolean _forUpdate = false)
+{
+    ABSMRPAssessmentRun ret;
+
+    ret.selectForUpdate(_forUpdate);
+
+    select firstonly ret
+        where ret.RunId == _runId;
+
+    return ret;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>exist</Name>
+        <Source><![CDATA[
+public static boolean exist(ABSMRPAssessmentRunId _runId)
+{
+    return (select firstonly RecId from ABSMRPAssessmentRun
+                where ABSMRPAssessmentRun.RunId == _runId).RecId != 0;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>generateRunId</Name>
+        <Source><![CDATA[
+public static ABSMRPAssessmentRunId generateRunId(ReqPlanId _planId)
+{
+    utcdatetime now  = DateTimeUtil::utcNow();
+    date        d    = DateTimeUtil::date(now);
+    int         t    = DateTimeUtil::time(now);
+    int         hr   = real2int(t / 3600);
+    int         mn   = real2int((t mod 3600) / 60);
+    int         sc   = t mod 60;
+    str         ts   = int2Str(year(d))
+                     + (mthOfYr(d)  < 10 ? '0' : '') + int2Str(mthOfYr(d))
+                     + (dayOfMth(d) < 10 ? '0' : '') + int2Str(dayOfMth(d))
+                     + (hr          < 10 ? '0' : '') + int2Str(hr)
+                     + (mn          < 10 ? '0' : '') + int2Str(mn)
+                     + (sc          < 10 ? '0' : '') + int2Str(sc);
+  return strFmt("RUN-%1-%2", _planId, ts);
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>initValue</Name>
+        <Source><![CDATA[
+public void initValue()
+{
+    super();
+
+    // RunId is set by the engine after PlanId is known.
+    this.AssessmentDate = DateTimeUtil::getToday(DateTimeUtil::getUserPreferredTimeZone());
+    this.AssessmentTime = DateTimeUtil::utcNow();
+    this.Status         = ABSMRPAssessmentStatus::InProgress;
+}
+        ]]></Source>
+      </Method>
+    </Methods>
+  </SourceCode>
+  <DeveloperDocumentation>@ABS:ABSMRPAssessmentRunDeveloperDocumentation</DeveloperDocumentation>
+  <Label>@ABS:ABSMRPAssessmentRun</Label>
+  <TableGroup>WorksheetHeader</TableGroup>
+  <TitleField1>RunId</TitleField1>
+  <TitleField2>PlanId</TitleField2>
+  <CacheLookup>None</CacheLookup>
+  <ClusteredIndex>RunIdx</ClusteredIndex>
+  <PrimaryIndex>SurrogateKey</PrimaryIndex>
+  <FormRef>ABSMRPAssessment</FormRef>
+  <SaveDataPerCompany>Yes</SaveDataPerCompany>
+  <Fields>
+    <AxTableField xmlns="" i:type="AxTableFieldString">
+      <Name>RunId</Name>
+      <ExtendedDataType>ABSMRPAssessmentRunId</ExtendedDataType>
+      <Mandatory>Yes</Mandatory>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldString">
+      <Name>PlanId</Name>
+      <ExtendedDataType>ReqPlanId</ExtendedDataType>
+      <Mandatory>Yes</Mandatory>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldString">
+      <Name>SiteId</Name>
+      <ExtendedDataType>InventSiteId</ExtendedDataType>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldDate">
+      <Name>AssessmentDate</Name>
+      <ExtendedDataType>TransDate</ExtendedDataType>
+      <Label>@ABS:AssessmentDate</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldUtcDateTime">
+      <Name>AssessmentTime</Name>
+      <Label>@ABS:AssessmentTime</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldEnum">
+      <Name>Status</Name>
+      <EnumType>ABSMRPAssessmentStatus</EnumType>
+      <Label>@ABS:Status</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldEnum">
+      <Name>OverallSeverity</Name>
+      <EnumType>ABSMRPAssessmentSeverity</EnumType>
+      <Label>@ABS:OverallSeverity</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldInt">
+      <Name>TotalChecks</Name>
+      <Label>@ABS:TotalChecks</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldInt">
+      <Name>IssuesFound</Name>
+      <Label>@ABS:IssuesFound</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldEnum">
+      <Name>PlanningEngine</Name>
+      <EnumType>ABSMRPPlanningEngine</EnumType>
+      <Label>@ABS:PlanningEngine</Label>
+    </AxTableField>
+  </Fields>
+  <FieldGroups>
+    <AxTableFieldGroup>
+      <Name>AutoReport</Name>
+      <Fields>
+        <AxTableFieldGroupField>
+          <DataField>RunId</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>PlanId</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>AssessmentDate</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>Status</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>OverallSeverity</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>IssuesFound</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>PlanningEngine</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>SiteId</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>AssessmentTime</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>TotalChecks</DataField>
+        </AxTableFieldGroupField>
+      </Fields>
+    </AxTableFieldGroup>
+    <AxTableFieldGroup>
+      <Name>AutoSummary</Name>
+      <Fields />
+    </AxTableFieldGroup>
+    <AxTableFieldGroup>
+      <Name>AutoBrowse</Name>
+      <Fields />
+    </AxTableFieldGroup>
+    <AxTableFieldGroup>
+      <Name>AutoLookup</Name>
+      <Fields>
+        <AxTableFieldGroupField>
+          <DataField>RunId</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>PlanId</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>AssessmentDate</DataField>
+        </AxTableFieldGroupField>
+      </Fields>
+    </AxTableFieldGroup>
+    <AxTableFieldGroup>
+      <Name>AutoIdentification</Name>
+      <AutoPopulate>Yes</AutoPopulate>
+      <Fields />
+    </AxTableFieldGroup>
+  </FieldGroups>
+  <Indexes>
+    <AxTableIndex>
+      <Name>RunIdx</Name>
+      <AllowDuplicates>Yes</AllowDuplicates>
+      <Fields>
+        <AxTableIndexField>
+          <DataField>RunId</DataField>
+        </AxTableIndexField>
+      </Fields>
+    </AxTableIndex>
+    <AxTableIndex>
+      <Name>PlanDateIdx</Name>
+      <AllowDuplicates>Yes</AllowDuplicates>
+      <Fields>
+        <AxTableIndexField>
+          <DataField>PlanId</DataField>
+        </AxTableIndexField>
+        <AxTableIndexField>
+          <DataField>AssessmentDate</DataField>
+        </AxTableIndexField>
+      </Fields>
+    </AxTableIndex>
+  </Indexes>
+  <Mappings />
+  <Relations />
+  <StateMachines />
+</AxTable>

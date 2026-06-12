@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxDataEntityView xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>ABSMRPAssessmentDetailEntity</Name>
+  <SourceCode>
+    <Declaration><![CDATA[
+public class ABSMRPAssessmentDetailEntity extends common
+{
+}
+]]></Declaration>
+    <Methods />
+  </SourceCode>
+  <DeveloperDocumentation>@ABS:ABSMRPAssessmentDetailEntityDescription</DeveloperDocumentation>
+  <Label>@ABS:ABSMRPAssessmentDetailEntityLabel</Label>
+  <SubscriberAccessLevel>
+    <Read>Allow</Read>
+  </SubscriberAccessLevel>
+  <DataManagementEnabled>Yes</DataManagementEnabled>
+  <DataManagementStagingTable>ABSMRPAssessmentDetailStaging</DataManagementStagingTable>
+  <EntityCategory>Transaction</EntityCategory>
+  <IsPublic>Yes</IsPublic>
+  <PrimaryCompanyContext>DataAreaId</PrimaryCompanyContext>
+  <PrimaryKey>EntityKey</PrimaryKey>
+  <PublicCollectionName>ABSMRPAssessmentDetails</PublicCollectionName>
+  <PublicEntityName>ABSMRPAssessmentDetail</PublicEntityName>
+  <SupportsSetBasedSqlOperations>No</SupportsSetBasedSqlOperations>
+  <DeleteActions />
+  <FieldGroups>
+    <AxTableFieldGroup>
+      <Name>AutoReport</Name>
+      <Fields />
+    </AxTableFieldGroup>
+    <AxTableFieldGroup>
+      <Name>AutoLookup</Name>
+      <Fields />
+    </AxTableFieldGroup>
+    <AxTableFieldGroup>
+      <Name>AutoIdentification</Name>
+      <AutoPopulate>Yes</AutoPopulate>
+      <Fields />
+    </AxTableFieldGroup>
+    <AxTableFieldGroup>
+      <Name>AutoSummary</Name>
+      <Fields />
+    </AxTableFieldGroup>
+    <AxTableFieldGroup>
+      <Name>AutoBrowse</Name>
+      <Fields />
+    </AxTableFieldGroup>
+  </FieldGroups>
+  <Fields>
+    <AxDataEntityViewField xmlns=""
+      i:type="AxDataEntityViewMappedField">
+      <Name>DetailRecId</Name>
+      <DataField>RecId</DataField>
+      <DataSource>ABSMRPAssessmentDetail</DataSource>
+    </AxDataEntityViewField>
+    <AxDataEntityViewField xmlns=""
+      i:type="AxDataEntityViewMappedField">
+      <Name>RunId</Name>
+      <DataField>RunId</DataField>
+      <DataSource>ABSMRPAssessmentDetail</DataSource>
+    </AxDataEntityViewField>
+    <AxDataEntityViewField xmlns=""
+      i:type="AxDataEntityViewMappedField">
+      <Name>CheckCode</Name>
+      <DataField>CheckCode</DataField>
+      <DataSource>ABSMRPAssessmentDetail</DataSource>
+    </AxDataEntityViewField>
+    <AxDataEntityViewField xmlns=""
+      i:type="AxDataEntityViewMappedField">
+      <Name>ItemId</Name>
+      <DataField>ItemId</DataField>
+      <DataSource>ABSMRPAssessmentDetail</DataSource>
+    </AxDataEntityViewField>
+    <AxDataEntityViewField xmlns=""
+      i:type="AxDataEntityViewMappedField">
+      <Name>SiteId</Name>
+      <DataField>SiteId</DataField>
+      <DataSource>ABSMRPAssessmentDetail</DataSource>
+    </AxDataEntityViewField>
+    <AxDataEntityViewField xmlns=""
+      i:type="AxDataEntityViewMappedField">
+      <Name>ABCClass</Name>
+      <DataField>ABCClass</DataField>
+      <DataSource>ABSMRPAssessmentDetail</DataSource>
+    </AxDataEntityViewField>
+    <AxDataEntityViewField xmlns=""
+      i:type="AxDataEntityViewMappedField">
+      <Name>XYZClass</Name>
+      <DataField>XYZClass</DataField>
+      <DataSource>ABSMRPAssessmentDetail</DataSource>
+    </AxDataEntityViewField>
+    <AxDataEntityViewField xmlns=""
+      i:type="AxDataEntityViewMappedField">
+      <Name>PriorityScore</Name>
+      <DataField>PriorityScore</DataField>
+      <DataSource>ABSMRPAssessmentDetail</DataSource>
+    </AxDataEntityViewField>
+    <AxDataEntityViewField xmlns=""
+      i:type="AxDataEntityViewMappedField">
+      <Name>CompoundedRisk</Name>
+      <DataField>CompoundedRisk</DataField>
+      <DataSource>ABSMRPAssessmentDetail</DataSource>
+    </AxDataEntityViewField>
+    <AxDataEntityViewField xmlns=""
+      i:type="AxDataEntityViewMappedField">
+      <Name>DetailNote</Name>
+      <DataField>DetailNote</DataField>
+      <DataSource>ABSMRPAssessmentDetail</DataSource>
+    </AxDataEntityViewField>
+  </Fields>
+  <Keys>
+    <AxDataEntityViewKey>
+      <Name>EntityKey</Name>
+      <Fields>
+        <AxDataEntityViewKeyField>
+          <DataField>DetailRecId</DataField>
+        </AxDataEntityViewKeyField>
+      </Fields>
+    </AxDataEntityViewKey>
+  </Keys>
+  <Mappings />
+  <Ranges />
+  <Relations />
+  <StateMachines />
+  <ViewMetadata>
+    <Name>Metadata</Name>
+    <SourceCode>
+      <Methods>
+        <Method>
+          <Name>classDeclaration</Name>
+          <Source><![CDATA[
+[Query]
+public class Metadata extends QueryRun
+{
+}
+]]></Source>
+        </Method>
+      </Methods>
+    </SourceCode>
+    <DataSources>
+      <AxQuerySimpleRootDataSource>
+        <Name>ABSMRPAssessmentDetail</Name>
+        <DynamicFields>Yes</DynamicFields>
+        <Table>ABSMRPAssessmentDetail</Table>
+        <DataSources />
+        <DerivedDataSources />
+        <Fields />
+        <Ranges />
+        <GroupBy />
+        <Having />
+        <OrderBy />
+      </AxQuerySimpleRootDataSource>
+    </DataSources>
+  </ViewMetadata>
+</AxDataEntityView>

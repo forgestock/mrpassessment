@@ -1,0 +1,348 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AxTable xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>ABSItemABCXYZ</Name>
+  <SourceCode>
+    <Declaration><![CDATA[
+public class ABSItemABCXYZ extends common
+{
+}
+    ]]></Declaration>
+    <Methods>
+      <Method>
+        <Name>find</Name>
+        <Source><![CDATA[
+public static ABSItemABCXYZ find(ItemId _itemId, InventSiteId _siteId, boolean _forUpdate = false)
+{
+    ABSItemABCXYZ ret;
+
+    ret.selectForUpdate(_forUpdate);
+
+    select firstonly ret
+        where ret.ItemId == _itemId
+           && ret.SiteId == _siteId;
+
+    return ret;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>exist</Name>
+        <Source><![CDATA[
+public static boolean exist(ItemId _itemId, InventSiteId _siteId)
+{
+    return (select firstonly RecId from ABSItemABCXYZ
+                where ABSItemABCXYZ.ItemId == _itemId
+                   && ABSItemABCXYZ.SiteId == _siteId).RecId != 0;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>findOrCreate</Name>
+        <Source><![CDATA[
+public static ABSItemABCXYZ findOrCreate(ItemId _itemId, InventSiteId _siteId)
+{
+    ABSItemABCXYZ ret = ABSItemABCXYZ::find(_itemId, _siteId, true);
+
+    if (!ret)
+    {
+        ret.ItemId = _itemId;
+        ret.SiteId = _siteId;
+        ret.insert();
+    }
+
+    return ret;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>abcXyzLabel</Name>
+        <Source><![CDATA[
+public str abcXyzLabel()
+{
+    return enum2Str(this.ABCClass) + enum2Str(this.XYZClass);
+}
+        ]]></Source>
+      </Method>
+    </Methods>
+  </SourceCode>
+  <DeveloperDocumentation>@ABS:ABSItemABCXYZDeveloperDocumentation</DeveloperDocumentation>
+  <Label>@ABS:ABSItemABCXYZ</Label>
+  <TableGroup>Main</TableGroup>
+  <TitleField1>ItemId</TitleField1>
+  <TitleField2>SiteId</TitleField2>
+  <CacheLookup>None</CacheLookup>
+  <ClusteredIndex>ItemSiteIdx</ClusteredIndex>
+  <PrimaryIndex>SurrogateKey</PrimaryIndex>
+  <ReplacementKey>ItemSiteIdx</ReplacementKey>
+  <FormRef>ABSItemABCXYZ</FormRef>
+  <SaveDataPerCompany>Yes</SaveDataPerCompany>
+  <Fields>
+    <AxTableField xmlns="" i:type="AxTableFieldString">
+      <Name>ItemId</Name>
+      <ExtendedDataType>ItemId</ExtendedDataType>
+      <Mandatory>Yes</Mandatory>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldString">
+      <Name>SiteId</Name>
+      <ExtendedDataType>InventSiteId</ExtendedDataType>
+      <Mandatory>Yes</Mandatory>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldEnum">
+      <Name>ABCClass</Name>
+      <EnumType>ABSABCClassification</EnumType>
+      <Label>@ABS:ABCClass</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldEnum">
+      <Name>XYZClass</Name>
+      <EnumType>ABSXYZClassification</EnumType>
+      <Label>@ABS:XYZClass</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldReal">
+      <Name>SalesAmt12M</Name>
+      <ExtendedDataType>AmountMST</ExtendedDataType>
+      <Label>@ABS:SalesAmt12M</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldReal">
+      <Name>SalesAmtPct</Name>
+      <ExtendedDataType>Percent</ExtendedDataType>
+      <Label>@ABS:SalesAmtPct</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldReal">
+      <Name>CumulativePct</Name>
+      <ExtendedDataType>Percent</ExtendedDataType>
+      <Label>@ABS:CumulativePct</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldReal">
+      <Name>DemandMean</Name>
+      <ExtendedDataType>InventQty</ExtendedDataType>
+      <Label>@ABS:DemandMean</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldReal">
+      <Name>DemandStdDev</Name>
+      <ExtendedDataType>InventQty</ExtendedDataType>
+      <Label>@ABS:DemandStdDev</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldReal">
+      <Name>DemandCV</Name>
+      <Label>@ABS:DemandCV</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldReal">
+      <Name>RangeOfCoverage</Name>
+      <Label>@ABS:RangeOfCoverage</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldInt">
+      <Name>ZeroPeriods</Name>
+      <Label>@ABS:ZeroPeriods</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldInt">
+      <Name>HistoryMonthsAvailable</Name>
+      <Label>@ABS:ABSHistoryMonthsAvailable</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldDate">
+      <Name>CalculatedDate</Name>
+      <ExtendedDataType>TransDate</ExtendedDataType>
+      <Label>@ABS:CalculatedDate</Label>
+    </AxTableField>
+  </Fields>
+  <FieldGroups>
+    <AxTableFieldGroup>
+      <Name>AutoReport</Name>
+      <Label>@SYS21932</Label>
+      <Fields>
+        <AxTableFieldGroupField>
+          <DataField>ItemId</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>SiteId</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>ABCClass</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>XYZClass</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>SalesAmt12M</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>CalculatedDate</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>HistoryMonthsAvailable</DataField>
+        </AxTableFieldGroupField>
+      </Fields>
+    </AxTableFieldGroup>
+    <AxTableFieldGroup>
+      <Name>AutoLookup</Name>
+      <Label>@SYS77582</Label>
+      <Fields>
+        <AxTableFieldGroupField>
+          <DataField>ItemId</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>SiteId</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>ABCClass</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>XYZClass</DataField>
+        </AxTableFieldGroupField>
+      </Fields>
+    </AxTableFieldGroup>
+    <AxTableFieldGroup>
+      <Name>AutoIdentification</Name>
+      <AutoPopulate>Yes</AutoPopulate>
+      <Label>@SYS100218</Label>
+      <Fields>
+        <AxTableFieldGroupField>
+          <DataField>ItemId</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>SiteId</DataField>
+        </AxTableFieldGroupField>
+      </Fields>
+    </AxTableFieldGroup>
+    <AxTableFieldGroup>
+      <Name>Overview</Name>
+      <Label>@SYS9039</Label>
+      <Fields>
+        <AxTableFieldGroupField>
+          <DataField>ItemId</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>SiteId</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>ABCClass</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>XYZClass</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>SalesAmt12M</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>CalculatedDate</DataField>
+        </AxTableFieldGroupField>
+      </Fields>
+    </AxTableFieldGroup>
+    <AxTableFieldGroup>
+      <Name>Classification</Name>
+      <Label>@ABS:Classification</Label>
+      <Fields>
+        <AxTableFieldGroupField>
+          <DataField>ABCClass</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>XYZClass</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>SalesAmt12M</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>SalesAmtPct</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>CumulativePct</DataField>
+        </AxTableFieldGroupField>
+      </Fields>
+    </AxTableFieldGroup>
+    <AxTableFieldGroup>
+      <Name>DemandStatistics</Name>
+      <Label>@ABS:DemandStatistics</Label>
+      <Fields>
+        <AxTableFieldGroupField>
+          <DataField>DemandMean</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>DemandStdDev</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>DemandCV</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>ZeroPeriods</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>RangeOfCoverage</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>CalculatedDate</DataField>
+        </AxTableFieldGroupField>
+      </Fields>
+    </AxTableFieldGroup>
+  </FieldGroups>
+  <Indexes>
+    <AxTableIndex>
+      <Name>ItemSiteIdx</Name>
+      <AlternateKey>Yes</AlternateKey>
+      <Fields>
+        <AxTableIndexField>
+          <DataField>ItemId</DataField>
+        </AxTableIndexField>
+        <AxTableIndexField>
+          <DataField>SiteId</DataField>
+        </AxTableIndexField>
+      </Fields>
+    </AxTableIndex>
+    <AxTableIndex>
+      <Name>ABCClassIdx</Name>
+      <AllowDuplicates>Yes</AllowDuplicates>
+      <Fields>
+        <AxTableIndexField>
+          <DataField>SiteId</DataField>
+        </AxTableIndexField>
+        <AxTableIndexField>
+          <DataField>ABCClass</DataField>
+        </AxTableIndexField>
+      </Fields>
+    </AxTableIndex>
+    <AxTableIndex>
+      <Name>XYZClassIdx</Name>
+      <AllowDuplicates>Yes</AllowDuplicates>
+      <Fields>
+        <AxTableIndexField>
+          <DataField>SiteId</DataField>
+        </AxTableIndexField>
+        <AxTableIndexField>
+          <DataField>XYZClass</DataField>
+        </AxTableIndexField>
+      </Fields>
+    </AxTableIndex>
+  </Indexes>
+  <Mappings />
+  <Relations>
+    <AxTableRelation xmlns="" i:type="AxTableRelationForeignKey">
+      <Name>InventTable</Name>
+      <Cardinality>ZeroMore</Cardinality>
+      <OnDelete>Restricted</OnDelete>
+      <RelatedTable>InventTable</RelatedTable>
+      <RelatedTableCardinality>ZeroOne</RelatedTableCardinality>
+      <RelationshipType>Association</RelationshipType>
+      <Constraints>
+        <AxTableRelationConstraint xmlns="" i:type="AxTableRelationConstraintField">
+          <Name>ItemId</Name>
+          <Field>ItemId</Field>
+          <RelatedField>ItemId</RelatedField>
+        </AxTableRelationConstraint>
+      </Constraints>
+    </AxTableRelation>
+    <AxTableRelation xmlns="" i:type="AxTableRelationForeignKey">
+      <Name>InventSite</Name>
+      <Cardinality>ZeroMore</Cardinality>
+      <OnDelete>Restricted</OnDelete>
+      <RelatedTable>InventSite</RelatedTable>
+      <RelatedTableCardinality>ZeroOne</RelatedTableCardinality>
+      <RelationshipType>Association</RelationshipType>
+      <Constraints>
+        <AxTableRelationConstraint xmlns="" i:type="AxTableRelationConstraintField">
+          <Name>SiteId</Name>
+          <Field>SiteId</Field>
+          <RelatedField>SiteId</RelatedField>
+        </AxTableRelationConstraint>
+      </Constraints>
+    </AxTableRelation>
+  </Relations>
+  <StateMachines />
+</AxTable>

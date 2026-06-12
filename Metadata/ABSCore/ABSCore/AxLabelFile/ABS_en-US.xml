@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxLabelFile xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ABS_en-US</Name>
+	<LabelContentFileName>ABS.en-US.label.txt</LabelContentFileName>
+	<LabelFileId>ABS</LabelFileId>
+	<Language>en-US</Language>
+	<RelativeUriInModelStore>ABSCore\ABSCore\AxLabelFile\LabelResources\en-US\ABS.en-US.label.txt</RelativeUriInModelStore>
+</AxLabelFile>

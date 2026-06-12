@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxMenuExtension xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="Microsoft.Dynamics.AX.Metadata.V1">
+	<Name>InventoryManagement.ABSCoreExtension</Name>
+	<Customizations />
+	<Elements>
+		<AxMenuExtensionElement xmlns="">
+			<Parent>InquiriesAndReports</Parent>
+			<MenuElement xmlns=""
+				i:type="AxMenuElementSubMenu">
+				<Name>ABSCoreInquiries</Name>
+				<Label>@ABS:ABSPlanningOptimizationMenu</Label>
+				<Elements>
+					<!-- Inventory optimizer workspace -->
+					<AxMenuElement xmlns=""
+						i:type="AxMenuElementMenuItem">
+						<Name>ABSInvOptimizerWorkspaceLink</Name>
+						<MenuItemName>ABSInventoryOptimizerWorkspace</MenuItemName>
+					</AxMenuElement>
+					<!-- ABC/XYZ Classification results -->
+					<AxMenuElement xmlns=""
+						i:type="AxMenuElementMenuItem">
+						<Name>ABSItemABCXYZ</Name>
+						<MenuItemName>ABSItemABCXYZ</MenuItemName>
+					</AxMenuElement>
+					<!-- MRP Exception -->
+					<AxMenuElement xmlns=""
+						i:type="AxMenuElementMenuItem">
+						<Name>ABSMRPException</Name>
+						<MenuItemName>ABSMRPException</MenuItemName>
+					</AxMenuElement>
+					<!-- MRP Assessment results -->
+					<AxMenuElement xmlns=""
+						i:type="AxMenuElementMenuItem">
+						<Name>ABSMRPAssessment</Name>
+						<MenuItemName>ABSMRPAssessment</MenuItemName>
+					</AxMenuElement>
+					<!-- Excess and Obsolete cockpit -->
+					<AxMenuElement xmlns=""
+						i:type="AxMenuElementMenuItem">
+						<Name>ABSExcessObsolete</Name>
+						<MenuItemName>ABSExcessObsolete</MenuItemName>
+					</AxMenuElement>
+				</Elements>
+			</MenuElement>
+		</AxMenuExtensionElement>
+		<AxMenuExtensionElement xmlns="">
+			<Parent>PeriodicTasks</Parent>
+			<MenuElement xmlns=""
+				i:type="AxMenuElementSubMenu">
+				<Name>ABSCorePeriodic</Name>
+				<Label>@ABS:ABSPlanningOptimizationMenu</Label>
+				<Elements>
+					<!-- Run ABC/XYZ Classification -->
+					<AxMenuElement xmlns=""
+						i:type="AxMenuElementMenuItem">
+						<Name>ABSABCXYZClassification</Name>
+						<MenuItemName>ABSABCXYZClassification</MenuItemName>
+						<MenuItemType>Action</MenuItemType>
+					</AxMenuElement>
+					<!-- Run MRP Exception Detection -->
+					<AxMenuElement xmlns=""
+						i:type="AxMenuElementMenuItem">
+						<Name>ABSMRPExceptionDetection</Name>
+						<MenuItemName>ABSMRPExceptionDetection</MenuItemName>
+						<MenuItemType>Action</MenuItemType>
+					</AxMenuElement>
+					<!-- Run MRP Assessment -->
+					<AxMenuElement xmlns=""
+						i:type="AxMenuElementMenuItem">
+						<Name>ABSMRPAssessmentRun</Name>
+						<MenuItemName>ABSMRPAssessmentRun</MenuItemName>
+						<MenuItemType>Action</MenuItemType>
+					</AxMenuElement>
+					<!-- Run Excess and Obsolete analysis -->
+					<AxMenuElement xmlns=""
+						i:type="AxMenuElementMenuItem">
+						<Name>ABSExcessObsoleteRun</Name>
+						<MenuItemName>ABSExcessObsoleteRun</MenuItemName>
+						<MenuItemType>Action</MenuItemType>
+					</AxMenuElement>
+				</Elements>
+			</MenuElement>
+		</AxMenuExtensionElement>
+	</Elements>
+	<MenuElementModifications />
+	<PropertyModifications />
+</AxMenuExtension>

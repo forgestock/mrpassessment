@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>ABSMRPAssessmentReportController</Name>
+  <SourceCode>
+    <Declaration><![CDATA[
+class ABSMRPAssessmentReportController extends SrsReportRunController
+{
+}
+    ]]></Declaration>
+    <Methods>
+      <Method>
+        <Name>main</Name>
+        <Source><![CDATA[
+public static void main(Args _args)
+{
+    ABSMRPAssessmentReportController controller = new ABSMRPAssessmentReportController();
+    controller.parmReportName(ssrsReportStr(ABSMRPAssessmentReport, Report));
+    controller.parmArgs(_args);
+    controller.startOperation();
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>prePromptModifyContract</Name>
+        <Source><![CDATA[
+protected void prePromptModifyContract()
+{
+    ABSMRPAssessmentReportContract  contract;
+    ABSMRPAssessmentRun             run;
+    Args                            lArgs = this.parmArgs();
+
+    super();
+
+    if (lArgs && lArgs.record() && lArgs.dataset() == tableNum(ABSMRPAssessmentRun))
+    {
+        run      = lArgs.record();
+        contract = this.parmReportContract().parmRdpContract() as ABSMRPAssessmentReportContract;
+        if (contract)
+        {
+            contract.parmRunId(run.RunId);
+        }
+    }
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>preRunModifyContract</Name>
+        <Source><![CDATA[
+protected void preRunModifyContract()
+{
+    ABSMRPAssessmentReportContract  contract;
+    ABSMRPAssessmentRun             run;
+    Args                            lArgs = this.parmArgs();
+
+    super();
+
+    if (lArgs && lArgs.record() && lArgs.dataset() == tableNum(ABSMRPAssessmentRun))
+    {
+        run      = lArgs.record();
+        contract = this.parmReportContract().parmRdpContract() as ABSMRPAssessmentReportContract;
+        if (contract)
+        {
+            contract.parmRunId(run.RunId);
+        }
+    }
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>caption</Name>
+        <Source><![CDATA[
+public ClassDescription caption()
+{
+    return "@ABS:ABSMRPAssessmentReport";
+}
+        ]]></Source>
+      </Method>
+    </Methods>
+  </SourceCode>
+</AxClass>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>ABSMRPAssessmentContract</Name>
+  <SourceCode>
+    <Declaration><![CDATA[
+[DataContractAttribute]
+class ABSMRPAssessmentContract
+{
+    ReqPlanId    planId;
+    NoYes        includeItemChecks;
+    int          deletePreviousRunsDays;
+}
+    ]]></Declaration>
+    <Methods>
+      <Method>
+        <Name>parmPlanId</Name>
+        <Source><![CDATA[
+[DataMemberAttribute('PlanId'),
+ SysOperationLabelAttribute(literalStr("@ABS:MRPPlanId")),
+ SysOperationDisplayOrderAttribute('1')]
+public ReqPlanId parmPlanId(ReqPlanId _planId = planId)
+{
+    planId = _planId;
+    return planId;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>parmIncludeItemChecks</Name>
+        <Source><![CDATA[
+[DataMemberAttribute('IncludeItemChecks'),
+ SysOperationLabelAttribute(literalStr("@ABS:IncludeItemChecks")),
+ SysOperationDisplayOrderAttribute('2')]
+public NoYes parmIncludeItemChecks(NoYes _includeItemChecks = includeItemChecks)
+{
+    includeItemChecks = _includeItemChecks;
+    return includeItemChecks;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>parmDeletePreviousRunsDays</Name>
+        <Source><![CDATA[
+[DataMemberAttribute('DeletePreviousRunsDays'),
+ SysOperationLabelAttribute(literalStr("@ABS:DeletePreviousRunsDays")),
+ SysOperationDisplayOrderAttribute('3')]
+public int parmDeletePreviousRunsDays(int _deletePreviousRunsDays = deletePreviousRunsDays)
+{
+    deletePreviousRunsDays = _deletePreviousRunsDays;
+    return deletePreviousRunsDays;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>new</Name>
+        <Source><![CDATA[
+public void new()
+{
+    super();
+
+    includeItemChecks      = NoYes::Yes;
+    deletePreviousRunsDays = 30;
+}
+        ]]></Source>
+      </Method>
+    </Methods>
+  </SourceCode>
+</AxClass>

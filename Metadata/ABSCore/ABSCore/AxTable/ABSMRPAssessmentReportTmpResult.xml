@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxTable xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>ABSMRPAssessmentReportTmpResult</Name>
+  <DeveloperDocumentation>@ABS:ABSMRPAssessmentReportTmpResultDeveloperDocumentation</DeveloperDocumentation>
+  <Label>@ABS:ABSMRPAssessmentReport</Label>
+  <TableType>TempDB</TableType>
+  <SaveDataPerCompany>Yes</SaveDataPerCompany>
+  <Fields>
+    <AxTableField xmlns="" i:type="AxTableFieldString">
+      <Name>RunId</Name>
+      <ExtendedDataType>ABSMRPAssessmentRunId</ExtendedDataType>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldString">
+      <Name>PlanId</Name>
+      <ExtendedDataType>ReqPlanId</ExtendedDataType>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldString">
+      <Name>SiteId</Name>
+      <ExtendedDataType>InventSiteId</ExtendedDataType>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldDate">
+      <Name>AssessmentDate</Name>
+      <ExtendedDataType>TransDate</ExtendedDataType>
+      <Label>@ABS:AssessmentDate</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldEnum">
+      <Name>OverallSeverity</Name>
+      <EnumType>ABSMRPAssessmentSeverity</EnumType>
+      <Label>@ABS:OverallSeverity</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldInt">
+      <Name>TotalChecks</Name>
+      <Label>@ABS:TotalChecks</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldInt">
+      <Name>IssuesFound</Name>
+      <Label>@ABS:IssuesFound</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldEnum">
+      <Name>PlanningEngine</Name>
+      <EnumType>ABSMRPPlanningEngine</EnumType>
+      <Label>@ABS:PlanningEngine</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldString">
+      <Name>CheckCode</Name>
+      <ExtendedDataType>ABSMRPCheckCode</ExtendedDataType>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldEnum">
+      <Name>Category</Name>
+      <EnumType>ABSMRPAssessmentCategory</EnumType>
+      <Label>@ABS:Category</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldEnum">
+      <Name>Severity</Name>
+      <EnumType>ABSMRPAssessmentSeverity</EnumType>
+      <Label>@ABS:Severity</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldInt">
+      <Name>AffectedCount</Name>
+      <Label>@ABS:AffectedCount</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldEnum">
+      <Name>SeverityTrend</Name>
+      <EnumType>ABSMRPAssessmentSeverityTrend</EnumType>
+      <Label>@ABS:SeverityTrend</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldString">
+      <Name>CheckDescription</Name>
+      <ExtendedDataType>ABSMRPCheckDescription</ExtendedDataType>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldString">
+      <Name>Recommendation</Name>
+      <ExtendedDataType>ABSMRPRecommendation</ExtendedDataType>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldString">
+      <Name>AffectedObjects</Name>
+      <ExtendedDataType>ABSMRPAffectedObjects</ExtendedDataType>
+    </AxTableField>
+  </Fields>
+  <FieldGroups>
+    <AxTableFieldGroup>
+      <Name>AutoReport</Name>
+      <Fields>
+        <AxTableFieldGroupField><DataField>RunId</DataField></AxTableFieldGroupField>
+        <AxTableFieldGroupField><DataField>PlanId</DataField></AxTableFieldGroupField>
+        <AxTableFieldGroupField><DataField>SiteId</DataField></AxTableFieldGroupField>
+        <AxTableFieldGroupField><DataField>AssessmentDate</DataField></AxTableFieldGroupField>
+        <AxTableFieldGroupField><DataField>OverallSeverity</DataField></AxTableFieldGroupField>
+        <AxTableFieldGroupField><DataField>TotalChecks</DataField></AxTableFieldGroupField>
+        <AxTableFieldGroupField><DataField>IssuesFound</DataField></AxTableFieldGroupField>
+        <AxTableFieldGroupField><DataField>CheckCode</DataField></AxTableFieldGroupField>
+        <AxTableFieldGroupField><DataField>Category</DataField></AxTableFieldGroupField>
+        <AxTableFieldGroupField><DataField>Severity</DataField></AxTableFieldGroupField>
+        <AxTableFieldGroupField><DataField>AffectedCount</DataField></AxTableFieldGroupField>
+        <AxTableFieldGroupField><DataField>CheckDescription</DataField></AxTableFieldGroupField>
+        <AxTableFieldGroupField><DataField>Recommendation</DataField></AxTableFieldGroupField>
+      </Fields>
+    </AxTableFieldGroup>
+  </FieldGroups>
+  <Indexes />
+  <Mappings />
+  <Relations />
+  <StateMachines />
+</AxTable>

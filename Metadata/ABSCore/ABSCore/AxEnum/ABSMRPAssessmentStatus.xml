@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxEnum xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>ABSMRPAssessmentStatus</Name>
+  <SourceCode>
+    <Declaration><![CDATA[]]></Declaration>
+  </SourceCode>
+  <DeveloperDocumentation>@ABS:ABSMRPAssessmentStatusDeveloperDocumentation</DeveloperDocumentation>
+  <Label>@ABS:ABSMRPAssessmentStatus</Label>
+  <EnumValues>
+    <AxEnumValue>
+      <Name>InProgress</Name>
+      <Label>@ABS:AssessmentStatusInProgress</Label>
+      <Value>0</Value>
+    </AxEnumValue>
+    <AxEnumValue>
+      <Name>Completed</Name>
+      <Label>@ABS:AssessmentStatusCompleted</Label>
+      <Value>1</Value>
+    </AxEnumValue>
+    <AxEnumValue>
+      <Name>Failed</Name>
+      <Label>@ABS:AssessmentStatusFailed</Label>
+      <Value>2</Value>
+    </AxEnumValue>
+  </EnumValues>
+</AxEnum>

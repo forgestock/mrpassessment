@@ -1,0 +1,245 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AxForm xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="Microsoft.Dynamics.AX.Metadata.V6">
+	<Name>ABSInventoryOptimizerWorkspace</Name>
+	<SourceCode>
+		<Methods xmlns="">
+			<Method>
+				<Name>classDeclaration</Name>
+				<Source><![CDATA[
+[Form]
+public class ABSInventoryOptimizerWorkspace extends FormRun
+{
+}
+]]></Source>
+			</Method>
+			<Method>
+				<Name>init</Name>
+				<Source><![CDATA[
+public void init()
+{
+    super();
+}
+]]></Source>
+			</Method>
+		</Methods>
+		<DataSources xmlns="" />
+		<DataControls xmlns="" />
+		<Members xmlns="" />
+	</SourceCode>
+	<DataSources />
+	<Design>
+		<Caption xmlns="">@ABS:ABSInventoryOptimizerWorkspace</Caption>
+		<Pattern xmlns="">TabbedWorkspace</Pattern>
+		<PatternVersion xmlns="">1.0</PatternVersion>
+		<ShowDeleteButton xmlns="">No</ShowDeleteButton>
+		<ShowNewButton xmlns="">No</ShowNewButton>
+		<Style xmlns="">Workspace</Style>
+		<ViewEditMode xmlns="">View</ViewEditMode>
+		<Controls xmlns="">
+			<AxFormControl xmlns=""
+				i:type="AxFormTabControl">
+				<Name>Body</Name>
+				<Type>Tab</Type>
+				<FormControlExtension
+					i:nil="true" />
+				<Controls>
+					<AxFormControl xmlns=""
+						i:type="AxFormTabPageControl">
+						<Name>Workspace</Name>
+						<Type>TabPage</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormTabControl">
+								<Name>WorkspaceTabControl</Name>
+								<ExtendedStyle>tab_simpleFastTab</ExtendedStyle>
+								<Type>Tab</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<Controls>
+									<AxFormControl xmlns=""
+										i:type="AxFormTabPageControl">
+										<Name>SectionCardList</Name>
+										<AutoDeclaration>Yes</AutoDeclaration>
+										<Type>TabPage</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<Controls>
+											<AxFormControl xmlns=""
+												i:type="AxFormContainerControl">
+												<Name>KpiStripContainer</Name>
+												<HeightMode>SizeToContent</HeightMode>
+												<Type>Container</Type>
+												<WidthMode>SizeToAvailable</WidthMode>
+												<FormControlExtension>
+													<Name>FormPartControl</Name>
+													<ExtensionComponents>
+														<AxFormControlExtensionComponent xmlns=""
+															i:type="AxFormControlExtensionComponentComposite">
+															<Name>dataLinks</Name>
+															<ExtensionComponents />
+														</AxFormControlExtensionComponent>
+													</ExtensionComponents>
+													<ExtensionProperties>
+														<AxFormControlExtensionProperty>
+															<Name>targetName</Name>
+															<Type>String</Type>
+															<Value>ABSWorkspaceKpiStrip</Value>
+														</AxFormControlExtensionProperty>
+														<AxFormControlExtensionProperty>
+															<Name>autoRefreshInterval</Name>
+															<Type>Int32</Type>
+															<Value>0</Value>
+														</AxFormControlExtensionProperty>
+														<AxFormControlExtensionProperty>
+															<Name>parmRunMode</Name>
+															<Type>Enum</Type>
+															<TypeName>FormPartControlRunMode</TypeName>
+															<Value>Local</Value>
+														</AxFormControlExtensionProperty>
+													</ExtensionProperties>
+												</FormControlExtension>
+												<Controls />
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormContainerControl">
+												<Name>ABCXYZCardContainer</Name>
+												<HeightMode>SizeToAvailable</HeightMode>
+												<Type>Container</Type>
+												<WidthMode>SizeToAvailable</WidthMode>
+												<FormControlExtension>
+													<Name>FormPartControl</Name>
+													<ExtensionComponents>
+														<AxFormControlExtensionComponent xmlns=""
+															i:type="AxFormControlExtensionComponentComposite">
+															<Name>dataLinks</Name>
+															<ExtensionComponents />
+														</AxFormControlExtensionComponent>
+													</ExtensionComponents>
+													<ExtensionProperties>
+														<AxFormControlExtensionProperty>
+															<Name>targetName</Name>
+															<Type>String</Type>
+															<Value>ABSWorkspaceCardGrid</Value>
+														</AxFormControlExtensionProperty>
+														<AxFormControlExtensionProperty>
+															<Name>autoRefreshInterval</Name>
+															<Type>Int32</Type>
+															<Value>0</Value>
+														</AxFormControlExtensionProperty>
+														<AxFormControlExtensionProperty>
+															<Name>parmRunMode</Name>
+															<Type>Enum</Type>
+															<TypeName>FormPartControlRunMode</TypeName>
+															<Value>Local</Value>
+														</AxFormControlExtensionProperty>
+													</ExtensionProperties>
+												</FormControlExtension>
+												<Controls />
+											</AxFormControl>
+										</Controls>
+										<Caption>@ABS:ABSWorkspaceSummaryCaption</Caption>
+										<FastTabExpanded>Yes</FastTabExpanded>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormTabPageControl">
+										<Name>SectionRelatedLinks</Name>
+										<Pattern>SectionRelatedLinks</Pattern>
+										<PatternVersion>1.1</PatternVersion>
+										<Type>TabPage</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<Controls>
+											<AxFormControl xmlns=""
+												i:type="AxFormMenuFunctionButtonControl">
+												<Name>LinkInventoryOptimizer</Name>
+												<Type>MenuFunctionButton</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<ButtonDisplay>TextOnly</ButtonDisplay>
+												<MenuItemName>ABSInventoryOptimizerWorkspace</MenuItemName>
+												<Style>Link</Style>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormMenuFunctionButtonControl">
+												<Name>LinkMRPException</Name>
+												<Type>MenuFunctionButton</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<ButtonDisplay>TextOnly</ButtonDisplay>
+												<MenuItemName>ABSMRPException</MenuItemName>
+												<Style>Link</Style>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormMenuFunctionButtonControl">
+												<Name>LinkExcessObsolete</Name>
+												<Type>MenuFunctionButton</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<ButtonDisplay>TextOnly</ButtonDisplay>
+												<MenuItemName>ABSExcessObsolete</MenuItemName>
+												<Style>Link</Style>
+											</AxFormControl>
+										</Controls>
+										<ColumnsMode>Fill</ColumnsMode>
+										<Caption>@ABS:ABSWorkspaceRelatedLinksCaption</Caption>
+										<FastTabExpanded>Yes</FastTabExpanded>
+									</AxFormControl>
+								</Controls>
+								<Style>FastTabs</Style>
+							</AxFormControl>
+						</Controls>
+						<Caption>@ABS:ABSWorkspaceMyWork</Caption>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormTabPageControl">
+						<Name>Analytics</Name>
+						<Type>TabPage</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormContainerControl">
+								<Name>AnalyticsContainer</Name>
+								<HeightMode>SizeToAvailable</HeightMode>
+								<Type>Container</Type>
+								<WidthMode>SizeToAvailable</WidthMode>
+								<FormControlExtension>
+									<Name>FormPartControl</Name>
+									<ExtensionComponents>
+										<AxFormControlExtensionComponent xmlns=""
+											i:type="AxFormControlExtensionComponentComposite">
+											<Name>dataLinks</Name>
+											<ExtensionComponents />
+										</AxFormControlExtensionComponent>
+									</ExtensionComponents>
+									<ExtensionProperties>
+										<AxFormControlExtensionProperty>
+											<Name>targetName</Name>
+											<Type>String</Type>
+											<Value>ABSInventoryAnalytics</Value>
+										</AxFormControlExtensionProperty>
+										<AxFormControlExtensionProperty>
+											<Name>autoRefreshInterval</Name>
+											<Type>Int32</Type>
+											<Value>0</Value>
+										</AxFormControlExtensionProperty>
+										<AxFormControlExtensionProperty>
+											<Name>parmRunMode</Name>
+											<Type>Enum</Type>
+											<TypeName>FormPartControlRunMode</TypeName>
+											<Value>Local</Value>
+										</AxFormControlExtensionProperty>
+									</ExtensionProperties>
+								</FormControlExtension>
+								<Controls />
+							</AxFormControl>
+						</Controls>
+						<Caption>@ABS:ABSWorkspaceAnalytics</Caption>
+					</AxFormControl>
+				</Controls>
+			</AxFormControl>
+		</Controls>
+	</Design>
+</AxForm>

@@ -1,0 +1,182 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AxTable xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ABSMRPAssessmentResult</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+public class ABSMRPAssessmentResult extends common
+{
+}
+    
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>findByRunCheck</Name>
+				<Source><![CDATA[
+public static ABSMRPAssessmentResult findByRunCheck(
+    ABSMRPAssessmentRunId _runId,
+    ABSMRPCheckCode       _checkCode,
+    boolean               _forUpdate = false)
+{
+    ABSMRPAssessmentResult ret;
+
+    ret.selectForUpdate(_forUpdate);
+
+    select firstonly ret
+        where ret.RunId     == _runId
+           && ret.CheckCode == _checkCode;
+
+    return ret;
+}
+        
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+	<DeveloperDocumentation>@ABS:ABSMRPAssessmentResultDeveloperDocumentation</DeveloperDocumentation>
+	<Label>@ABS:ABSMRPAssessmentResult</Label>
+	<TableGroup>WorksheetLine</TableGroup>
+	<TitleField1>CheckCode</TitleField1>
+	<TitleField2>Severity</TitleField2>
+	<ClusteredIndex>RunCheckIdx</ClusteredIndex>
+	<DeleteActions />
+	<FieldGroups>
+		<AxTableFieldGroup>
+			<Name>AutoReport</Name>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>RunId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>CheckCode</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>Category</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>Severity</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>AffectedCount</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>CheckDescription</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>Recommendation</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>AffectedObjects</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>SeverityTrend</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>Suppressed</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>NotApplicable</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+	</FieldGroups>
+	<Fields>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>RunId</Name>
+			<ExtendedDataType>ABSMRPAssessmentRunId</ExtendedDataType>
+			<Mandatory>Yes</Mandatory>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>CheckCode</Name>
+			<ExtendedDataType>ABSMRPCheckCode</ExtendedDataType>
+			<Mandatory>Yes</Mandatory>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldEnum">
+			<Name>Category</Name>
+			<EnumType>ABSMRPAssessmentCategory</EnumType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>CategoryName</Name>
+			<ExtendedDataType>Description</ExtendedDataType>
+			<Label>@ABS:Category</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldEnum">
+			<Name>Severity</Name>
+			<EnumType>ABSMRPAssessmentSeverity</EnumType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldInt">
+			<Name>AffectedCount</Name>
+			<Label>@ABS:AffectedCount</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>CheckDescription</Name>
+			<ExtendedDataType>ABSMRPCheckDescription</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>Recommendation</Name>
+			<ExtendedDataType>ABSMRPRecommendation</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>AffectedObjects</Name>
+			<ExtendedDataType>ABSMRPAffectedObjects</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldEnum">
+			<Name>SeverityTrend</Name>
+			<EnumType>ABSMRPAssessmentSeverityTrend</EnumType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldEnum">
+			<Name>Suppressed</Name>
+			<EnumType>NoYes</EnumType>
+			<Label>@ABS:Suppressed</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldEnum">
+			<Name>NotApplicable</Name>
+			<EnumType>NoYes</EnumType>
+			<Label>@ABS:NotApplicable</Label>
+		</AxTableField>
+	</Fields>
+	<FullTextIndexes />
+	<Indexes>
+		<AxTableIndex>
+			<Name>RunCheckIdx</Name>
+			<AllowDuplicates>Yes</AllowDuplicates>
+			<Fields>
+				<AxTableIndexField>
+					<DataField>RunId</DataField>
+				</AxTableIndexField>
+				<AxTableIndexField>
+					<DataField>CheckCode</DataField>
+				</AxTableIndexField>
+			</Fields>
+		</AxTableIndex>
+	</Indexes>
+	<Mappings />
+	<Relations>
+		<AxTableRelation>
+			<Name>ABSMRPAssessmentRun</Name>
+			<Cardinality>ZeroMore</Cardinality>
+			<RelatedTable>ABSMRPAssessmentRun</RelatedTable>
+			<RelatedTableCardinality>ExactlyOne</RelatedTableCardinality>
+			<Constraints>
+				<AxTableRelationConstraint xmlns=""
+					i:type="AxTableRelationConstraintField">
+					<Name>RunId</Name>
+					<Field>RunId</Field>
+					<RelatedField>RunId</RelatedField>
+				</AxTableRelationConstraint>
+			</Constraints>
+		</AxTableRelation>
+	</Relations>
+	<StateMachines />
+</AxTable>

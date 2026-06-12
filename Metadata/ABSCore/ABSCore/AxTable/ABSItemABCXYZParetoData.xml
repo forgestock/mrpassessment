@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxTable xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>ABSItemABCXYZParetoData</Name>
+  <SourceCode>
+    <Declaration><![CDATA[
+public class ABSItemABCXYZParetoData extends common
+{
+}
+    ]]></Declaration>
+  </SourceCode>
+  <DeveloperDocumentation>@ABS:ABSItemABCXYZParetoDataDeveloperDocumentation</DeveloperDocumentation>
+  <Label>@ABS:ABSParetoChartTitle</Label>
+  <TableGroup>WorksheetLine</TableGroup>
+  <TableType>InMemory</TableType>
+  <SaveDataPerCompany>No</SaveDataPerCompany>
+  <Fields>
+    <AxTableField xmlns="" i:type="AxTableFieldInt">
+      <Name>ItemPct</Name>
+      <Label>@ABS:ABSParetoItemPct</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldString">
+      <Name>ItemPctLabel</Name>
+      <Label>@ABS:ABSParetoItemPct</Label>
+      <StringSize>8</StringSize>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldReal">
+      <Name>CumulativeValuePct</Name>
+      <Label>@ABS:ABSParetoCumulativeValuePct</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldReal">
+      <Name>Ref80</Name>
+      <Label>@ABS:ABSParetoRef80</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldReal">
+      <Name>Ref95</Name>
+      <Label>@ABS:ABSParetoRef95</Label>
+    </AxTableField>
+  </Fields>
+  <FieldGroups>
+    <AxTableFieldGroup>
+      <Name>AutoReport</Name>
+      <Label>@SYS21932</Label>
+      <Fields>
+        <AxTableFieldGroupField>
+          <DataField>ItemPct</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>CumulativeValuePct</DataField>
+        </AxTableFieldGroupField>
+      </Fields>
+    </AxTableFieldGroup>
+    <AxTableFieldGroup>
+      <Name>AutoIdentification</Name>
+      <AutoPopulate>Yes</AutoPopulate>
+      <Label>@SYS19069</Label>
+      <Fields />
+    </AxTableFieldGroup>
+  </FieldGroups>
+  <Indexes />
+  <Mappings />
+  <Relations />
+  <StateMachines />
+</AxTable>

@@ -1,0 +1,455 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxTable xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>ABSMRPException</Name>
+  <SourceCode>
+    <Declaration><![CDATA[
+public class ABSMRPException extends common
+{
+}
+    ]]></Declaration>
+    <Methods>
+      <Method>
+        <Name>find</Name>
+        <Source><![CDATA[
+public static ABSMRPException find(RefRecId _recId, boolean _forUpdate = false)
+{
+    ABSMRPException ret;
+
+    ret.selectForUpdate(_forUpdate);
+
+    select firstonly ret
+        where ret.RecId == _recId;
+
+    return ret;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>exist</Name>
+        <Source><![CDATA[
+public static boolean exist(RefRecId _recId)
+{
+    return (select firstonly RecId from ABSMRPException
+                where ABSMRPException.RecId == _recId).RecId != 0;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>findByPlanItemSite</Name>
+        <Source><![CDATA[
+public static ABSMRPException findByPlanItemSite(
+    ReqPlanId           _planId,
+    ItemId              _itemId,
+    InventSiteId        _siteId,
+    ABSMRPExceptionType _exceptionType,
+    RefRecId            _reqPORecId,
+    boolean             _forUpdate = false)
+{
+    ABSMRPException ret;
+
+    ret.selectForUpdate(_forUpdate);
+
+    select firstonly ret
+        where ret.PlanId        == _planId
+           && ret.ItemId        == _itemId
+           && ret.SiteId        == _siteId
+           && ret.ExceptionType == _exceptionType
+           && ret.ReqPORecId    == _reqPORecId;
+
+    return ret;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>updateStatus</Name>
+        <Source><![CDATA[
+public void updateStatus(ABSMRPExceptionStatus _status)
+{
+    ABSMRPException buffer;
+
+    if (!this.RecId)
+    {
+        return;
+    }
+
+    ttsBegin;
+    select forUpdate buffer
+        where buffer.RecId == this.RecId;
+
+    if (!buffer.RecId)
+    {
+        ttsCommit;
+        return;
+    }
+
+    buffer.Status = _status;
+
+    if (_status == ABSMRPExceptionStatus::Dismissed || _status == ABSMRPExceptionStatus::Confirmed)
+    {
+        buffer.ResolvedBy   = curUserId();
+        buffer.ResolvedDate = DateTimeUtil::getToday(DateTimeUtil::getUserPreferredTimeZone());
+    }
+
+    buffer.update();
+    ttsCommit;
+
+    this.data(buffer);
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>isHighPriority</Name>
+        <Source><![CDATA[
+public boolean isHighPriority()
+{
+    return this.Severity == ABSMRPExceptionSeverity::High
+        || this.ABCClass == ABSABCClassification::A;
+}
+        ]]></Source>
+      </Method>
+      <Method>
+        <Name>initValue</Name>
+        <Source><![CDATA[
+public void initValue()
+{
+    super();
+
+    this.Status      = ABSMRPExceptionStatus::Open;
+    this.CreatedDate = DateTimeUtil::getToday(DateTimeUtil::getUserPreferredTimeZone());
+}
+        ]]></Source>
+      </Method>
+    </Methods>
+  </SourceCode>
+  <DeveloperDocumentation>@ABS:ABSMRPExceptionDeveloperDocumentation</DeveloperDocumentation>
+  <Label>@ABS:ABSMRPException</Label>
+  <TableGroup>WorksheetLine</TableGroup>
+  <TitleField1>ItemId</TitleField1>
+  <TitleField2>ExceptionType</TitleField2>
+  <CacheLookup>None</CacheLookup>
+  <ClusteredIndex>PlanItemSiteTypeReqPOIdx</ClusteredIndex>
+  <PrimaryIndex>SurrogateKey</PrimaryIndex>
+  <ReplacementKey>PlanItemSiteTypeReqPOIdx</ReplacementKey>
+  <FormRef>ABSMRPException</FormRef>
+  <SaveDataPerCompany>Yes</SaveDataPerCompany>
+  <Fields>
+    <AxTableField xmlns="" i:type="AxTableFieldString">
+      <Name>ItemId</Name>
+      <ExtendedDataType>ItemId</ExtendedDataType>
+      <Mandatory>Yes</Mandatory>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldString">
+      <Name>SiteId</Name>
+      <ExtendedDataType>InventSiteId</ExtendedDataType>
+      <Mandatory>Yes</Mandatory>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldString">
+      <Name>PlanId</Name>
+      <ExtendedDataType>ReqPlanId</ExtendedDataType>
+      <Mandatory>Yes</Mandatory>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldInt64">
+      <Name>ReqPORecId</Name>
+      <ExtendedDataType>RefRecId</ExtendedDataType>
+      <Label>@ABS:ReqPORecId</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldEnum">
+      <Name>ABCClass</Name>
+      <EnumType>ABSABCClassification</EnumType>
+      <Label>@ABS:ABCClass</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldEnum">
+      <Name>XYZClass</Name>
+      <EnumType>ABSXYZClassification</EnumType>
+      <Label>@ABS:XYZClass</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldEnum">
+      <Name>ExceptionType</Name>
+      <EnumType>ABSMRPExceptionType</EnumType>
+      <Label>@ABS:ExceptionType</Label>
+      <Mandatory>Yes</Mandatory>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldString">
+      <Name>TypeName</Name>
+      <ExtendedDataType>Description</ExtendedDataType>
+      <Label>@ABS:ExceptionType</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldInt">
+      <Name>ExceptionCount</Name>
+      <Label>@ABS:ABSExceptionCountLabel</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldEnum">
+      <Name>Severity</Name>
+      <EnumType>ABSMRPExceptionSeverity</EnumType>
+      <Label>@ABS:Severity</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldDate">
+      <Name>RequirementDate</Name>
+      <ExtendedDataType>TransDate</ExtendedDataType>
+      <Label>@ABS:RequirementDate</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldReal">
+      <Name>ExceptionQty</Name>
+      <ExtendedDataType>InventQty</ExtendedDataType>
+      <Label>@ABS:ExceptionQty</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldInt">
+      <Name>ExceptionDays</Name>
+      <ExtendedDataType>Days</ExtendedDataType>
+      <Label>@ABS:ExceptionDays</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldString">
+      <Name>SuggestedAction</Name>
+      <ExtendedDataType>ABSMRPRecommendation</ExtendedDataType>
+      <Label>@ABS:SuggestedAction</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldReal">
+      <Name>PriorityScore</Name>
+      <Label>@ABS:PriorityScore</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldEnum">
+      <Name>Status</Name>
+      <EnumType>ABSMRPExceptionStatus</EnumType>
+      <Label>@ABS:Status</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldString">
+      <Name>ResolvedBy</Name>
+      <ExtendedDataType>UserId</ExtendedDataType>
+      <Label>@ABS:ResolvedBy</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldDate">
+      <Name>ResolvedDate</Name>
+      <ExtendedDataType>TransDate</ExtendedDataType>
+      <Label>@ABS:ResolvedDate</Label>
+    </AxTableField>
+    <AxTableField xmlns="" i:type="AxTableFieldDate">
+      <Name>CreatedDate</Name>
+      <ExtendedDataType>TransDate</ExtendedDataType>
+      <Label>@ABS:CreatedDate</Label>
+    </AxTableField>
+  </Fields>
+  <FieldGroups>
+    <AxTableFieldGroup>
+      <Name>AutoReport</Name>
+      <Label>@SYS21932</Label>
+      <Fields>
+        <AxTableFieldGroupField>
+          <DataField>PlanId</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>ItemId</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>SiteId</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>ExceptionType</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>Severity</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>Status</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>ReqPORecId</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>CreatedDate</DataField>
+        </AxTableFieldGroupField>
+      </Fields>
+    </AxTableFieldGroup>
+    <AxTableFieldGroup>
+      <Name>AutoLookup</Name>
+      <Label>@SYS77582</Label>
+      <Fields>
+        <AxTableFieldGroupField>
+          <DataField>PlanId</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>ItemId</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>SiteId</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>ExceptionType</DataField>
+        </AxTableFieldGroupField>
+      </Fields>
+    </AxTableFieldGroup>
+    <AxTableFieldGroup>
+      <Name>AutoIdentification</Name>
+      <AutoPopulate>Yes</AutoPopulate>
+      <Label>@SYS100218</Label>
+      <Fields>
+        <AxTableFieldGroupField>
+          <DataField>PlanId</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>ItemId</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>ExceptionType</DataField>
+        </AxTableFieldGroupField>
+      </Fields>
+    </AxTableFieldGroup>
+    <AxTableFieldGroup>
+      <Name>Overview</Name>
+      <Label>@SYS9039</Label>
+      <Fields>
+        <AxTableFieldGroupField>
+          <DataField>PlanId</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>ItemId</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>SiteId</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>ABCClass</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>XYZClass</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>ExceptionType</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>Severity</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>Status</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>PriorityScore</DataField>
+        </AxTableFieldGroupField>
+      </Fields>
+    </AxTableFieldGroup>
+    <AxTableFieldGroup>
+      <Name>ExceptionDetails</Name>
+      <Label>@ABS:ExceptionDetails</Label>
+      <Fields>
+        <AxTableFieldGroupField>
+          <DataField>RequirementDate</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>ExceptionQty</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>ExceptionDays</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>SuggestedAction</DataField>
+        </AxTableFieldGroupField>
+      </Fields>
+    </AxTableFieldGroup>
+    <AxTableFieldGroup>
+      <Name>Resolution</Name>
+      <Label>@ABS:Resolution</Label>
+      <Fields>
+        <AxTableFieldGroupField>
+          <DataField>Status</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>ResolvedBy</DataField>
+        </AxTableFieldGroupField>
+        <AxTableFieldGroupField>
+          <DataField>ResolvedDate</DataField>
+        </AxTableFieldGroupField>
+      </Fields>
+    </AxTableFieldGroup>
+  </FieldGroups>
+  <Indexes>
+    <AxTableIndex>
+      <Name>PlanItemSiteTypeReqPOIdx</Name>
+      <AlternateKey>Yes</AlternateKey>
+      <Fields>
+        <AxTableIndexField>
+          <DataField>PlanId</DataField>
+        </AxTableIndexField>
+        <AxTableIndexField>
+          <DataField>ItemId</DataField>
+        </AxTableIndexField>
+        <AxTableIndexField>
+          <DataField>SiteId</DataField>
+        </AxTableIndexField>
+        <AxTableIndexField>
+          <DataField>ExceptionType</DataField>
+        </AxTableIndexField>
+        <AxTableIndexField>
+          <DataField>ReqPORecId</DataField>
+        </AxTableIndexField>
+        <AxTableIndexField>
+          <DataField>RequirementDate</DataField>
+        </AxTableIndexField>
+      </Fields>
+    </AxTableIndex>
+    <AxTableIndex>
+      <Name>StatusSeverityIdx</Name>
+      <AllowDuplicates>Yes</AllowDuplicates>
+      <Fields>
+        <AxTableIndexField>
+          <DataField>Status</DataField>
+        </AxTableIndexField>
+        <AxTableIndexField>
+          <DataField>Severity</DataField>
+        </AxTableIndexField>
+      </Fields>
+    </AxTableIndex>
+  </Indexes>
+  <Mappings />
+  <Relations>
+    <AxTableRelation xmlns="" i:type="AxTableRelationForeignKey">
+      <Name>InventTable</Name>
+      <Cardinality>ZeroMore</Cardinality>
+      <OnDelete>Restricted</OnDelete>
+      <RelatedTable>InventTable</RelatedTable>
+      <RelatedTableCardinality>ZeroOne</RelatedTableCardinality>
+      <RelationshipType>Association</RelationshipType>
+      <Constraints>
+        <AxTableRelationConstraint xmlns="" i:type="AxTableRelationConstraintField">
+          <Name>ItemId</Name>
+          <Field>ItemId</Field>
+          <RelatedField>ItemId</RelatedField>
+        </AxTableRelationConstraint>
+      </Constraints>
+    </AxTableRelation>
+    <AxTableRelation xmlns="" i:type="AxTableRelationForeignKey">
+      <Name>InventSite</Name>
+      <Cardinality>ZeroMore</Cardinality>
+      <OnDelete>Restricted</OnDelete>
+      <RelatedTable>InventSite</RelatedTable>
+      <RelatedTableCardinality>ZeroOne</RelatedTableCardinality>
+      <RelationshipType>Association</RelationshipType>
+      <Constraints>
+        <AxTableRelationConstraint xmlns="" i:type="AxTableRelationConstraintField">
+          <Name>SiteId</Name>
+          <Field>SiteId</Field>
+          <RelatedField>SiteId</RelatedField>
+        </AxTableRelationConstraint>
+      </Constraints>
+    </AxTableRelation>
+    <AxTableRelation xmlns="" i:type="AxTableRelationForeignKey">
+      <Name>ABSItemABCXYZ</Name>
+      <Cardinality>ZeroMore</Cardinality>
+      <OnDelete>Restricted</OnDelete>
+      <RelatedTable>ABSItemABCXYZ</RelatedTable>
+      <RelatedTableCardinality>ExactlyOne</RelatedTableCardinality>
+      <RelationshipType>Association</RelationshipType>
+      <Constraints>
+        <AxTableRelationConstraint xmlns="" i:type="AxTableRelationConstraintField">
+          <Name>ItemId</Name>
+          <Field>ItemId</Field>
+          <RelatedField>ItemId</RelatedField>
+        </AxTableRelationConstraint>
+        <AxTableRelationConstraint xmlns="" i:type="AxTableRelationConstraintField">
+          <Name>SiteId</Name>
+          <Field>SiteId</Field>
+          <RelatedField>SiteId</RelatedField>
+        </AxTableRelationConstraint>
+      </Constraints>
+    </AxTableRelation>
+  </Relations>
+  <StateMachines />
+</AxTable>
