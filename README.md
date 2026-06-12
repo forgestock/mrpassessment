@@ -12,8 +12,13 @@ A powerful native suite of free tools that helps Demand Planners, Inventory Cont
   <img width="915" height="931" alt="image" src="https://github.com/user-attachments/assets/e8b5cc3b-c321-4d16-bb28-9503dd4c0855" />
 
 - **MRP Exception Advisor** — Smart prioritization of planned order issues with weighted scoring
+  <img width="1788" height="936" alt="image" src="https://github.com/user-attachments/assets/3553d496-0f91-4f7a-b2a7-e7bbd1859470" />
+
 - **MRP Assessment Engine** — 38 diagnostic checks on plan configuration and master data health
+  <img width="1124" height="939" alt="image" src="https://github.com/user-attachments/assets/f8999bfd-adcd-49b9-8a84-c62f72c74de4" />
+
 - **Excess & Obsolete Cockpit** — Aging analysis and disposition recommendations for slow-moving and dead stock
+  <img width="928" height="948" alt="image" src="https://github.com/user-attachments/assets/b3a85a78-5b48-4af1-8ff4-5f90dc51c90d" />
 
 ---
 
