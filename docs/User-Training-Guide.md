@@ -2,9 +2,11 @@
 ## Free Features: ABC/XYZ Classification · MRP Exception · MRP Assessment · Excess & Obsolete Cockpit
 
 **Module:** Inventory Optimizer (ABS)  
-**Platform:** Microsoft Dynamics 365 Finance & Operations  
+**Platform:** Microsoft Dynamics 365 for Finance and Operations (D365FO)  
 **Audience:** Demand planners, materials planners, inventory controllers, MRP super users  
 **Last updated:** June 2026
+
+The Inventory Optimizer module is built natively for **Microsoft Dynamics 365 for Finance and Operations** — all features run inside your existing D365FO environment, use standard D365FO batch processing, security, and master data, and require no external services or integrations.
 
 > **Update (June 2026):** Configuration for MRP Assessment check toggles is maintained in the standard
 > **Inventory and warehouse management parameters** form, tab **Inventory optimizer**,
