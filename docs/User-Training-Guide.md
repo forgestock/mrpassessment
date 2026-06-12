@@ -23,7 +23,7 @@
 
 ## Table of Contents
 
-1. [How the three features work together](#1-how-the-three-features-work-together)
+1. [How the four features work together](#1-how-the-four-features-work-together)
 2. [ABC/XYZ Classification](#2-abcxyz-classification)
    - [What is ABC analysis?](#what-is-abc-analysis)
    - [What is XYZ analysis?](#what-is-xyz-analysis)
@@ -53,7 +53,7 @@
 
 ---
 
-## 1. How the three features work together
+## 1. How the four features work together
 
 The four free features answer four different questions about your supply chain:
 
@@ -83,9 +83,10 @@ Use this checklist before team onboarding, UAT walkthroughs, or go-live handover
 
 | Checklist item | Why it matters | Owner |
 |---|---|---|
-| Batch processing is healthy (no recurring failed jobs) | All three features are batch-driven | IT / batch admin |
+| Batch processing is healthy (no recurring failed jobs) | All four features are batch-driven | IT / batch admin |
 | Master planning runs are completing on schedule | Exception and assessment results depend on fresh plan output | MRP super user |
-| ABC/XYZ job has been run at least once in current legal entity | Priority scoring quality depends on class data | Inventory controller |
+| ABC/XYZ job has been run at least once in current legal entity | Priority scoring quality depends on class data; required for E&O excess flag and coverage calculations | Inventory controller |
+| Excess & Obsolete analysis has been run at least once | Baseline write-down exposure and aging data must be established before planners act on recommendations | Inventory controller |
 | Users have access to periodic tasks + inquiry menus | Training fails if users can only view, not run/review | Security admin |
 | One agreed "working plan" for training | Avoids confusion when comparing results | Planning lead |
 
@@ -115,47 +116,48 @@ ABC analysis ranks every stocked item at a site by its share of total demand val
 
 ### What is XYZ analysis?
 
-XYZ analysis measures how *predictable* an item's monthly demand is using the **Coefficient of Variation (CV)** — the ratio of the standard deviation to the mean of monthly demand quantities.
+XYZ analysis measures how *predictable* an item's monthly demand is. The classifier uses the **SBC demand-pattern scheme** (Syntetos, Boylan and Croston, 2005), which separates *how often* demand occurs from *how variable* it is when it does occur:
 
-$$CV = \frac{\sigma_{monthly}}{\mu_{monthly}}$$
+- **ADI (Average Demand Interval)** — the average number of months between months that had demand. ADI = total months in the window ÷ months with demand. An item sold every month has ADI = 1.0; an item sold in 4 of 12 months has ADI = 3.0.
+- **CV² (squared coefficient of variation of demand sizes)** — how much the demand *quantity* varies, measured **only across the months that actually had demand**. Zero-demand months do not inflate this number.
 
-A low CV means demand is consistent from month to month, making it easy to plan. A high CV means demand swings wildly — sometimes very high, sometimes near zero — making it much harder to hold the right quantity of stock at the right time.
+The standard SBC cut-offs (ADI = 1.32, CV² = 0.49) split items into four demand patterns, mapped to X/Y/Z:
 
-**Why CV and not just standard deviation?** Standard deviation alone is misleading because it is scale-dependent. An item selling 10,000 units per month with a standard deviation of 1,000 is far more predictable than an item selling 200 units per month with a standard deviation of 400, even though the first item's absolute variation is larger. CV normalises the variation relative to average demand, making items comparable across very different volume levels.
+| Demand pattern | ADI | CV² | Meaning | XYZ class |
+|---|---|---|---|---|
+| **Smooth** | < 1.32 | < 0.49 | Regular and stable | **X** |
+| **Erratic** | < 1.32 | ≥ 0.49 | Frequent but variable in size | **Y** |
+| **Intermittent** | ≥ 1.32 | < 0.49 | Infrequent but steady in size | **Y** |
+| **Lumpy** | ≥ 1.32 | ≥ 0.49 | Infrequent *and* variable — hardest to plan | **Z** |
 
-| Class | CV threshold | Demand pattern | Replenishment approach |
-|---|---|---|---|
-| **X** | CV < 0.50 | Steady, predictable | Statistical reorder points work well |
-| **Y** | 0.50 ≤ CV < 1.00 | Moderately variable, seasonal | Regular forecasting with safety stock |
-| **Z** | CV ≥ 1.00 | Sporadic or intermittent | Demand-driven or just-in-time ordering |
+**Why SBC and not a simple CV over all months?** Computing one CV across all calendar months (zeros included) makes a perfectly regular seasonal item look as chaotic as a genuinely erratic one — a product sold in steady quantities every third month would score a huge CV purely because of the zero months. SBC avoids this classic pitfall by measuring *frequency* (ADI) and *size variability* (CV²) separately: an intermittent-but-steady item lands in Y (plannable with the right method), while only items that are both infrequent **and** unpredictable in size land in Z.
 
 **Understanding each class in practice:**
 
-- **X items** have highly stable demand. The standard deviation is less than half of the mean — you can forecast these items with high confidence using statistical methods (e.g. reorder point = mean demand × lead time + safety stock based on service level). Small safety stock buffers are sufficient. Examples: consumables with a steady usage rate, spare parts replaced on fixed maintenance schedules.
+- **X items** (Smooth) have demand nearly every month with stable quantities — you can forecast these items with high confidence using statistical methods (e.g. reorder point = mean demand × lead time + safety stock based on service level). Small safety stock buffers are sufficient. Examples: consumables with a steady usage rate, spare parts replaced on fixed maintenance schedules.
 
-- **Y items** show meaningful variation but not chaos. Demand may follow a seasonal pattern (peaks in summer, troughs in winter), respond to promotions, or reflect a broader business cycle. Forecasting is worthwhile but must account for the variability — safety stock needs to be sized more generously than for X items. Examples: seasonal products, items tied to project-based customer demand, items with promotional uplift.
+- **Y items** (Erratic or Intermittent) are plannable with the right method, but a plain monthly forecast struggles. *Erratic* items sell frequently but in swinging quantities (promotions, project demand) — size the safety stock generously. *Intermittent* items sell infrequently but in steady quantities (e.g. a part consumed every few months on a maintenance cycle) — period-based ordering aligned to the demand interval works better than a monthly reorder point. Examples: seasonal products, items tied to project-based customer demand, items with promotional uplift.
 
-- **Z items** have highly irregular demand — months with very high orders interspersed with months of zero or near-zero demand. Statistical reorder points perform poorly on Z items because there is no reliable mean to anchor them. The preferred approach is either make-to-order (carry no stock; source only when an order is placed) or to hold a relatively large safety stock buffer if stock-out risk is unacceptable. Examples: spare parts for ageing equipment, slow-moving specialty items, items used only in specific customer projects.
+- **Z items** (Lumpy) have demand that is both infrequent *and* unpredictable in size — months of nothing interspersed with orders of very different magnitudes. Statistical reorder points perform poorly on Z items because there is no reliable mean to anchor them. The preferred approach is either make-to-order (carry no stock; source only when an order is placed) or to hold a relatively large safety stock buffer if stock-out risk is unacceptable. Examples: spare parts for ageing equipment, slow-moving specialty items, items used only in specific customer projects.
 
 **How XYZ affects safety stock sizing:** The safety stock formula used in the Safety Stock Recommender is $SS = Z \times \sigma_d \times \sqrt{LT}$, where $\sigma_d$ is the standard deviation of demand and $LT$ is the replenishment lead time. For Z-class items with high $\sigma_d$, this formula produces very large safety stock values — often signalling that make-to-order is economically preferable to stocking. The XYZ class shown in the exception list and assessment results gives planners an immediate signal about whether a safety stock recommendation is realistic.
 
-**Interpreting CV values:**
+**Worked examples:**
 
-| CV example | Monthly demand example | Interpretation |
-|---|---|---|
-| 0.10 | Mean 500 units, std dev 50 units | Highly stable. X class — ideal for statistical replenishment. |
-| 0.45 | Mean 200 units, std dev 90 units | Borderline X/Y. Minor variability; statistical methods still work well. |
-| 0.75 | Mean 80 units, std dev 60 units | Y class. Noticeable swings; investigate seasonal or promotional drivers. |
-| 1.20 | Mean 30 units, std dev 36 units | Z class. Sporadic. Consider make-to-order or consignment arrangement. |
-| 3.50 | Mean 5 units, std dev 17.5 units | Deeply Z. Very low volume with large spikes. Safety stock is likely uneconomical. |
+| Demand history (12 months) | ADI | CV² | Pattern | XYZ class |
+|---|---|---|---|---|
+| Sold every month, 480–520 units | 1.0 | ≈ 0.00 | Smooth | **X** |
+| Sold every month, 50–400 units swinging | 1.0 | ≈ 0.80 | Erratic | **Y** |
+| Sold in 4 months, always ~100 units | 3.0 | ≈ 0.02 | Intermittent | **Y** |
+| Sold in 4 months, 10 / 350 / 60 / 900 units | 3.0 | ≈ 1.10 | Lumpy | **Z** |
 
-**Items with zero demand months:** When an item has months with zero demand within the analysis window, those zero values are included in the CV calculation. A product sold in 4 out of 12 months will have a very high CV even if the months it does sell show consistent quantities. The **Zero periods** column on the item list shows how many months had zero demand — use this alongside the CV to distinguish *truly erratic* demand from *seasonal/intermittent* demand.
+**Items with zero demand months:** months with zero demand lengthen the **ADI** (demand interval) but are deliberately **excluded from the CV² calculation**, which only measures the size variability of the months that did have demand. The **Zero periods** column on the item list shows how many months had zero demand, and the **Demand CV** column shows the classic σ/μ across all months for reference — but the classification itself is driven by the ADI/CV² quadrant, so a seasonal item with steady order sizes correctly lands in Y (Intermittent), not Z.
 
 > **Minimum data requirement:** XYZ analysis requires at least **3 complete calendar months** of issue-demand history within the date range. This most commonly affects newly introduced items and items that were recently added to a site's stocking policy.
 
 > **No demand history? Items default to C/Z.** After the demand-based pass, the job runs a completeness sweep: any item that has item-coverage settings at the site but no qualifying demand history is classified **C (lowest value) / Z (sporadic)** — the most conservative planning quadrant. The **History months** column shows 0 for these items, so you can tell a swept default apart from a statistics-based classification. This means planned items no longer show up as *Unclassified* in the MRP Assessment or Exception features.
 
-> **Cross-site fallback in downstream features:** Many downstream features (MRP Exception, Stock Level Monitor, BOM Analysis, Backlog Monitor, Kanban Monitor, Lead Time Monitor, Material Document Analysis) read ABC/XYZ class for display. When a row exists for an item at site A but not at site B (the site currently being processed), these features will display the class from the item's *highest-DemandMean* site as a fallback so the planner always sees an ABC/XYZ class instead of a blank. Only the **classifications** (A/B/C and X/Y/Z) are inherited &mdash; site-specific statistics such as `DemandMean` are never borrowed across sites, because that would distort calculations such as days-of-stock coverage or the safety stock formula.
+> **Cross-site fallback in downstream features:** Several downstream display features (Stock Level Monitor, BOM Analysis, Backlog Monitor, Kanban Monitor, Lead Time Monitor, Material Document Analysis) read ABC/XYZ class for display. *(MRP Exception does **not** use the fallback — it reads the classification strictly for the site being scanned and defaults unclassified items to C/Z, the most conservative weighting.)* When a row exists for an item at site A but not at site B (the site currently being processed), these features will display the class from the item's *highest-DemandMean* site as a fallback so the planner always sees an ABC/XYZ class instead of a blank. Only the **classifications** (A/B/C and X/Y/Z) are inherited &mdash; site-specific statistics such as `DemandMean` are never borrowed across sites, because that would distort calculations such as days-of-stock coverage or the safety stock formula.
 
 ### The combined 3×3 matrix
 
@@ -225,24 +227,33 @@ Combining ABC and XYZ produces nine planning segments:
 **Workspace (Inventory health dashboard)**  
 Navigate to **Inventory Management › Inquiries and reports › Inventory optimizer › Inventory health dashboard**.
 
-- The **9-tile matrix** at the top shows item counts per segment. Click any tile to open the item list filtered to that segment.
-- The **summary card grid** shows item count, 12-month sales value, and inventory value per segment.
+- The **headline KPI strip** above the matrix shows four numbers at a glance: **Total inventory value**, **Classified items**, **% usage value in A class** (share of 12-month usage value held by A-class items), and **Items needing attention** (open, high-severity MRP exceptions). Click the attention count to open the MRP exception list pre-filtered to exactly those exceptions.
+- The **9-tile matrix** shows item counts per segment. Click any tile to open the item list filtered to that segment.
+- The **summary card grid** shows item count, 12-month usage value (sales deliveries + production consumption, at cost), and inventory value per segment. The CZ card splits its count into measured vs **no history** items (the completeness sweep), so a large CZ count is not mistaken for measured sporadic demand.
+- The **Analytics tab** holds two charts: inventory value by ABC/XYZ segment, and open MRP exceptions by type.
 
 **Item list (Item ABC/XYZ classification)**  
 Navigate to **Inventory Management › Inquiries and reports › Inventory optimizer › Item ABC/XYZ classification**.
+
+- The **Pareto chart** above the grid plots the cumulative % of usage value against the % of items (ranked by value), with reference lines at the 80 % (A) and 95 % (B) cuts — the classic "20 % of items = 80 % of value" picture. It follows the active grid filter.
+- ActionPane buttons provide one-click **ABC and XYZ filters** (All/A/B/C, All/X/Y/Z) and three **sort modes** (Default order, Sort by sales amount, Sort by criticality).
+- Rows with a very high **Range of coverage** (more than 1–2 years of stock) are highlighted amber/orange as potential excess — only for items with at least 3 months of history.
 
 Key columns:
 
 | Column | Description |
 |---|---|
-| **ABC class** | A / B / C based on revenue share |
-| **XYZ class** | X / Y / Z based on demand CV |
-| **12M sales amount** | Item revenue over the analysis window |
-| **Sales amount %** | Item share of total site revenue |
+| **ABC class** | A / B / C based on cumulative usage-value share (80 / 95 cuts) |
+| **XYZ class** | X / Y / Z based on the SBC demand pattern (ADI + CV² of demand sizes) |
+| **12M sales amount** | Item usage value over the analysis window |
+| **Sales amount %** | Item share of total site usage value |
+| **Cumulative %** | Running usage-value share in value-ranked order (drives the ABC cut) |
 | **Demand mean** | Average monthly demand quantity |
 | **Demand std dev** | Standard deviation of monthly demand |
-| **Demand CV** | Coefficient of variation (σ / μ) |
-| **Zero periods** | Months in the window with zero demand |
+| **Demand CV** | Classic coefficient of variation (σ / μ) across all months — shown for reference; classification uses ADI/CV² |
+| **Zero periods** | Months in the window with zero demand (drives the ADI) |
+| **History months** | Months of usable demand history; 0 = classified by the completeness sweep, not statistics |
+| **Range of coverage** | Days of stock at current demand rate — high values signal excess |
 | **Calculated date** | Date of the last classification run |
 
 ---
@@ -323,6 +334,8 @@ $$\text{Priority score} = \text{Severity score} \times \text{ABC score} \times \
 
 Navigate to **Inventory Management › Inquiries and reports › Inventory optimizer › MRP exception**.
 
+The **Summary tab** shows a donut of open exceptions by type — the shape of the workload at a glance before you dive into rows. Rows in the grid are colour-coded by severity (red High / amber Medium / green Low) and sorted by priority score by default.
+
 **Key columns:**
 
 | Column | Description |
@@ -353,7 +366,7 @@ The MRP Assessment answers: *Can the MRP output be trusted?* Where MRP Exception
 
 ### What does the assessment check?
 
-The assessment runs up to **27 diagnostic checks** grouped into nine categories:
+The assessment runs up to **38 diagnostic checks** grouped into nine categories:
 
 | Category | What it checks | Check codes |
 |---|---|---|
@@ -474,7 +487,7 @@ The form has three levels:
 | **SS-001, SS-003, SS-004** (Safety stock gaps) | Demand planner | Use the Safety Stock & ROP Simulator to recalculate safety stock levels, then update item coverage |
 | **CV-002, CV-003** (Coverage gaps) | Demand planner / buyer | Assign coverage groups and set lead times in **Master planning › Setup › Item coverage** |
 | **FW-003** (Negative on-hand, no supply) | Buyer / warehouse | Create an emergency purchase order or investigate a warehouse posting error |
-| **PB-001** (Dead stock with open supply) | Demand planner / buyer | Cancel or reduce open purchase orders for dead-stock items |
+| **PB-001** (Dead stock with open supply) | Demand planner / buyer | Cancel or reduce open purchase orders for dead-stock items. See **Excess & Obsolete cockpit** for a full view of Dormant/Dead stock with aging and provision values. |
 | **PO-001 to PO-003** (PO availability/integration) | IT / D365 platform admin | Enable global PO integration, remove company exclusion, and confirm current-company PO availability before running planning |
 | **PO-004 to PO-006** (Fit-analysis diagnostics) | IT / planning process owner | Run fit analysis, resolve unsupported configuration patterns, and enable fit-analysis runtime toggle if disabled |
 > **Enable/disable checks:** Administrators can turn checks on or off on **Inventory management › Setup › Inventory and warehouse management parameters** (tab **Inventory optimizer**, FastTab **MRP Assessment check configuration**). Check codes are grouped by family (PC, DQ, SS, CV, PR, FW, BR, PB, PO). Disabled checks are not executed and are excluded from the overall severity score.
@@ -608,8 +621,8 @@ Use these playbooks to reduce onboarding time and make daily routines explicit b
 1. Open **MRP exception** list and filter `Status = Open`.
 2. Sort by **Priority score** descending.
 3. Action top exceptions first:
-   - `OverdueOrder` and `SafetyStockBreach` first
-   - `CapacityOverload` escalated immediately
+   - **Overdue order** and **Safety stock breach** first
+   - **Oversized order** on A-class items escalated to the buyer
 4. Mark actioned rows as `Confirmed`; mark non-actionable rows `Dismissed` with a reason.
 
 **Weekly (45-60 min):**
