@@ -1,15 +1,23 @@
 # Inventory Optimizer — User Training Guide
-## Free Features: ABC/XYZ Classification · MRP Exception Advisor · MRP Assessment
+## Free Features: ABC/XYZ Classification · MRP Exception · MRP Assessment · Excess & Obsolete Cockpit
 
 **Module:** Inventory Optimizer (ABS)  
 **Platform:** Microsoft Dynamics 365 Finance & Operations  
 **Audience:** Demand planners, materials planners, inventory controllers, MRP super users  
-**Last updated:** May 2026
+**Last updated:** June 2026
 
-> **Update (May 2026):** Configuration for MRP Assessment check toggles is maintained in the standard
+> **Update (June 2026):** Configuration for MRP Assessment check toggles is maintained in the standard
 > **Inventory and warehouse management parameters** form, tab **Inventory optimizer**,
 > FastTab **MRP Assessment check configuration**. There is no separate Inventory Optimizer
 > parameters form for free features.
+>
+> **Update (June 2026):** ABC/XYZ demand extraction now reads inventory issue movements from
+> `InventTrans` (status Sold or Deducted), so manufacturing component consumption is included.
+>
+> **Update (June 2026):** The **Excess & Obsolete Cockpit** has been added as a free feature.
+> It buckets on-hand stock by movement aging (Active → Dead) and recommends a disposition
+> per item. Items with on-hand but no issue history yet (e.g. recently received) are placed
+> in a new **No movement history** bucket rather than being flagged dead/scrap.
 
 ---
 
@@ -22,7 +30,7 @@
    - [The combined 3×3 matrix](#the-combined-33-matrix)
    - [How to run the batch job](#how-to-run-the-abcxyz-batch-job)
    - [How to read the results](#how-to-read-the-abcxyz-results)
-3. [MRP Exception Advisor](#3-mrp-exception-advisor)
+3. [MRP Exception](#3-mrp-exception)
    - [What exceptions are detected?](#what-exceptions-are-detected)
    - [How severity and priority are calculated](#how-severity-and-priority-are-calculated)
    - [How to run the batch job](#how-to-run-the-mrp-exception-batch-job)
@@ -33,27 +41,33 @@
    - [How to run the batch job](#how-to-run-the-mrp-assessment-batch-job)
    - [How to review the results](#how-to-review-the-mrp-assessment-results)
    - [Acting on common findings](#acting-on-common-findings)
-5. [Recommended operating rhythm](#5-recommended-operating-rhythm)
-6. [Quick-reference menu paths](#6-quick-reference-menu-paths)
-7. [Role-based quick starts](#7-role-based-quick-starts)
-8. [Troubleshooting and FAQ](#8-troubleshooting-and-faq)
+5. [Excess & Obsolete Cockpit](#5-excess--obsolete-cockpit)
+   - [What does the cockpit show?](#what-does-the-cockpit-show)
+   - [Aging buckets and recommendations](#aging-buckets-and-recommendations)
+   - [How to run the batch job](#how-to-run-the-excess--obsolete-batch-job)
+   - [How to read the results](#how-to-read-the-excess--obsolete-results)
+6. [Recommended operating rhythm](#6-recommended-operating-rhythm)
+7. [Quick-reference menu paths](#7-quick-reference-menu-paths)
+8. [Role-based quick starts](#8-role-based-quick-starts)
+9. [Troubleshooting and FAQ](#9-troubleshooting-and-faq)
 
 ---
 
 ## 1. How the three features work together
 
-The three free features answer three different questions about your supply chain:
+The four free features answer four different questions about your supply chain:
 
 | Feature | Analyses | Question answered |
 |---|---|---|
-| **ABC/XYZ Classification** | Customer invoice history | Which items matter most, and how predictable is their demand? |
-| **MRP Exception Advisor** | Planned order output (`ReqPO`) | What supply actions need to be taken right now? |
+| **ABC/XYZ Classification** | Inventory issue demand history (`InventTrans`) | Which items matter most, and how predictable is their demand? |
+| **MRP Exception** | Planned order output (`ReqPO`) | What supply actions need to be taken right now? |
 | **MRP Assessment** | Plan configuration + master data | Can the MRP output be trusted? |
+| **Excess & Obsolete Cockpit** | On-hand stock + issue/receipt movement aging | Which stock is no longer moving, and what should we do with it? |
 
 They are designed to run in sequence:
 
 ```
-ABC/XYZ Classification  →  MRP Exception Advisor  →  MRP Assessment
+ABC/XYZ Classification  →  MRP Exception  →  MRP Assessment
        (monthly)                (after each MRP run)        (weekly)
 ```
 
@@ -89,7 +103,7 @@ Use this checklist before team onboarding, UAT walkthroughs, or go-live handover
 
 ### What is ABC analysis?
 
-ABC analysis ranks every stocked item at a site by its share of total invoiced sales revenue over the analysis window, applying the Pareto (80/20) principle.
+ABC analysis ranks every stocked item at a site by its share of total demand value over the analysis window, applying the Pareto (80/20) principle.
 
 | Class | Cumulative revenue share | Typical inventory strategy |
 |---|---|---|
@@ -137,7 +151,11 @@ A low CV means demand is consistent from month to month, making it easy to plan.
 
 **Items with zero demand months:** When an item has months with zero demand within the analysis window, those zero values are included in the CV calculation. A product sold in 4 out of 12 months will have a very high CV even if the months it does sell show consistent quantities. The **Zero periods** column on the item list shows how many months had zero demand — use this alongside the CV to distinguish *truly erratic* demand from *seasonal/intermittent* demand.
 
-> **Minimum data requirement:** XYZ analysis requires at least **3 complete calendar months** of invoice data within the date range. Items with fewer than 3 months of data are skipped for XYZ classification and will show a blank XYZ class in the item list. This most commonly affects newly introduced items and items that were recently added to a site's stocking policy.
+> **Minimum data requirement:** XYZ analysis requires at least **3 complete calendar months** of issue-demand history within the date range. This most commonly affects newly introduced items and items that were recently added to a site's stocking policy.
+
+> **No demand history? Items default to C/Z.** After the demand-based pass, the job runs a completeness sweep: any item that has item-coverage settings at the site but no qualifying demand history is classified **C (lowest value) / Z (sporadic)** — the most conservative planning quadrant. The **History months** column shows 0 for these items, so you can tell a swept default apart from a statistics-based classification. This means planned items no longer show up as *Unclassified* in the MRP Assessment or Exception features.
+
+> **Cross-site fallback in downstream features:** Many downstream features (MRP Exception, Stock Level Monitor, BOM Analysis, Backlog Monitor, Kanban Monitor, Lead Time Monitor, Material Document Analysis) read ABC/XYZ class for display. When a row exists for an item at site A but not at site B (the site currently being processed), these features will display the class from the item's *highest-DemandMean* site as a fallback so the planner always sees an ABC/XYZ class instead of a blank. Only the **classifications** (A/B/C and X/Y/Z) are inherited &mdash; site-specific statistics such as `DemandMean` are never borrowed across sites, because that would distort calculations such as days-of-stock coverage or the safety stock formula.
 
 ### The combined 3×3 matrix
 
@@ -170,7 +188,7 @@ Combining ABC and XYZ produces nine planning segments:
 | Large **AX inventory value** | Healthy — significant capital in your most predictable, high-value items. |
 | Large **AZ inventory value** | Risk — high capital tied up in sporadic A-items. Consider make-to-order or consignment. |
 | Large **CZ inventory value** | Working-capital concern — low-value, erratic items consuming cash. |
-| Many items with **no class** (all tiles = 0) | The classification job has not been run yet, or no invoice data exists for the selected period. |
+| Many items with **no class** (all tiles = 0) | The classification job has not been run yet for this site. (Planned items with no demand history are auto-classified C/Z by the sweep, so a blank class genuinely means "not yet run".) |
 
 ### How to run the ABC/XYZ batch job
 
@@ -182,7 +200,7 @@ Combining ABC and XYZ produces nine planning segments:
    | **Site** | The site to classify. Leave blank to classify **all active sites** in one job. | Leave blank (all sites) |
    | **From date** | Start of the analysis window. | First day of the month, 12 months ago |
    | **To date** | End of the analysis window. | Last day of the previous month |
-   | **Delete and regenerate** | Deletes all existing classification records before re-inserting. | **Tick this** for monthly runs |
+   | **Delete and regenerate** | Deletes existing classification records before re-inserting — **only for the selected site** when a site is specified; all sites only when Site is blank. Safe to run site-by-site. | **Tick this** for monthly runs |
 
 3. Click **OK** to run immediately, or use the **Batch** tab to schedule overnight.
 4. Monitor progress at **System administration › Inquiries › Batch jobs** (description: *ABC/XYZ Classification*).
@@ -190,7 +208,7 @@ Combining ABC and XYZ produces nine planning segments:
 
 > **Best practice:** Schedule monthly on the first working day of each month with Site blank, a 12-month look-back, and *Delete and regenerate* ticked. This refreshes all sites in one run.
 
-> **Troubleshooting — no data found:** If a site reports no data, verify that customer invoice transactions exist in **Accounts receivable › Inquiries › Journals › Invoice journal** for that site and period. Sites with no invoice data are silently skipped.
+> **Troubleshooting — no data found:** If a site reports no data, verify that issue transactions exist for the selected site and period in inventory transactions (`InventTrans`) with issue statuses such as Sold or Deducted. Sites with no issue-demand data are silently skipped.
 
 ### Parameter presets (ABC/XYZ)
 
@@ -204,8 +222,8 @@ Combining ABC and XYZ produces nine planning segments:
 
 ### How to read the ABC/XYZ results
 
-**Workspace (ABC/XYZ Matrix)**  
-Navigate to **Inventory Management › Inquiries and reports › Inventory optimizer › ABC/XYZ Matrix**.
+**Workspace (Inventory health dashboard)**  
+Navigate to **Inventory Management › Inquiries and reports › Inventory optimizer › Inventory health dashboard**.
 
 - The **9-tile matrix** at the top shows item counts per segment. Click any tile to open the item list filtered to that segment.
 - The **summary card grid** shows item count, 12-month sales value, and inventory value per segment.
@@ -229,29 +247,26 @@ Key columns:
 
 ---
 
-## 3. MRP Exception Advisor
+## 3. MRP Exception
 
-The MRP Exception Advisor scans the output of a completed master planning run and surfaces supply-side problems that need planner action. It enriches each exception with ABC/XYZ context so planners can prioritise the most critical issues first.
+MRP Exception scans the output of a completed master planning run and surfaces supply-side problems that need planner action. It enriches each exception with ABC/XYZ context so planners can prioritise the most critical issues first.
 
 ### What exceptions are detected?
 
-Five exception types are detected automatically:
+Four exception types are detected automatically:
 
 | Exception type | What it means | Suggested action |
 |---|---|---|
 | **Overdue order** | A planned purchase order's requirement date is in the past (`ReqDate < today()`) | Expedite the purchase order |
 | **Safety stock breach** | Current physical stock is below the item's minimum on-hand (safety stock) | Raise an emergency PO to restore safety stock |
 | **Lead time violation** | Days remaining before the requirement date is less than the item's purchase lead time | Place the order immediately — normal lead time is already insufficient |
-| **Excess inventory** | Days-of-stock on hand exceed the class-specific coverage threshold | Review and cancel or defer planned supply |
-| **Capacity overload** | An item simultaneously has an overdue order *and* a safety stock breach | Escalate to production/supply planning |
+| **Oversized order** | A single planned order quantity exceeds the configured months of average demand (a lot-sizing / overstock risk) | Split the planned order into smaller batches |
 
-**Excess inventory thresholds by ABC class:**
+> **Excess inventory is now handled by the Excess & Obsolete cockpit**, not by an MRP exception. The cockpit values, ages, and recommends a disposition for surplus stock — richer than a bare quantity exception. The `Excess inventory` exception type is retained only so historical rows still display.
 
-| ABC class | Coverage limit |
-|---|---|
-| A | 30 days |
-| B | 60 days |
-| C | 90 days |
+> **Detection scope (prerequisites):**
+> - Only **purchase** planned orders are scanned. Overdue/oversized **production and transfer** orders are not flagged in this version.
+> - **Safety stock breach** only covers items that already have an ABC/XYZ classification row — run **ABC/XYZ Classification** first, or a newly stocked item with safety stock will not be checked until it is classified.
 
 ### How severity and priority are calculated
 
@@ -259,11 +274,12 @@ Each exception is assigned a **severity** based on how critical it is:
 
 | Exception type | High | Medium | Low |
 |---|---|---|---|
-| Overdue order | > 7 days late | > 3 days late | ≤ 3 days late |
+| Overdue order | > High-days threshold (default 7) late | > Medium-days threshold (default 3) late | ≤ Medium-days threshold late |
 | Safety stock breach | A-class item | B-class item | C-class item |
 | Lead time violation | A-class item | B-class item | C-class item |
-| Excess inventory | A-class item | B-class item | C-class item |
-| Capacity overload | Always High | — | — |
+| Oversized order | A-class item | B-class item | C-class item |
+
+> **Configurable thresholds:** the overdue High/Medium day bands and the oversized-order months-of-demand multiplier are set on **Inventory management › Setup › Inventory and warehouse management parameters › Inventory optimizer tab › MRP exception thresholds**. Leave a value at 0 to use its default (7 days / 3 days / 3 months).
 
 A **priority score** combines severity, ABC class, and XYZ class:
 
@@ -325,15 +341,15 @@ Navigate to **Inventory Management › Inquiries and reports › Inventory optim
 **Working the exception list — suggested process:**
 
 1. Filter to **Status = Open** and sort by **Priority score** descending.
-2. For each high-priority exception, review the suggested action and take the appropriate step in D365FO (place/expedite a PO, adjust safety stock, etc.).
-3. Once actioned, set the exception **Status** to **Confirmed** (action taken) or **Dismissed** (not applicable).
-4. `Confirmed` and `Dismissed` exceptions are retained across re-runs as an audit trail.
+2. For each high-priority exception, click **View requirement** to open the underlying planned order, and take the appropriate step in D365FO (place/expedite a PO, adjust safety stock, etc.). *(Safety stock breaches have no planned order, so View requirement is not available for them.)*
+3. Once actioned, set the exception **Status** to **Confirmed** (action taken) or **Dismissed** (not applicable). Select multiple rows first to **Confirm** or **Dismiss them in bulk** — handy for clearing many low-severity rows at once.
+4. `Confirmed` and `Dismissed` exceptions are retained across re-runs as an audit trail. Re-running detection refreshes the quantitative fields (days, quantity, severity) of still-Open exceptions, so a worsening condition is reflected rather than frozen at its first-detected values.
 
 ---
 
 ## 4. MRP Assessment
 
-The MRP Assessment answers: *Can the MRP output be trusted?* Where the MRP Exception Advisor analyses *what MRP produced*, the Assessment analyses the *inputs and configuration* that determine whether that output is valid.
+The MRP Assessment answers: *Can the MRP output be trusted?* Where MRP Exception analyses *what MRP produced*, the Assessment analyses the *inputs and configuration* that determine whether that output is valid.
 
 ### What does the assessment check?
 
@@ -380,12 +396,12 @@ The assessment runs up to **27 diagnostic checks** grouped into nine categories:
 
 **Compounded risk** is flagged when an item appears in an assessment finding *and* has a related open MRP exception of the same root cause. Its priority score is multiplied by 1.5, making these items the highest priority in the detail grid.
 
-| Assessment check | Related MRP exception |
+| Assessment check | Related signal |
 |---|---|
-| SS-001, SS-004 | Safety stock breach |
-| FW-003 | Overdue order |
-| CV-002, CV-003 | Lead time violation |
-| PB-001 | Excess inventory |
+| SS-001, SS-004 | Safety stock breach (MRP exception) |
+| FW-003 | Overdue order (MRP exception) |
+| CV-002, CV-003 | Lead time violation (MRP exception) |
+| PB-001 | Dead/Dormant stock with open supply (Excess & Obsolete cockpit) |
 
 ### How to run the MRP Assessment batch job
 
@@ -465,19 +481,94 @@ The form has three levels:
 
 ---
 
-## 5. Recommended operating rhythm
+## 5. Excess & Obsolete Cockpit
+
+The Excess & Obsolete (E&O) Cockpit answers: *Which on-hand stock is no longer moving, and what should we do with it?* It buckets every stocked item at a site by how long ago it last moved, overlays a provision value and an excess-coverage flag, and recommends a disposition per item.
+
+### What does the cockpit show?
+
+For each item/site with on-hand stock, the cockpit computes:
+
+| Output | Description |
+|---|---|
+| **Aging bucket** | Movement-aging band derived from months since the last issue (sale/deduction) |
+| **Recommendation** | Suggested disposition (No action, Run out, Reduce orders, Transfer, Discount, Scrap) |
+| **On-hand quantity / value** | Current physical stock and its posted + physical value |
+| **Provision value** | On-hand value × the bucket's provision percentage — your suggested write-down exposure |
+| **Months since last issue** | How long since the item last had a Sold/Deducted movement at the site |
+| **Months of coverage** | On-hand divided by mean monthly demand (999 when demand is zero) |
+| **Excess flag** | Yes when days-of-stock exceed the ABC class-specific coverage limit (A 30 / B 60 / C 120 days) |
+| **Open supply flag** | Yes when an open purchase order still exists for a Dormant/Dead item ("still buying what doesn't move") |
+| **ABC / XYZ class** | From the last ABC/XYZ classification run (enriches the view; not required to run) |
+
+A **stacked column chart** at the top shows provision value and remaining (uncovered) on-hand value per aging bucket, so you can see at a glance where write-down exposure is concentrated.
+
+### Aging buckets and recommendations
+
+| Aging bucket | Trigger | Default provision % | Recommendation |
+|---|---|---|---|
+| **Active** | Last issued < 3 months ago | 0 % | No action (or Reduce orders if flagged excess) |
+| **Slow moving** | Last issued 3 – 6 months ago | 10 % | Run out |
+| **Very slow moving** | Last issued 6 – 12 months ago | 25 % | Run out |
+| **Dormant** | Last issued 12 – 24 months ago | 50 % | Discount |
+| **Dead stock** | Last issued ≥ 24 months ago | 100 % | Scrap |
+| **No movement history** | On-hand but never issued, and not received long ago | 0 % | No action |
+
+> **No movement history is *not* dead stock.** An item that has on-hand but no issue history yet — e.g. recently received purchases or a newly stocked item — is placed in the **No movement history** bucket with 0 % provision and **no scrap recommendation**, because it simply has not had a chance to move. Only never-issued stock that has *also sat since receipt* for a long time ages into Dormant (12 – 24 months since receipt) and then Dead (≥ 24 months since receipt). This prevents brand-new stock from being condemned to scrap.
+
+> **Pre-requisite:** Run ABC/XYZ Classification at least once before running the cockpit. The excess flag and coverage calculations rely on each item's `DemandMean` and ABC class. Without classification data, items show as *Unclassified* with `Months of coverage = 999` and `Excess flag = No`.
+
+**Row colour coding:** Dead = red, Dormant = orange, Very slow = amber, Slow = blue, No movement history = grey. To avoid drowning the list in colour, the bands only fire for items with at least 3 months of demand history (or buckets that are already Dormant/Dead).
+
+### How to run the Excess & Obsolete batch job
+
+1. Navigate to **Inventory Management › Periodic tasks › Inventory optimizer › Run excess and obsolete analysis**.
+2. Fill in the parameters:
+
+   | Parameter | Description | Recommendation |
+   |---|---|---|
+   | **Site** | The site to analyse. Leave blank to analyse **all active sites**. | Leave blank (all sites) |
+   | **As of date** | The reference date for the aging calculation. | Today |
+   | **Provision % (Slow / Very slow / Dormant / Dead)** | Write-down percentage applied per bucket. | Defaults: 10 / 25 / 50 / 100 |
+   | **Delete and regenerate** | Clears existing rows before re-inserting — for the selected site only when a site is given. | **Tick this** for periodic runs |
+
+3. Click **OK** to run immediately, or use the **Batch** tab to schedule.
+4. When complete, the job posts a summary showing total provision value for the analysed site(s).
+
+> **Tip:** The cockpit is also included in the **Optimize all** master job (it runs straight after ABC/XYZ classification), so a full Optimize All run refreshes it automatically.
+
+### How to read the Excess & Obsolete results
+
+Navigate to **Inventory Management › Inquiries and reports › Inventory optimizer › Excess and obsolete cockpit**.
+
+- The **chart** shows provision value vs remaining value by aging bucket.
+- The **grid** lists each item/site with its bucket, recommendation, values, and flags. Sort by **Provision value** descending to tackle the biggest write-down exposure first.
+- Use the **quick filter** to focus on a bucket (e.g. *Dead stock*) or a recommendation (e.g. *Scrap*).
+- The **Item ABC/XYZ** button opens the classification list for context.
+
+**Working the list — suggested process:**
+
+1. Filter to **Aging bucket = Dead stock** and review the *Scrap* candidates with the highest provision value.
+2. Check the **Open supply flag** — Dormant/Dead items still on open PO are the priority ("stop buying what isn't moving").
+3. For **Dormant** items, evaluate discount/clearance; for **Slow / Very slow**, plan to run the stock down rather than reorder.
+4. Treat **No movement history** rows as "watch" items — recently received stock that needs time, not action.
+
+---
+
+## 6. Recommended operating rhythm
 
 | Frequency | Task | Who |
 |---|---|---|
 | **Monthly** (first working day) | Run **ABC/XYZ Classification** for all sites, 12-month look-back, Delete and regenerate ticked | Inventory controller / batch admin |
 | **Nightly** (scheduled batch) | Run **master planning** → then **MRP Exception Scan** as a chained dependency | Batch admin |
 | **Weekly** | Run **MRP Assessment** and review the overall severity. Resolve any Critical or High findings before the weekly planning meeting. | MRP super user |
+| **Monthly** | Run **Excess & Obsolete analysis** (or rely on Optimize all). Review Dead/Dormant provision value and act on Scrap/Discount candidates with open supply. | Inventory controller / demand planner |
 | **Daily** (start of day) | Open **MRP exception** list, filter Open, sort by Priority score descending. Work exceptions top-down. | Demand planner / buyer |
 | **Monthly** | Review ABC/XYZ segment shifts. Update coverage groups and safety stock for items that have changed class. | Demand planner |
 
 ---
 
-## 6. Quick-reference menu paths
+## 7. Quick-reference menu paths
 
 ### Batch jobs (Periodic tasks)
 
@@ -486,15 +577,17 @@ The form has three levels:
 | ABC/XYZ Classification | **Inventory Management › Periodic tasks › Inventory optimizer › ABC/XYZ Classification** |
 | MRP Exception Scan | **Inventory Management › Periodic tasks › Inventory optimizer › MRP Exception Scan** |
 | Run MRP Assessment | **Inventory Management › Periodic tasks › Inventory optimizer › Run MRP assessment** |
+| Run excess and obsolete analysis | **Inventory Management › Periodic tasks › Inventory optimizer › Run excess and obsolete analysis** |
 
 ### Inquiry forms (Inquiries and reports)
 
 | Form | Menu path |
 |---|---|
-| Inventory Optimizer workspace | **Inventory Management › Inquiries and reports › Inventory optimizer › ABC/XYZ Matrix** |
+| Inventory Optimizer workspace | **Inventory Management › Inquiries and reports › Inventory optimizer › Inventory health dashboard** |
 | Item ABC/XYZ classification | **Inventory Management › Inquiries and reports › Inventory optimizer › Item ABC/XYZ classification** |
 | MRP exception | **Inventory Management › Inquiries and reports › Inventory optimizer › MRP exception** |
 | MRP assessment | **Inventory Management › Inquiries and reports › Inventory optimizer › MRP assessment** |
+| Excess and obsolete cockpit | **Inventory Management › Inquiries and reports › Inventory optimizer › Excess and obsolete cockpit** |
 
 ### Setup
 
@@ -504,7 +597,7 @@ The form has three levels:
 
 ---
 
-## 7. Role-based quick starts
+## 8. Role-based quick starts
 
 Use these playbooks to reduce onboarding time and make daily routines explicit by role.
 
@@ -551,6 +644,7 @@ Use these playbooks to reduce onboarding time and make daily routines explicit b
 2. Review segment shifts (`AX`, `AY`, `AZ`, etc.).
 3. Identify high-capital risk clusters (`AZ`, `CZ`).
 4. Share class-change list with planners for policy updates.
+5. Run **Excess & Obsolete analysis** and review total provision value. Action Dead/Dormant items with an **Open supply flag** first, then Scrap/Discount candidates by descending provision value.
 
 **Monthly governance check (30 min):**
 
@@ -583,15 +677,17 @@ Use these playbooks to reduce onboarding time and make daily routines explicit b
 
 ---
 
-## 8. Troubleshooting and FAQ
+## 9. Troubleshooting and FAQ
 
 ### Common symptoms and fixes
 
 | Symptom | Likely cause | What to check first |
 |---|---|---|
-| ABC/XYZ matrix is empty | Job has not run or no invoice data in range | ABC/XYZ batch history, invoice journals, selected date range |
+| ABC/XYZ matrix is empty | Job has not run or no issue-demand data in range | ABC/XYZ batch history, inventory transactions, selected date range |
 | Exception list suddenly drops to near-zero | Master planning did not complete, or wrong plan/site was scanned | Latest MRP batch status, exception job parameters |
 | Assessment shows many `Not applicable` checks | Active engine changed (Legacy vs PO) | Planning engine status, PO applicability of checks |
+| E&O cockpit shows everything as Dead stock | ABC/XYZ not run, or demo/old data with no recent movement | Run ABC/XYZ classification first; check that recent Sold/Deducted issues exist in the window |
+| E&O cockpit is empty | Analysis not run, or no on-hand stock at the site | Run **Run excess and obsolete analysis**; verify on-hand exists |
 | PO checks remain High/Critical | PO integration/config not resolved | PO-001 to PO-006 rows and recommended actions |
 | Severity trend keeps worsening | Underlying process ownership gap | Assign owner + due date per check and review weekly |
 
@@ -608,6 +704,9 @@ A: The framework records all checks for transparency. Zero means pass, while sti
 
 **Q: When should we trust MRP output?**  
 A: When Assessment has no unresolved Critical findings, High findings are understood/owned, and the top exceptions are actively managed.
+
+**Q: Why is a brand-new item showing in the Excess & Obsolete cockpit?**  
+A: It will appear in the **No movement history** bucket (grey, 0 % provision, *No action*) because it has on-hand but no issue history yet. It is *not* flagged dead or scrap. Only never-issued stock that has also sat since receipt for 12+ months ages into Dormant, and 24+ months into Dead.
 
 ---
 
